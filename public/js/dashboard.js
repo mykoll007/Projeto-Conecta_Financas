@@ -6,7 +6,7 @@ const LOGIN_KEY = "clara-financas-login";
 const TOKEN_KEY = "clara-financas-token";
 const THEME_KEY = "clara-financas-tema";
 
-const API_URL = "projeto-conecta-financas.vercel.app/api";
+const API_URL = "https://projeto-conecta-financas.vercel.app/api";
 
 
 // =====================================================

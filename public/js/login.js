@@ -2,7 +2,7 @@ const LOGIN_KEY = "clara-financas-login";
 const TOKEN_KEY = "clara-financas-token";
 const REMEMBER_KEY = "clara-financas-remember";
 
-const API_URL = "projeto-conecta-financas.vercel.app/api";
+const API_URL = "https://projeto-conecta-financas.vercel.app/api";
 
 const loginForm = document.getElementById("loginForm");
 const emailInput = document.getElementById("email");
