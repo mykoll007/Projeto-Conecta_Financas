@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Fixos mensais | Conecta Finanças</title>
+
+  <link rel="stylesheet" href="css/fixos.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">$</div>
+
+        <div class="brand-text">
+          <strong>Conecta Finanças</strong>
+          <span>Seu dinheiro, sem complicação</span>
+        </div>
+      </a>
+
+      <nav class="desktop-nav">
+        <a href="index.html" class="nav-link">
+          Início
+        </a>
+
+        <a href="movimentacoes.html" class="nav-link">
+          Movimentações
+        </a>
+
+        <a href="fixos.html" class="nav-link active">
+          Fixos mensais
+        </a>
+
+        <a href="relatorios.html" class="nav-link">
+          Relatórios
+        </a>
+      </nav>
+
+      <div class="topbar-actions">
+        <button
+          type="button"
+          class="icon-button"
+          id="themeToggle"
+          aria-label="Alterar tema"
+        >
+          ☾
+        </button>
+
+        <button
+          type="button"
+          class="primary-button"
+          id="topAddButton"
+        >
+          <span>＋</span>
+          Novo fixo
+        </button>
+
+        <div class="profile-menu">
+          <button
+            type="button"
+            class="profile-button"
+            id="profileButton"
+          >
+            <span class="profile-avatar" id="profileAvatar">
+              M
+            </span>
+
+            <span class="profile-info">
+              <strong id="profileName">Marina</strong>
+              <small>Minha conta</small>
+            </span>
+
+            <span class="profile-arrow">⌄</span>
+          </button>
+
+          <div class="profile-dropdown" id="profileDropdown">
+            <a href="configuracoes.html">
+              Configurações
+            </a>
+
+            <button type="button" id="logoutButton">
+              Sair da conta
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="mobile-menu-button"
+          id="mobileMenuButton"
+          aria-label="Abrir menu"
+        >
+          ☰
+        </button>
+      </div>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav">
+      <a href="index.html">Início</a>
+      <a href="movimentacoes.html">Movimentações</a>
+      <a href="fixos.html" class="active">Fixos mensais</a>
+      <a href="relatorios.html">Relatórios</a>
+      <a href="configuracoes.html">Configurações</a>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <section class="page-header">
+      <div>
+        <span class="section-label">
+          Lançamentos recorrentes
+        </span>
+
+        <h1>Fixos mensais</h1>
+
+        <p>
+          Cadastre receitas e despesas que se repetem todos os meses.
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <button
+          type="button"
+          class="secondary-button"
+          id="launchFixedButton"
+        >
+          Lançar no mês
+        </button>
+
+        <button
+          type="button"
+          class="primary-button"
+          id="headerAddButton"
+        >
+          <span>＋</span>
+          Novo fixo
+        </button>
+      </div>
+    </section>
+
+    <section class="summary-grid">
+      <article class="summary-card">
+        <div class="summary-icon income-icon">↗</div>
+
+        <div>
+          <span>Receitas fixas</span>
+
+          <strong
+            class="income-text"
+            id="fixedIncomeValue"
+          >
+            R$ 0,00
+          </strong>
+
+          <small id="fixedIncomeCount">
+            0 lançamentos ativos
+          </small>
+        </div>
+      </article>
+
+      <article class="summary-card">
+        <div class="summary-icon expense-icon">↘</div>
+
+        <div>
+          <span>Despesas fixas</span>
+
+          <strong
+            class="expense-text"
+            id="fixedExpenseValue"
+          >
+            R$ 0,00
+          </strong>
+
+          <small id="fixedExpenseCount">
+            0 lançamentos ativos
+          </small>
+        </div>
+      </article>
+
+      <article class="summary-card balance-card">
+        <div class="summary-icon balance-icon">$</div>
+
+        <div>
+          <span>Saldo previsto</span>
+
+          <strong id="fixedBalanceValue">
+            R$ 0,00
+          </strong>
+
+          <small>Receitas menos despesas fixas</small>
+        </div>
+      </article>
+
+      <article class="summary-card">
+        <div class="summary-icon active-icon">✓</div>
+
+        <div>
+          <span>Fixos ativos</span>
+
+          <strong id="activeFixedCount">0</strong>
+
+          <small id="inactiveFixedCount">
+            0 lançamentos inativos
+          </small>
+        </div>
+      </article>
+    </section>
+
+    <section class="launch-card">
+      <div class="launch-content">
+        <div class="launch-icon">↻</div>
+
+        <div>
+          <span class="card-label">
+            Lançamento automático
+          </span>
+
+          <h2>Adicionar fixos às movimentações</h2>
+
+          <p>
+            Escolha um mês e lance todas as receitas e despesas
+            recorrentes que estiverem ativas.
+          </p>
+        </div>
+      </div>
+
+      <div class="launch-controls">
+        <div>
+          <label for="launchMonth">Mês</label>
+
+          <select id="launchMonth">
+            <option value="0">Janeiro</option>
+            <option value="1">Fevereiro</option>
+            <option value="2">Março</option>
+            <option value="3">Abril</option>
+            <option value="4">Maio</option>
+            <option value="5">Junho</option>
+            <option value="6">Julho</option>
+            <option value="7">Agosto</option>
+            <option value="8">Setembro</option>
+            <option value="9">Outubro</option>
+            <option value="10">Novembro</option>
+            <option value="11">Dezembro</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="launchYear">Ano</label>
+
+          <select id="launchYear"></select>
+        </div>
+
+        <button
+          type="button"
+          class="primary-button launch-button"
+          id="confirmLaunchButton"
+        >
+          Lançar fixos
+        </button>
+      </div>
+    </section>
+
+    <section class="filters-card">
+      <div class="filters-header">
+        <div>
+          <span class="card-label">Filtros</span>
+          <h2>Encontre um lançamento fixo</h2>
+        </div>
+
+        <button
+          type="button"
+          class="clear-button"
+          id="clearFilters"
+        >
+          Limpar filtros
+        </button>
+      </div>
+
+      <div class="filters-grid">
+        <div class="search-field">
+          <label for="searchInput">Pesquisar</label>
+
+          <div class="search-container">
+            <span>⌕</span>
+
+            <input
+              type="search"
+              id="searchInput"
+              placeholder="Descrição ou categoria"
+            >
+          </div>
+        </div>
+
+        <div>
+          <label for="typeFilter">Tipo</label>
+
+          <select id="typeFilter">
+            <option value="all">Todos</option>
+            <option value="income">Receitas</option>
+            <option value="expense">Despesas</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="statusFilter">Situação</label>
+
+          <select id="statusFilter">
+            <option value="all">Todos</option>
+            <option value="active">Ativos</option>
+            <option value="inactive">Inativos</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="categoryFilter">Categoria</label>
+
+          <select id="categoryFilter">
+            <option value="all">Todas</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="orderFilter">Ordenar</label>
+
+          <select id="orderFilter">
+            <option value="day">Dia de vencimento</option>
+            <option value="highest">Maior valor</option>
+            <option value="lowest">Menor valor</option>
+            <option value="description">Descrição</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="fixed-card">
+      <div class="fixed-header">
+        <div>
+          <span class="card-label">Recorrências</span>
+
+          <h2>Seus lançamentos fixos</h2>
+
+          <p id="resultsText">
+            0 lançamentos encontrados
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="secondary-button"
+          id="listAddButton"
+        >
+          ＋ Adicionar
+        </button>
+      </div>
+
+      <div class="fixed-list" id="fixedList"></div>
+
+      <div class="empty-state" id="emptyState" hidden>
+        <div class="empty-icon">↻</div>
+
+        <strong>Nenhum lançamento fixo encontrado</strong>
+
+        <p>
+          Cadastre uma receita ou despesa que se repete mensalmente.
+        </p>
+
+        <button
+          type="button"
+          class="primary-button"
+          id="emptyAddButton"
+        >
+          Adicionar lançamento fixo
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="modal" id="fixedModal">
+    <form class="modal-card" id="fixedForm">
+      <div class="modal-header">
+        <div>
+          <span class="card-label" id="modalLabel">
+            Novo lançamento
+          </span>
+
+          <h2 id="modalTitle">
+            Adicionar fixo mensal
+          </h2>
+        </div>
+
+        <button
+          type="button"
+          class="modal-close"
+          data-close-modal="fixedModal"
+          aria-label="Fechar"
+        >
+          ×
+        </button>
+      </div>
+
+      <input type="hidden" id="fixedId">
+
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="description">Descrição</label>
+
+          <input
+            type="text"
+            id="description"
+            placeholder="Ex.: Aluguel"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="fixedType">Tipo</label>
+
+          <select id="fixedType">
+            <option value="expense">Despesa</option>
+            <option value="income">Receita</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="amount">Valor mensal</label>
+
+          <input
+            type="number"
+            id="amount"
+            min="0.01"
+            step="0.01"
+            placeholder="0,00"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="category">Categoria</label>
+
+          <select id="category"></select>
+        </div>
+
+        <div class="form-group">
+          <label for="day">Dia do mês</label>
+
+          <input
+            type="number"
+            id="day"
+            min="1"
+            max="31"
+            value="5"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="payment">
+            Forma de pagamento
+          </label>
+
+          <select id="payment">
+            <option value="Pix">Pix</option>
+
+            <option value="Cartão de crédito">
+              Cartão de crédito
+            </option>
+
+            <option value="Cartão de débito">
+              Cartão de débito
+            </option>
+
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Boleto">Boleto</option>
+
+            <option value="Transferência">
+              Transferência
+            </option>
+
+            <option value="Débito automático">
+              Débito automático
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="defaultStatus">
+            Status ao lançar
+          </label>
+
+          <select id="defaultStatus">
+            <option value="pending">Pendente</option>
+            <option value="paid">Pago ou recebido</option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label class="active-checkbox">
+            <input type="checkbox" id="active" checked>
+
+            <span>
+              <strong>Lançamento ativo</strong>
+
+              <small>
+                Será incluído ao lançar os fixos do mês.
+              </small>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="secondary-button"
+          data-close-modal="fixedModal"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="submit"
+          class="primary-button"
+        >
+          Salvar lançamento
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal delete-modal" id="deleteModal">
+    <div class="modal-card small-modal">
+      <div class="delete-icon">!</div>
+
+      <h2>Excluir lançamento fixo?</h2>
+
+      <p>
+        Essa ação remove somente o cadastro recorrente. As
+        movimentações já lançadas não serão excluídas.
+      </p>
+
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="secondary-button"
+          data-close-modal="deleteModal"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="danger-button"
+          id="confirmDelete"
+        >
+          Excluir
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal launch-modal" id="launchModal">
+    <div class="modal-card small-modal">
+      <div class="launch-confirm-icon">↻</div>
+
+      <h2>Lançar fixos no período?</h2>
+
+      <p id="launchConfirmationText">
+        Os lançamentos ativos serão adicionados às movimentações.
+      </p>
+
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="secondary-button"
+          data-close-modal="launchModal"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="primary-button"
+          id="executeLaunchButton"
+        >
+          Confirmar lançamento
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/fixos.js"></script>
+</body>
+</html>

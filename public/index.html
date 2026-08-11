@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Dashboard | Conecta Finanças</title>
+
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">$</div>
+
+        <div class="brand-text">
+          <strong>Conecta Finanças</strong>
+          <span>Seu dinheiro, sem complicação</span>
+        </div>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Menu principal">
+        <a href="index.html" class="nav-link active">
+          Início
+        </a>
+
+        <a href="movimentacoes.html" class="nav-link">
+          Movimentações
+        </a>
+
+        <a href="fixos.html" class="nav-link">
+          Fixos mensais
+        </a>
+
+        <a href="relatorios.html" class="nav-link">
+          Relatórios
+        </a>
+      </nav>
+
+      <div class="topbar-actions">
+        <button
+          type="button"
+          class="icon-button"
+          id="themeToggle"
+          aria-label="Alterar tema"
+        >
+          ☾
+        </button>
+
+        <button
+          type="button"
+          class="primary-button"
+          id="openTransaction"
+        >
+          <span>＋</span>
+          Nova movimentação
+        </button>
+
+        <div class="profile-menu">
+          <button
+            type="button"
+            class="profile-button"
+            id="profileButton"
+            aria-expanded="false"
+          >
+            <span class="profile-avatar" id="profileAvatar">
+              M
+            </span>
+
+            <span class="profile-info">
+              <strong id="profileName">Marina</strong>
+              <small>Minha conta</small>
+            </span>
+
+            <span class="profile-arrow">⌄</span>
+          </button>
+
+          <div class="profile-dropdown" id="profileDropdown">
+            <a href="configuracoes.html">
+              Configurações
+            </a>
+
+            <button type="button" id="logoutButton">
+              Sair da conta
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="mobile-menu-button"
+          id="mobileMenuButton"
+          aria-label="Abrir menu"
+        >
+          ☰
+        </button>
+      </div>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav">
+      <a href="index.html" class="active">Início</a>
+      <a href="movimentacoes.html">Movimentações</a>
+      <a href="fixos.html">Fixos mensais</a>
+      <a href="relatorios.html">Relatórios</a>
+      <a href="configuracoes.html">Configurações</a>
+    </nav>
+  </header>
+
+  <main class="dashboard">
+    <section class="dashboard-header">
+      <div>
+        <span class="section-label">Visão geral</span>
+
+        <h1>
+          Olá, <span id="welcomeName">Marina</span>.
+        </h1>
+
+        <p>
+          Aqui está o resumo da sua vida financeira neste mês.
+        </p>
+      </div>
+
+      <div class="period-filter">
+        <label for="monthSelect">Período</label>
+
+        <div class="period-fields">
+          <select id="monthSelect" aria-label="Selecionar mês">
+            <option value="0">Janeiro</option>
+            <option value="1">Fevereiro</option>
+            <option value="2">Março</option>
+            <option value="3">Abril</option>
+            <option value="4">Maio</option>
+            <option value="5">Junho</option>
+            <option value="6">Julho</option>
+            <option value="7" selected>Agosto</option>
+            <option value="8">Setembro</option>
+            <option value="9">Outubro</option>
+            <option value="10">Novembro</option>
+            <option value="11">Dezembro</option>
+          </select>
+
+          <select id="yearSelect" aria-label="Selecionar ano">
+            <option value="2025">2025</option>
+            <option value="2026" selected>2026</option>
+            <option value="2027">2027</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="summary-grid">
+      <article class="summary-card balance-card">
+        <div class="summary-card-top">
+          <div class="summary-icon">
+            $
+          </div>
+
+          <span class="summary-status">
+            Saldo atual
+          </span>
+        </div>
+
+        <strong class="summary-value" id="balanceValue">
+          R$ 0,00
+        </strong>
+
+        <p>
+          Entradas menos despesas pagas
+        </p>
+      </article>
+
+      <article class="summary-card">
+        <div class="summary-card-top">
+          <div class="summary-icon income-icon">
+            ↗
+          </div>
+
+          <span class="summary-status">
+            Entradas
+          </span>
+        </div>
+
+        <strong
+          class="summary-value income-value"
+          id="incomeValue"
+        >
+          R$ 0,00
+        </strong>
+
+        <p id="incomeCount">
+          Nenhum recebimento
+        </p>
+      </article>
+
+      <article class="summary-card">
+        <div class="summary-card-top">
+          <div class="summary-icon expense-icon">
+            ↘
+          </div>
+
+          <span class="summary-status">
+            Despesas
+          </span>
+        </div>
+
+        <strong
+          class="summary-value expense-value"
+          id="expenseValue"
+        >
+          R$ 0,00
+        </strong>
+
+        <p id="expenseCount">
+          Nenhum pagamento
+        </p>
+      </article>
+
+      <article class="summary-card">
+        <div class="summary-card-top">
+          <div class="summary-icon pending-icon">
+            !
+          </div>
+
+          <span class="summary-status">
+            Contas pendentes
+          </span>
+        </div>
+
+        <strong class="summary-value" id="pendingValue">
+          R$ 0,00
+        </strong>
+
+        <p>
+          Ainda não impactam o seu saldo
+        </p>
+      </article>
+    </section>
+
+    <section class="budget-card">
+      <div class="budget-header">
+        <div>
+          <span class="card-label">
+            Orçamento mensal
+          </span>
+
+          <h2>
+            Controle seus limites
+          </h2>
+        </div>
+
+        <button
+          type="button"
+          class="secondary-button"
+          id="editBudget"
+        >
+          Editar orçamento
+        </button>
+      </div>
+
+      <div class="budget-values">
+        <p>
+          <strong id="budgetUsed">R$ 0,00</strong>
+          utilizados de
+          <span id="budgetTotal">R$ 0,00</span>
+        </p>
+
+        <strong id="budgetPercent">0%</strong>
+      </div>
+
+      <div
+        class="budget-progress"
+        role="progressbar"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        <div
+          class="budget-progress-fill"
+          id="budgetProgress"
+        ></div>
+      </div>
+
+      <p class="budget-remaining">
+        Você ainda tem
+        <strong id="budgetRemaining">R$ 0,00</strong>
+        disponíveis neste mês.
+      </p>
+    </section>
+
+    <section class="content-grid">
+      <article class="content-card chart-card">
+        <div class="card-header">
+          <div>
+            <span class="card-label">
+              Entradas e despesas
+            </span>
+
+            <h2>
+              Comparativo dos últimos meses
+            </h2>
+          </div>
+
+          <div class="chart-legend">
+            <span>
+              <i class="legend-dot income-dot"></i>
+              Entradas
+            </span>
+
+            <span>
+              <i class="legend-dot expense-dot"></i>
+              Despesas
+            </span>
+          </div>
+        </div>
+
+        <div
+          class="bar-chart"
+          id="barChart"
+          aria-label="Gráfico de entradas e despesas"
+        ></div>
+      </article>
+
+      <article class="content-card category-card">
+        <div class="card-header">
+          <div>
+            <span class="card-label">
+              Gastos por categoria
+            </span>
+
+            <h2>
+              Onde seu dinheiro foi usado
+            </h2>
+          </div>
+        </div>
+
+        <div class="category-chart-content">
+          <div class="donut-wrapper">
+            <div
+              class="donut-chart"
+              id="donutChart"
+              aria-label="Gráfico de gastos por categoria"
+            >
+              <div class="donut-center">
+                <span>Total</span>
+                <strong id="donutTotal">R$ 0</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="category-legend" id="categoryLegend">
+            <p>Sem despesas no período.</p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="transactions-card">
+      <div class="transactions-header">
+        <div>
+          <span class="card-label">
+            Movimentações recentes
+          </span>
+
+          <h2>
+            Últimos lançamentos
+          </h2>
+
+          <p>
+            Consulte as movimentações mais recentes deste mês.
+          </p>
+        </div>
+
+        <a
+          href="movimentacoes.html"
+          class="secondary-button link-button"
+        >
+          Ver todas
+        </a>
+      </div>
+
+      <div class="transactions-list" id="recentTransactions">
+        <div class="empty-state">
+          <div class="empty-icon">↔</div>
+
+          <strong>Nenhuma movimentação encontrada</strong>
+
+          <p>
+            Adicione uma movimentação para começar.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="quick-actions">
+      <div class="quick-actions-header">
+        <div>
+          <span class="card-label">
+            Acesso rápido
+          </span>
+
+          <h2>
+            O que você deseja fazer?
+          </h2>
+        </div>
+      </div>
+
+      <div class="quick-actions-grid">
+        <button
+          type="button"
+          class="quick-action-card"
+          id="quickAddTransaction"
+        >
+          <span class="quick-action-icon">
+            ＋
+          </span>
+
+          <strong>Nova movimentação</strong>
+
+          <p>
+            Cadastre uma receita ou despesa.
+          </p>
+        </button>
+
+        <a
+          href="movimentacoes.html"
+          class="quick-action-card"
+        >
+          <span class="quick-action-icon">
+            ↔
+          </span>
+
+          <strong>Ver movimentações</strong>
+
+          <p>
+            Consulte, filtre e organize seus lançamentos.
+          </p>
+        </a>
+
+        <a
+          href="fixos.html"
+          class="quick-action-card"
+        >
+          <span class="quick-action-icon">
+            ↻
+          </span>
+
+          <strong>Fixos mensais</strong>
+
+          <p>
+            Gerencie salário e despesas recorrentes.
+          </p>
+        </a>
+
+        <a
+          href="relatorios.html"
+          class="quick-action-card"
+        >
+          <span class="quick-action-icon">
+            ▥
+          </span>
+
+          <strong>Relatórios</strong>
+
+          <p>
+            Analise a evolução das suas finanças.
+          </p>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="modal" id="transactionModal">
+    <form
+      method="dialog"
+      class="modal-card"
+      id="transactionForm"
+    >
+      <div class="modal-header">
+        <div>
+          <span class="card-label">
+            Novo lançamento
+          </span>
+
+          <h2>Adicionar movimentação</h2>
+        </div>
+
+        <button
+          type="button"
+          class="modal-close"
+          data-close-modal="transactionModal"
+          aria-label="Fechar"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="description">
+            Descrição
+          </label>
+
+          <input
+            type="text"
+            id="description"
+            placeholder="Ex.: Supermercado"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="transactionType">
+            Tipo
+          </label>
+
+          <select id="transactionType">
+            <option value="expense">Despesa</option>
+            <option value="income">Entrada</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="amount">
+            Valor
+          </label>
+
+          <input
+            type="number"
+            id="amount"
+            min="0.01"
+            step="0.01"
+            placeholder="0,00"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="category">
+            Categoria
+          </label>
+
+          <select id="category">
+            <option value="Alimentação">Alimentação</option>
+            <option value="Moradia">Moradia</option>
+            <option value="Transporte">Transporte</option>
+            <option value="Saúde">Saúde</option>
+            <option value="Lazer">Lazer</option>
+            <option value="Salário">Salário</option>
+            <option value="Outros">Outros</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="date">
+            Data
+          </label>
+
+          <input
+            type="date"
+            id="date"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="status">
+            Status
+          </label>
+
+          <select id="status">
+            <option value="paid">Pago</option>
+            <option value="pending">Pendente</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="payment">
+            Forma de pagamento
+          </label>
+
+          <select id="payment">
+            <option value="Pix">Pix</option>
+            <option value="Cartão de crédito">
+              Cartão de crédito
+            </option>
+            <option value="Cartão de débito">
+              Cartão de débito
+            </option>
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Boleto">Boleto</option>
+            <option value="Transferência">Transferência</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="secondary-button"
+          data-close-modal="transactionModal"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="submit"
+          class="primary-button"
+        >
+          Salvar movimentação
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="budgetModal">
+    <form
+      method="dialog"
+      class="modal-card small-modal"
+      id="budgetForm"
+    >
+      <div class="modal-header">
+        <div>
+          <span class="card-label">
+            Orçamento
+          </span>
+
+          <h2>Editar orçamento mensal</h2>
+        </div>
+
+        <button
+          type="button"
+          class="modal-close"
+          data-close-modal="budgetModal"
+          aria-label="Fechar"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label for="budgetInput">
+          Limite mensal
+        </label>
+
+        <input
+          type="number"
+          id="budgetInput"
+          min="0"
+          step="0.01"
+          placeholder="0,00"
+          required
+        >
+      </div>
+
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="secondary-button"
+          data-close-modal="budgetModal"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="submit"
+          class="primary-button"
+        >
+          Salvar orçamento
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <div
+    class="toast"
+    id="toast"
+    role="status"
+  ></div>
+
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

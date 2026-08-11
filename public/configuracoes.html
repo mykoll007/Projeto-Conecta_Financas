@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Configurações | Conecta Finanças</title>
+
+  <link rel="stylesheet" href="css/configuracoes.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">$</div>
+
+        <div class="brand-text">
+          <strong>Conecta Finanças</strong>
+          <span>Seu dinheiro, sem complicação</span>
+        </div>
+      </a>
+
+      <nav class="desktop-nav">
+        <a href="index.html" class="nav-link">
+          Início
+        </a>
+
+        <a href="movimentacoes.html" class="nav-link">
+          Movimentações
+        </a>
+
+        <a href="fixos.html" class="nav-link">
+          Fixos mensais
+        </a>
+
+        <a href="relatorios.html" class="nav-link">
+          Relatórios
+        </a>
+
+        <a href="configuracoes.html" class="nav-link active">
+          Configurações
+        </a>
+      </nav>
+
+      <div class="topbar-actions">
+        <button
+          type="button"
+          class="icon-button"
+          id="themeToggle"
+          aria-label="Alterar tema"
+        >
+          ☾
+        </button>
+
+        <div class="profile-menu">
+          <button
+            type="button"
+            class="profile-button"
+            id="profileButton"
+            aria-expanded="false"
+          >
+            <span class="profile-avatar" id="profileAvatar">
+              M
+            </span>
+
+            <span class="profile-info">
+              <strong id="profileName">Marina</strong>
+              <small>Minha conta</small>
+            </span>
+
+            <span class="profile-arrow">⌄</span>
+          </button>
+
+          <div class="profile-dropdown" id="profileDropdown">
+            <a href="configuracoes.html">
+              Configurações
+            </a>
+
+            <button type="button" id="logoutButton">
+              Sair da conta
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="mobile-menu-button"
+          id="mobileMenuButton"
+          aria-label="Abrir menu"
+        >
+          ☰
+        </button>
+      </div>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav">
+      <a href="index.html">Início</a>
+      <a href="movimentacoes.html">Movimentações</a>
+      <a href="fixos.html">Fixos mensais</a>
+      <a href="relatorios.html">Relatórios</a>
+
+      <a href="configuracoes.html" class="active">
+        Configurações
+      </a>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <section class="page-header">
+      <div>
+        <span class="section-label">
+          Preferências
+        </span>
+
+        <h1>Configurações</h1>
+
+        <p>
+          Gerencie seu perfil, preferências financeiras e dados da conta.
+        </p>
+      </div>
+    </section>
+
+    <section class="settings-layout">
+      <aside class="settings-menu">
+        <button
+          type="button"
+          class="settings-menu-item active"
+          data-section="profileSection"
+        >
+          <span class="menu-icon">●</span>
+
+          <span>
+            <strong>Meu perfil</strong>
+            <small>Nome e dados pessoais</small>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="settings-menu-item"
+          data-section="financeSection"
+        >
+          <span class="menu-icon">$</span>
+
+          <span>
+            <strong>Preferências financeiras</strong>
+            <small>Moeda e orçamento</small>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="settings-menu-item"
+          data-section="appearanceSection"
+        >
+          <span class="menu-icon">◐</span>
+
+          <span>
+            <strong>Aparência</strong>
+            <small>Tema da aplicação</small>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="settings-menu-item"
+          data-section="categoriesSection"
+        >
+          <span class="menu-icon">▦</span>
+
+          <span>
+            <strong>Categorias</strong>
+            <small>Organização dos lançamentos</small>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="settings-menu-item"
+          data-section="securitySection"
+        >
+          <span class="menu-icon">●</span>
+
+          <span>
+            <strong>Segurança</strong>
+            <small>Senha e sessão</small>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="settings-menu-item danger-menu-item"
+          data-section="dataSection"
+        >
+          <span class="menu-icon">!</span>
+
+          <span>
+            <strong>Dados da conta</strong>
+            <small>Exportar ou apagar dados</small>
+          </span>
+        </button>
+      </aside>
+
+      <div class="settings-content">
+        <section
+          class="settings-section active"
+          id="profileSection"
+        >
+          <div class="section-header">
+            <div>
+              <span class="card-label">Perfil</span>
+
+              <h2>Informações pessoais</h2>
+
+              <p>
+                Esses dados serão usados para personalizar sua experiência.
+              </p>
+            </div>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-picture-area">
+              <div
+                class="large-avatar"
+                id="largeAvatar"
+              >
+                M
+              </div>
+
+              <div>
+                <strong id="profileDisplayName">
+                  Marina
+                </strong>
+
+                <span id="profileDisplayEmail">
+                  admin@email.com
+                </span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="secondary-button"
+              id="changeAvatarButton"
+            >
+              Alterar foto
+            </button>
+          </div>
+
+          <form id="profileForm">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="fullName">
+                  Nome completo
+                </label>
+
+                <input
+                  type="text"
+                  id="fullName"
+                  placeholder="Digite seu nome"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="email">
+                  E-mail
+                </label>
+
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="seuemail@exemplo.com"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="phone">
+                  Telefone
+                </label>
+
+                <input
+                  type="tel"
+                  id="phone"
+                  placeholder="(00) 00000-0000"
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="profession">
+                  Profissão
+                </label>
+
+                <input
+                  type="text"
+                  id="profession"
+                  placeholder="Ex.: Desenvolvedor"
+                >
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="submit"
+                class="primary-button"
+              >
+                Salvar alterações
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section
+          class="settings-section"
+          id="financeSection"
+        >
+          <div class="section-header">
+            <div>
+              <span class="card-label">
+                Finanças
+              </span>
+
+              <h2>Preferências financeiras</h2>
+
+              <p>
+                Configure valores usados em todo o sistema.
+              </p>
+            </div>
+          </div>
+
+          <form id="financeForm">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="currencySelect">
+                  Moeda
+                </label>
+
+                <select id="currencySelect">
+                  <option value="BRL">
+                    Real brasileiro — BRL
+                  </option>
+
+                  <option value="USD">
+                    Dólar americano — USD
+                  </option>
+
+                  <option value="EUR">
+                    Euro — EUR
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="monthlyBudget">
+                  Orçamento mensal
+                </label>
+
+                <input
+                  type="number"
+                  id="monthlyBudget"
+                  min="0"
+                  step="0.01"
+                  placeholder="0,00"
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="monthStartDay">
+                  Dia de início do mês financeiro
+                </label>
+
+                <select id="monthStartDay">
+                  <option value="1">Dia 1</option>
+                  <option value="5">Dia 5</option>
+                  <option value="10">Dia 10</option>
+                  <option value="15">Dia 15</option>
+                  <option value="20">Dia 20</option>
+                  <option value="25">Dia 25</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="defaultPayment">
+                  Forma de pagamento padrão
+                </label>
+
+                <select id="defaultPayment">
+                  <option value="Pix">Pix</option>
+
+                  <option value="Cartão de crédito">
+                    Cartão de crédito
+                  </option>
+
+                  <option value="Cartão de débito">
+                    Cartão de débito
+                  </option>
+
+                  <option value="Dinheiro">
+                    Dinheiro
+                  </option>
+
+                  <option value="Boleto">
+                    Boleto
+                  </option>
+
+                  <option value="Transferência">
+                    Transferência
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <label class="setting-toggle">
+              <div>
+                <strong>
+                  Incluir pendências nos relatórios
+                </strong>
+
+                <span>
+                  Mostra contas pendentes nos indicadores financeiros.
+                </span>
+              </div>
+
+              <input
+                type="checkbox"
+                id="includePending"
+              >
+
+              <span class="toggle-track"></span>
+            </label>
+
+            <label class="setting-toggle">
+              <div>
+                <strong>
+                  Confirmar antes de excluir
+                </strong>
+
+                <span>
+                  Exibe uma confirmação antes de apagar movimentações.
+                </span>
+              </div>
+
+              <input
+                type="checkbox"
+                id="confirmDeleteSetting"
+                checked
+              >
+
+              <span class="toggle-track"></span>
+            </label>
+
+            <div class="form-actions">
+              <button
+                type="submit"
+                class="primary-button"
+              >
+                Salvar preferências
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section
+          class="settings-section"
+          id="appearanceSection"
+        >
+          <div class="section-header">
+            <div>
+              <span class="card-label">
+                Aparência
+              </span>
+
+              <h2>Personalização do sistema</h2>
+
+              <p>
+                Escolha como o Conecta Finanças será exibido.
+              </p>
+            </div>
+          </div>
+
+          <div class="theme-options">
+            <button
+              type="button"
+              class="theme-card active"
+              data-theme="light"
+            >
+              <div class="theme-preview light-preview">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+
+              <strong>Tema claro</strong>
+
+              <small>
+                Fundo claro e cartões brancos.
+              </small>
+            </button>
+
+            <button
+              type="button"
+              class="theme-card"
+              data-theme="dark"
+            >
+              <div class="theme-preview dark-preview">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+
+              <strong>Tema escuro</strong>
+
+              <small>
+                Ideal para ambientes com pouca luz.
+              </small>
+            </button>
+
+            <button
+              type="button"
+              class="theme-card"
+              data-theme="system"
+            >
+              <div class="theme-preview system-preview">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+
+              <strong>Usar sistema</strong>
+
+              <small>
+                Segue a preferência do dispositivo.
+              </small>
+            </button>
+          </div>
+
+          <div class="appearance-option">
+            <div>
+              <strong>Animações</strong>
+
+              <span>
+                Ative transições e efeitos visuais.
+              </span>
+            </div>
+
+            <label class="simple-toggle">
+              <input
+                type="checkbox"
+                id="animationsSetting"
+                checked
+              >
+
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+          <div class="appearance-option">
+            <div>
+              <strong>Modo compacto</strong>
+
+              <span>
+                Reduz espaços e o tamanho dos cartões.
+              </span>
+            </div>
+
+            <label class="simple-toggle">
+              <input
+                type="checkbox"
+                id="compactMode"
+              >
+
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+        </section>
+
+        <section
+          class="settings-section"
+          id="categoriesSection"
+        >
+          <div class="section-header categories-header">
+            <div>
+              <span class="card-label">
+                Categorias
+              </span>
+
+              <h2>Gerenciar categorias</h2>
+
+              <p>
+                Crie e organize categorias para suas movimentações.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="primary-button"
+              id="addCategoryButton"
+            >
+              ＋ Nova categoria
+            </button>
+          </div>
+
+          <div
+            class="categories-list"
+            id="categoriesList"
+          ></div>
+        </section>
+
+        <section
+          class="settings-section"
+          id="securitySection"
+        >
+          <div class="section-header">
+            <div>
+              <span class="card-label">
+                Segurança
+              </span>
+
+              <h2>Senha e acesso</h2>
+
+              <p>
+                Atualize sua senha e controle sua sessão.
+              </p>
+            </div>
+          </div>
+
+          <form id="passwordForm">
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label for="currentPassword">
+                  Senha atual
+                </label>
+
+                <input
+                  type="password"
+                  id="currentPassword"
+                  placeholder="Digite sua senha atual"
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="newPassword">
+                  Nova senha
+                </label>
+
+                <input
+                  type="password"
+                  id="newPassword"
+                  placeholder="Mínimo de 6 caracteres"
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="confirmPassword">
+                  Confirmar nova senha
+                </label>
+
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  placeholder="Digite a senha novamente"
+                >
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="submit"
+                class="primary-button"
+              >
+                Alterar senha
+              </button>
+            </div>
+          </form>
+
+          <div class="security-card">
+            <div>
+              <strong>Sessão atual</strong>
+
+              <span id="sessionInformation">
+                Acesso realizado neste navegador.
+              </span>
+            </div>
+
+            <button
+              type="button"
+              class="secondary-button"
+              id="endSessionButton"
+            >
+              Encerrar sessão
+            </button>
+          </div>
+        </section>
+
+        <section
+          class="settings-section"
+          id="dataSection"
+        >
+          <div class="section-header">
+            <div>
+              <span class="card-label danger-label">
+                Dados da conta
+              </span>
+
+              <h2>Exportação e exclusão</h2>
+
+              <p>
+                Gerencie os dados armazenados no navegador.
+              </p>
+            </div>
+          </div>
+
+          <div class="data-action-card">
+            <div class="data-action-icon export-icon">
+              ↓
+            </div>
+
+            <div>
+              <strong>Exportar todos os dados</strong>
+
+              <p>
+                Baixe movimentações, fixos e preferências em JSON.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="secondary-button"
+              id="exportDataButton"
+            >
+              Exportar
+            </button>
+          </div>
+
+          <div class="data-action-card">
+            <div class="data-action-icon reset-icon">
+              ↻
+            </div>
+
+            <div>
+              <strong>Restaurar dados de demonstração</strong>
+
+              <p>
+                Substitui seus dados atuais pelos dados iniciais.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="secondary-button"
+              id="restoreDataButton"
+            >
+              Restaurar
+            </button>
+          </div>
+
+          <div class="danger-zone">
+            <div>
+              <span>Zona de perigo</span>
+
+              <h3>Apagar todos os dados financeiros</h3>
+
+              <p>
+                Essa ação remove movimentações, fixos, categorias e
+                preferências salvas.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="danger-button"
+              id="deleteAllDataButton"
+            >
+              Apagar todos os dados
+            </button>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="modal" id="categoryModal">
+    <form class="modal-card small-modal" id="categoryForm">
+      <div class="modal-header">
+        <div>
+          <span class="card-label">
+            Categoria
+          </span>
+
+          <h2 id="categoryModalTitle">
+            Nova categoria
+          </h2>
+        </div>
+
+        <button
+          type="button"
+          class="modal-close"
+          data-close-modal="categoryModal"
+        >
+          ×
+        </button>
+      </div>
+
+      <input type="hidden" id="editingCategory">
+
+      <div class="form-group">
+        <label for="categoryName">
+          Nome da categoria
+        </label>
+
+        <input
+          type="text"
+          id="categoryName"
+          placeholder="Ex.: Investimentos"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="categoryColor">
+          Cor
+        </label>
+
+        <input
+          type="color"
+          id="categoryColor"
+          value="#168a52"
+        >
+      </div>
+
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="secondary-button"
+          data-close-modal="categoryModal"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="submit"
+          class="primary-button"
+        >
+          Salvar categoria
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="confirmationModal">
+    <div class="modal-card confirmation-card">
+      <div class="confirmation-icon">!</div>
+
+      <h2 id="confirmationTitle">
+        Confirmar ação
+      </h2>
+
+      <p id="confirmationText">
+        Deseja continuar?
+      </p>
+
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="secondary-button"
+          data-close-modal="confirmationModal"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="danger-button"
+          id="confirmationButton"
+        >
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/configuracoes.js"></script>
+</body>
+</html>

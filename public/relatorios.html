@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Relatórios | Conecta Finanças</title>
+
+  <link rel="stylesheet" href="css/relatorios.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">$</div>
+
+        <div class="brand-text">
+          <strong>Conecta Finanças</strong>
+          <span>Seu dinheiro, sem complicação</span>
+        </div>
+      </a>
+
+      <nav class="desktop-nav">
+        <a href="index.html" class="nav-link">
+          Início
+        </a>
+
+        <a href="movimentacoes.html" class="nav-link">
+          Movimentações
+        </a>
+
+        <a href="fixos.html" class="nav-link">
+          Fixos mensais
+        </a>
+
+        <a href="relatorios.html" class="nav-link active">
+          Relatórios
+        </a>
+      </nav>
+
+      <div class="topbar-actions">
+        <button type="button" class="icon-button" id="themeToggle" aria-label="Alterar tema">
+          ☾
+        </button>
+
+        <button type="button" class="secondary-button export-top-button" id="exportCsvButton">
+          Exportar CSV
+        </button>
+
+        <div class="profile-menu">
+          <button type="button" class="profile-button" id="profileButton" aria-expanded="false">
+            <span class="profile-avatar" id="profileAvatar">
+              M
+            </span>
+
+            <span class="profile-info">
+              <strong id="profileName">Marina</strong>
+              <small>Minha conta</small>
+            </span>
+
+            <span class="profile-arrow">⌄</span>
+          </button>
+
+          <div class="profile-dropdown" id="profileDropdown">
+            <a href="configuracoes.html">
+              Configurações
+            </a>
+
+            <button type="button" id="logoutButton">
+              Sair da conta
+            </button>
+          </div>
+        </div>
+
+        <button type="button" class="mobile-menu-button" id="mobileMenuButton" aria-label="Abrir menu">
+          ☰
+        </button>
+      </div>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav">
+      <a href="index.html">Início</a>
+      <a href="movimentacoes.html">Movimentações</a>
+      <a href="fixos.html">Fixos mensais</a>
+      <a href="relatorios.html" class="active">Relatórios</a>
+      <a href="configuracoes.html">Configurações</a>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <section class="page-header">
+      <div>
+        <span class="section-label">
+          Análise financeira
+        </span>
+
+        <h1>Relatórios</h1>
+
+        <p>
+          Acompanhe seus resultados e entenda para onde seu dinheiro
+          está indo.
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="secondary-button" id="printButton">
+          Imprimir
+        </button>
+
+        <button type="button" class="primary-button" id="exportReportButton">
+          Exportar relatório
+        </button>
+      </div>
+    </section>
+
+    <section class="filters-card">
+      <div class="filters-header">
+        <div>
+          <span class="card-label">Período</span>
+
+          <h2>Selecione os dados do relatório</h2>
+        </div>
+
+        <button type="button" class="clear-button" id="currentMonthButton">
+          Mês atual
+        </button>
+      </div>
+
+      <div class="filters-grid">
+        <div class="filter-field">
+          <label for="startDate">
+            Data inicial
+          </label>
+
+          <input type="date" id="startDate">
+        </div>
+
+        <div class="filter-field">
+          <label for="endDate">
+            Data final
+          </label>
+
+          <input type="date" id="endDate">
+        </div>
+
+        <div class="filter-field">
+          <label for="typeFilter">
+            Tipo
+          </label>
+
+          <select id="typeFilter">
+            <option value="all">Entradas e despesas</option>
+            <option value="income">Somente entradas</option>
+            <option value="expense">Somente despesas</option>
+          </select>
+        </div>
+
+        <div class="filter-field">
+          <label for="statusFilter">
+            Status
+          </label>
+
+          <select id="statusFilter">
+            <option value="all">Todos os status</option>
+            <option value="paid">Pagos e recebidos</option>
+            <option value="pending">Pendentes</option>
+          </select>
+        </div>
+
+        <div class="filter-field">
+          <label for="categoryFilter">
+            Categoria
+          </label>
+
+          <select id="categoryFilter">
+            <option value="all">Todas as categorias</option>
+          </select>
+        </div>
+
+        <button type="button" class="primary-button apply-button" id="applyFiltersButton">
+          Atualizar relatório
+        </button>
+      </div>
+    </section>
+
+    <section class="summary-grid">
+      <article class="summary-card">
+        <div class="summary-card-header">
+          <span>Entradas recebidas</span>
+          <div class="summary-icon income-icon">↗</div>
+        </div>
+
+        <strong class="summary-value income-text" id="totalIncome">
+          R$ 0,00
+        </strong>
+
+        <p id="incomeCount">
+          0 recebimentos
+        </p>
+      </article>
+
+      <article class="summary-card">
+        <div class="summary-card-header">
+          <span>Despesas pagas</span>
+          <div class="summary-icon expense-icon">↘</div>
+        </div>
+
+        <strong class="summary-value expense-text" id="totalExpense">
+          R$ 0,00
+        </strong>
+
+        <p id="expenseCount">
+          0 pagamentos
+        </p>
+      </article>
+
+      <article class="summary-card balance-card">
+        <div class="summary-card-header">
+          <span>Resultado do período</span>
+          <div class="summary-icon balance-icon">$</div>
+        </div>
+
+        <strong class="summary-value" id="periodBalance">
+          R$ 0,00
+        </strong>
+
+        <p>
+          Entradas menos despesas pagas
+        </p>
+      </article>
+
+      <article class="summary-card">
+        <div class="summary-card-header">
+          <span>Contas pendentes</span>
+          <div class="summary-icon warning-icon">!</div>
+        </div>
+
+        <strong class="summary-value warning-text" id="totalPending">
+          R$ 0,00
+        </strong>
+
+        <p id="pendingCount">
+          0 pendências
+        </p>
+      </article>
+    </section>
+
+    <section class="indicator-grid">
+      <article class="indicator-card">
+        <span>Taxa de economia</span>
+
+        <strong id="savingRate">
+          0%
+        </strong>
+
+        <div class="indicator-progress">
+          <div id="savingProgress"></div>
+        </div>
+
+        <p>
+          Percentual das entradas que permaneceu disponível.
+        </p>
+      </article>
+
+      <article class="indicator-card">
+        <span>Média de despesas</span>
+
+        <strong id="averageExpense">
+          R$ 0,00
+        </strong>
+
+        <p>
+          Valor médio das despesas pagas no período.
+        </p>
+      </article>
+
+      <article class="indicator-card">
+        <span>Maior despesa</span>
+
+        <strong id="highestExpense">
+          R$ 0,00
+        </strong>
+
+        <p id="highestExpenseDescription">
+          Nenhuma despesa encontrada.
+        </p>
+      </article>
+
+      <article class="indicator-card">
+        <span>Categoria principal</span>
+
+        <strong id="topCategory">
+          Nenhuma
+        </strong>
+
+        <p id="topCategoryValue">
+          R$ 0,00 em despesas.
+        </p>
+      </article>
+    </section>
+
+    <section class="charts-grid">
+      <article class="content-card evolution-card">
+        <div class="card-header">
+          <div>
+            <span class="card-label">
+              Evolução mensal
+            </span>
+
+            <h2>Entradas e despesas por mês</h2>
+
+            <p>
+              Comparação dos valores pagos e recebidos.
+            </p>
+          </div>
+
+          <div class="chart-legend">
+            <span>
+              <i class="legend-dot income-dot"></i>
+              Entradas
+            </span>
+
+            <span>
+              <i class="legend-dot expense-dot"></i>
+              Despesas
+            </span>
+          </div>
+        </div>
+
+        <div class="chart-area">
+          <div class="chart-lines">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+          <div class="bar-chart" id="monthlyChart"></div>
+        </div>
+      </article>
+
+      <article class="content-card category-card">
+        <div class="card-header">
+          <div>
+            <span class="card-label">
+              Categorias
+            </span>
+
+            <h2>Distribuição de despesas</h2>
+
+            <p>
+              Participação de cada categoria nos gastos.
+            </p>
+          </div>
+        </div>
+
+        <div class="donut-content">
+          <div class="donut-chart" id="categoryDonut">
+            <div class="donut-center">
+              <span>Total gasto</span>
+              <strong id="donutTotal">R$ 0</strong>
+            </div>
+          </div>
+
+          <div class="category-legend" id="categoryLegend">
+            <p>Sem despesas no período.</p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="details-grid">
+      <article class="content-card ranking-card">
+        <div class="card-header">
+          <div>
+            <span class="card-label">
+              Ranking de movimentações
+            </span>
+
+            <h2>Maiores movimentações do período</h2>
+
+            <a href="movimentacoes.html" class="text-link">
+              Ver movimentações
+            </a>
+          </div>
+
+          <div class="ranking-list" id="expenseRanking"></div>
+      </article>
+
+      <article class="content-card insights-card">
+        <div class="card-header">
+          <div>
+            <span class="card-label">
+              Análise automática
+            </span>
+
+            <h2>Resumo financeiro</h2>
+          </div>
+        </div>
+
+        <div class="insights-list" id="insightsList"></div>
+      </article>
+    </section>
+
+    <section class="content-card category-table-card">
+      <div class="card-header">
+        <div>
+          <span class="card-label">
+            Detalhamento
+          </span>
+
+          <h2>Resumo por categoria</h2>
+
+          <p>
+            Valores totais e participação no período.
+          </p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Categoria</th>
+              <th>Quantidade</th>
+              <th>Total</th>
+              <th>Participação</th>
+            </tr>
+          </thead>
+
+          <tbody id="categoryTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="empty-state" id="categoryEmptyState" hidden>
+        <div class="empty-icon">▥</div>
+
+        <strong>Nenhum dado disponível</strong>
+
+        <p>
+          Adicione movimentações ou selecione outro período.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="js/relatorios.js"></script>
+</body>
+
+</html>
