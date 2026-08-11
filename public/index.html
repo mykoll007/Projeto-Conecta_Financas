@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Dashboard | Conecta Finanças</title>
 
@@ -44,37 +42,23 @@
       </nav>
 
       <div class="topbar-actions">
-        <button
-          type="button"
-          class="icon-button"
-          id="themeToggle"
-          aria-label="Alterar tema"
-        >
+        <button type="button" class="icon-button" id="themeToggle" aria-label="Alterar tema">
           ☾
         </button>
 
-        <button
-          type="button"
-          class="primary-button"
-          id="openTransaction"
-        >
+        <button type="button" class="primary-button" id="openTransaction">
           <span>＋</span>
           Nova movimentação
         </button>
 
         <div class="profile-menu">
-          <button
-            type="button"
-            class="profile-button"
-            id="profileButton"
-            aria-expanded="false"
-          >
+          <button type="button" class="profile-button" id="profileButton" aria-expanded="false">
             <span class="profile-avatar" id="profileAvatar">
               M
             </span>
 
             <span class="profile-info">
-              <strong id="profileName">Marina</strong>
+              <strong id="profileName"></strong>
               <small>Minha conta</small>
             </span>
 
@@ -92,12 +76,7 @@
           </div>
         </div>
 
-        <button
-          type="button"
-          class="mobile-menu-button"
-          id="mobileMenuButton"
-          aria-label="Abrir menu"
-        >
+        <button type="button" class="mobile-menu-button" id="mobileMenuButton" aria-label="Abrir menu">
           ☰
         </button>
       </div>
@@ -118,7 +97,7 @@
         <span class="section-label">Visão geral</span>
 
         <h1>
-          Olá, <span id="welcomeName">Marina</span>.
+          Olá, <span id="welcomeName">Carregando...</span>.
         </h1>
 
         <p>
@@ -186,10 +165,7 @@
           </span>
         </div>
 
-        <strong
-          class="summary-value income-value"
-          id="incomeValue"
-        >
+        <strong class="summary-value income-value" id="incomeValue">
           R$ 0,00
         </strong>
 
@@ -209,10 +185,7 @@
           </span>
         </div>
 
-        <strong
-          class="summary-value expense-value"
-          id="expenseValue"
-        >
+        <strong class="summary-value expense-value" id="expenseValue">
           R$ 0,00
         </strong>
 
@@ -254,11 +227,7 @@
           </h2>
         </div>
 
-        <button
-          type="button"
-          class="secondary-button"
-          id="editBudget"
-        >
+        <button type="button" class="secondary-button" id="editBudget">
           Editar orçamento
         </button>
       </div>
@@ -273,16 +242,8 @@
         <strong id="budgetPercent">0%</strong>
       </div>
 
-      <div
-        class="budget-progress"
-        role="progressbar"
-        aria-valuemin="0"
-        aria-valuemax="100"
-      >
-        <div
-          class="budget-progress-fill"
-          id="budgetProgress"
-        ></div>
+      <div class="budget-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+        <div class="budget-progress-fill" id="budgetProgress"></div>
       </div>
 
       <p class="budget-remaining">
@@ -318,11 +279,7 @@
           </div>
         </div>
 
-        <div
-          class="bar-chart"
-          id="barChart"
-          aria-label="Gráfico de entradas e despesas"
-        ></div>
+        <div class="bar-chart" id="barChart" aria-label="Gráfico de entradas e despesas"></div>
       </article>
 
       <article class="content-card category-card">
@@ -340,11 +297,7 @@
 
         <div class="category-chart-content">
           <div class="donut-wrapper">
-            <div
-              class="donut-chart"
-              id="donutChart"
-              aria-label="Gráfico de gastos por categoria"
-            >
+            <div class="donut-chart" id="donutChart" aria-label="Gráfico de gastos por categoria">
               <div class="donut-center">
                 <span>Total</span>
                 <strong id="donutTotal">R$ 0</strong>
@@ -375,10 +328,7 @@
           </p>
         </div>
 
-        <a
-          href="movimentacoes.html"
-          class="secondary-button link-button"
-        >
+        <a href="movimentacoes.html" class="secondary-button link-button">
           Ver todas
         </a>
       </div>
@@ -410,11 +360,7 @@
       </div>
 
       <div class="quick-actions-grid">
-        <button
-          type="button"
-          class="quick-action-card"
-          id="quickAddTransaction"
-        >
+        <button type="button" class="quick-action-card" id="quickAddTransaction">
           <span class="quick-action-icon">
             ＋
           </span>
@@ -426,10 +372,7 @@
           </p>
         </button>
 
-        <a
-          href="movimentacoes.html"
-          class="quick-action-card"
-        >
+        <a href="movimentacoes.html" class="quick-action-card">
           <span class="quick-action-icon">
             ↔
           </span>
@@ -441,10 +384,7 @@
           </p>
         </a>
 
-        <a
-          href="fixos.html"
-          class="quick-action-card"
-        >
+        <a href="fixos.html" class="quick-action-card">
           <span class="quick-action-icon">
             ↻
           </span>
@@ -456,10 +396,7 @@
           </p>
         </a>
 
-        <a
-          href="relatorios.html"
-          class="quick-action-card"
-        >
+        <a href="relatorios.html" class="quick-action-card">
           <span class="quick-action-icon">
             ▥
           </span>
@@ -475,11 +412,7 @@
   </main>
 
   <dialog class="modal" id="transactionModal">
-    <form
-      method="dialog"
-      class="modal-card"
-      id="transactionForm"
-    >
+    <form method="dialog" class="modal-card" id="transactionForm">
       <div class="modal-header">
         <div>
           <span class="card-label">
@@ -489,12 +422,7 @@
           <h2>Adicionar movimentação</h2>
         </div>
 
-        <button
-          type="button"
-          class="modal-close"
-          data-close-modal="transactionModal"
-          aria-label="Fechar"
-        >
+        <button type="button" class="modal-close" data-close-modal="transactionModal" aria-label="Fechar">
           ×
         </button>
       </div>
@@ -505,12 +433,7 @@
             Descrição
           </label>
 
-          <input
-            type="text"
-            id="description"
-            placeholder="Ex.: Supermercado"
-            required
-          >
+          <input type="text" id="description" placeholder="Ex.: Supermercado" required>
         </div>
 
         <div class="form-group">
@@ -529,14 +452,7 @@
             Valor
           </label>
 
-          <input
-            type="number"
-            id="amount"
-            min="0.01"
-            step="0.01"
-            placeholder="0,00"
-            required
-          >
+          <input type="text" id="amount" inputmode="numeric" placeholder="0,00" autocomplete="off" required>
         </div>
 
         <div class="form-group">
@@ -560,11 +476,7 @@
             Data
           </label>
 
-          <input
-            type="date"
-            id="date"
-            required
-          >
+          <input type="date" id="date" required>
         </div>
 
         <div class="form-group">
@@ -599,18 +511,11 @@
       </div>
 
       <div class="modal-actions">
-        <button
-          type="button"
-          class="secondary-button"
-          data-close-modal="transactionModal"
-        >
+        <button type="button" class="secondary-button" data-close-modal="transactionModal">
           Cancelar
         </button>
 
-        <button
-          type="submit"
-          class="primary-button"
-        >
+        <button type="submit" class="primary-button">
           Salvar movimentação
         </button>
       </div>
@@ -618,11 +523,7 @@
   </dialog>
 
   <dialog class="modal" id="budgetModal">
-    <form
-      method="dialog"
-      class="modal-card small-modal"
-      id="budgetForm"
-    >
+    <form method="dialog" class="modal-card small-modal" id="budgetForm">
       <div class="modal-header">
         <div>
           <span class="card-label">
@@ -632,12 +533,7 @@
           <h2>Editar orçamento mensal</h2>
         </div>
 
-        <button
-          type="button"
-          class="modal-close"
-          data-close-modal="budgetModal"
-          aria-label="Fechar"
-        >
+        <button type="button" class="modal-close" data-close-modal="budgetModal" aria-label="Fechar">
           ×
         </button>
       </div>
@@ -647,41 +543,24 @@
           Limite mensal
         </label>
 
-        <input
-          type="number"
-          id="budgetInput"
-          min="0"
-          step="0.01"
-          placeholder="0,00"
-          required
-        >
+        <input type="number" id="budgetInput" min="0" step="0.01" placeholder="0,00" required>
       </div>
 
       <div class="modal-actions">
-        <button
-          type="button"
-          class="secondary-button"
-          data-close-modal="budgetModal"
-        >
+        <button type="button" class="secondary-button" data-close-modal="budgetModal">
           Cancelar
         </button>
 
-        <button
-          type="submit"
-          class="primary-button"
-        >
+        <button type="submit" class="primary-button">
           Salvar orçamento
         </button>
       </div>
     </form>
   </dialog>
 
-  <div
-    class="toast"
-    id="toast"
-    role="status"
-  ></div>
+  <div class="toast" id="toast" role="status"></div>
 
   <script src="js/dashboard.js"></script>
 </body>
+
 </html>

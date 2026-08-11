@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Fixos mensais | Conecta Finanças</title>
 
@@ -44,36 +42,23 @@
       </nav>
 
       <div class="topbar-actions">
-        <button
-          type="button"
-          class="icon-button"
-          id="themeToggle"
-          aria-label="Alterar tema"
-        >
+        <button type="button" class="icon-button" id="themeToggle" aria-label="Alterar tema">
           ☾
         </button>
 
-        <button
-          type="button"
-          class="primary-button"
-          id="topAddButton"
-        >
+        <button type="button" class="primary-button" id="topAddButton">
           <span>＋</span>
           Novo fixo
         </button>
 
         <div class="profile-menu">
-          <button
-            type="button"
-            class="profile-button"
-            id="profileButton"
-          >
+          <button type="button" class="profile-button" id="profileButton">
             <span class="profile-avatar" id="profileAvatar">
               M
             </span>
 
             <span class="profile-info">
-              <strong id="profileName">Marina</strong>
+              <strong id="profileName"></strong>
               <small>Minha conta</small>
             </span>
 
@@ -91,12 +76,7 @@
           </div>
         </div>
 
-        <button
-          type="button"
-          class="mobile-menu-button"
-          id="mobileMenuButton"
-          aria-label="Abrir menu"
-        >
+        <button type="button" class="mobile-menu-button" id="mobileMenuButton" aria-label="Abrir menu">
           ☰
         </button>
       </div>
@@ -126,19 +106,11 @@
       </div>
 
       <div class="header-actions">
-        <button
-          type="button"
-          class="secondary-button"
-          id="launchFixedButton"
-        >
+        <button type="button" class="secondary-button" id="launchFixedButton">
           Lançar no mês
         </button>
 
-        <button
-          type="button"
-          class="primary-button"
-          id="headerAddButton"
-        >
+        <button type="button" class="primary-button" id="headerAddButton">
           <span>＋</span>
           Novo fixo
         </button>
@@ -152,10 +124,7 @@
         <div>
           <span>Receitas fixas</span>
 
-          <strong
-            class="income-text"
-            id="fixedIncomeValue"
-          >
+          <strong class="income-text" id="fixedIncomeValue">
             R$ 0,00
           </strong>
 
@@ -171,10 +140,7 @@
         <div>
           <span>Despesas fixas</span>
 
-          <strong
-            class="expense-text"
-            id="fixedExpenseValue"
-          >
+          <strong class="expense-text" id="fixedExpenseValue">
             R$ 0,00
           </strong>
 
@@ -257,11 +223,7 @@
           <select id="launchYear"></select>
         </div>
 
-        <button
-          type="button"
-          class="primary-button launch-button"
-          id="confirmLaunchButton"
-        >
+        <button type="button" class="primary-button launch-button" id="confirmLaunchButton">
           Lançar fixos
         </button>
       </div>
@@ -274,11 +236,7 @@
           <h2>Encontre um lançamento fixo</h2>
         </div>
 
-        <button
-          type="button"
-          class="clear-button"
-          id="clearFilters"
-        >
+        <button type="button" class="clear-button" id="clearFilters">
           Limpar filtros
         </button>
       </div>
@@ -290,11 +248,7 @@
           <div class="search-container">
             <span>⌕</span>
 
-            <input
-              type="search"
-              id="searchInput"
-              placeholder="Descrição ou categoria"
-            >
+            <input type="search" id="searchInput" placeholder="Descrição ou categoria">
           </div>
         </div>
 
@@ -351,11 +305,7 @@
           </p>
         </div>
 
-        <button
-          type="button"
-          class="secondary-button"
-          id="listAddButton"
-        >
+        <button type="button" class="secondary-button" id="listAddButton">
           ＋ Adicionar
         </button>
       </div>
@@ -371,11 +321,7 @@
           Cadastre uma receita ou despesa que se repete mensalmente.
         </p>
 
-        <button
-          type="button"
-          class="primary-button"
-          id="emptyAddButton"
-        >
+        <button type="button" class="primary-button" id="emptyAddButton">
           Adicionar lançamento fixo
         </button>
       </div>
@@ -395,12 +341,7 @@
           </h2>
         </div>
 
-        <button
-          type="button"
-          class="modal-close"
-          data-close-modal="fixedModal"
-          aria-label="Fechar"
-        >
+        <button type="button" class="modal-close" data-close-modal="fixedModal" aria-label="Fechar">
           ×
         </button>
       </div>
@@ -411,12 +352,7 @@
         <div class="form-group full-width">
           <label for="description">Descrição</label>
 
-          <input
-            type="text"
-            id="description"
-            placeholder="Ex.: Aluguel"
-            required
-          >
+          <input type="text" id="description" placeholder="Ex.: Aluguel" required>
         </div>
 
         <div class="form-group">
@@ -431,14 +367,7 @@
         <div class="form-group">
           <label for="amount">Valor mensal</label>
 
-          <input
-            type="number"
-            id="amount"
-            min="0.01"
-            step="0.01"
-            placeholder="0,00"
-            required
-          >
+          <input type="text" id="amount" inputmode="numeric" placeholder="0,00" autocomplete="off" required>
         </div>
 
         <div class="form-group">
@@ -450,14 +379,7 @@
         <div class="form-group">
           <label for="day">Dia do mês</label>
 
-          <input
-            type="number"
-            id="day"
-            min="1"
-            max="31"
-            value="5"
-            required
-          >
+          <input type="number" id="day" min="1" max="31" value="5" required>
         </div>
 
         <div class="form-group">
@@ -516,18 +438,11 @@
       </div>
 
       <div class="modal-actions">
-        <button
-          type="button"
-          class="secondary-button"
-          data-close-modal="fixedModal"
-        >
+        <button type="button" class="secondary-button" data-close-modal="fixedModal">
           Cancelar
         </button>
 
-        <button
-          type="submit"
-          class="primary-button"
-        >
+        <button type="submit" class="primary-button">
           Salvar lançamento
         </button>
       </div>
@@ -546,19 +461,11 @@
       </p>
 
       <div class="modal-actions">
-        <button
-          type="button"
-          class="secondary-button"
-          data-close-modal="deleteModal"
-        >
+        <button type="button" class="secondary-button" data-close-modal="deleteModal">
           Cancelar
         </button>
 
-        <button
-          type="button"
-          class="danger-button"
-          id="confirmDelete"
-        >
+        <button type="button" class="danger-button" id="confirmDelete">
           Excluir
         </button>
       </div>
@@ -576,19 +483,11 @@
       </p>
 
       <div class="modal-actions">
-        <button
-          type="button"
-          class="secondary-button"
-          data-close-modal="launchModal"
-        >
+        <button type="button" class="secondary-button" data-close-modal="launchModal">
           Cancelar
         </button>
 
-        <button
-          type="button"
-          class="primary-button"
-          id="executeLaunchButton"
-        >
+        <button type="button" class="primary-button" id="executeLaunchButton">
           Confirmar lançamento
         </button>
       </div>
@@ -599,4 +498,5 @@
 
   <script src="js/fixos.js"></script>
 </body>
+
 </html>

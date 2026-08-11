@@ -1644,35 +1644,24 @@ async function saveTransaction(event) {
         ).value.trim();
 
 
+    // =========================
+    // VALOR
+    // =========================
+
     let amountValue =
         getElement(
             "amount"
         ).value.trim();
 
 
-    // Aceita:
-    // 30
-    // 30,00
-    // 30.00
-    // 1.500,90
-    if (
-        amountValue.includes(",") &&
-        amountValue.includes(".")
-    ) {
-
-        amountValue =
-            amountValue
-                .replace(/\./g, "")
-                .replace(",", ".");
-
-    } else {
-
-        amountValue =
-            amountValue.replace(
-                ",",
-                "."
-            );
-    }
+    // Converte formato brasileiro para número:
+    // 111,10      -> 111.10
+    // 1.111,10    -> 1111.10
+    // 10.000,50   -> 10000.50
+    amountValue =
+        amountValue
+            .replace(/\./g, "")
+            .replace(",", ".");
 
 
     const amount =
@@ -1710,7 +1699,7 @@ async function saveTransaction(event) {
 
 
     // =========================
-    // Validações
+    // VALIDAÇÕES
     // =========================
 
     if (!description) {
@@ -1914,6 +1903,49 @@ async function saveTransaction(event) {
     }
 }
 
+function setupMoneyInput() {
+
+    const amountInput =
+        getElement("amount");
+
+
+    if (!amountInput) {
+        return;
+    }
+
+
+    amountInput.addEventListener(
+        "input",
+        event => {
+
+            let value =
+                event.target.value
+                    .replace(/\D/g, "");
+
+
+            if (!value) {
+
+                event.target.value = "";
+
+                return;
+            }
+
+
+            const amount =
+                Number(value) / 100;
+
+
+            event.target.value =
+                amount.toLocaleString(
+                    "pt-BR",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                );
+        }
+    );
+}
 
 // =====================================================
 // MODAL ORÇAMENTO
@@ -2390,6 +2422,8 @@ function setupModalClosing() {
 // =====================================================
 
 function setupEvents() {
+
+    setupMoneyInput();
 
     const openTransaction =
         getElement(

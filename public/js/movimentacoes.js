@@ -390,7 +390,41 @@ function parseMoney(value) {
     return Number(text);
 }
 
+function setupMoneyInput() {
 
+    const amountInput =
+        getElement("amount");
+
+    if (!amountInput) {
+        return;
+    }
+
+    amountInput.addEventListener(
+        "input",
+        event => {
+
+            let value =
+                event.target.value.replace(/\D/g, "");
+
+            if (!value) {
+                event.target.value = "";
+                return;
+            }
+
+            const amount =
+                Number(value) / 100;
+
+            event.target.value =
+                amount.toLocaleString(
+                    "pt-BR",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                );
+        }
+    );
+}
 // =====================================================
 // USUÁRIO
 // =====================================================
@@ -847,13 +881,13 @@ function getFilteredTransactions() {
                 const matchesType =
                     type === "all" ||
                     transaction.type ===
-                        type;
+                    type;
 
 
                 const matchesStatus =
                     status === "all" ||
                     transaction.status ===
-                        status;
+                    status;
 
 
                 const matchesCategory =
@@ -861,7 +895,7 @@ function getFilteredTransactions() {
                     String(
                         transaction.categoryId
                     ) ===
-                        String(category);
+                    String(category);
 
 
                 const matchesMonth =
@@ -869,7 +903,7 @@ function getFilteredTransactions() {
                     (
                         date &&
                         date.getMonth() ===
-                            Number(month)
+                        Number(month)
                     );
 
 
@@ -878,7 +912,7 @@ function getFilteredTransactions() {
                     (
                         date &&
                         date.getFullYear() ===
-                            Number(year)
+                        Number(year)
                     );
 
 
@@ -1008,9 +1042,9 @@ function renderSummary(
             transactions,
             transaction =>
                 transaction.type ===
-                    "income" &&
+                "income" &&
                 transaction.status ===
-                    "paid"
+                "paid"
         );
 
 
@@ -1019,9 +1053,9 @@ function renderSummary(
             transactions,
             transaction =>
                 transaction.type ===
-                    "expense" &&
+                "expense" &&
                 transaction.status ===
-                    "paid"
+                "paid"
         );
 
 
@@ -1030,9 +1064,9 @@ function renderSummary(
             transactions,
             transaction =>
                 transaction.type ===
-                    "expense" &&
+                "expense" &&
                 transaction.status ===
-                    "pending"
+                "pending"
         );
 
 
@@ -1040,9 +1074,9 @@ function renderSummary(
         transactions.filter(
             transaction =>
                 transaction.type ===
-                    "income" &&
+                "income" &&
                 transaction.status ===
-                    "paid"
+                "paid"
         ).length;
 
 
@@ -1050,9 +1084,9 @@ function renderSummary(
         transactions.filter(
             transaction =>
                 transaction.type ===
-                    "expense" &&
+                "expense" &&
                 transaction.status ===
-                    "paid"
+                "paid"
         ).length;
 
 
@@ -1060,9 +1094,9 @@ function renderSummary(
         transactions.filter(
             transaction =>
                 transaction.type ===
-                    "expense" &&
+                "expense" &&
                 transaction.status ===
-                    "pending"
+                "pending"
         ).length;
 
 
@@ -1101,30 +1135,27 @@ function renderSummary(
     getElement(
         "summaryIncomeCount"
     ).textContent =
-        `${incomeCount} recebimento${
-            incomeCount === 1
-                ? ""
-                : "s"
+        `${incomeCount} recebimento${incomeCount === 1
+            ? ""
+            : "s"
         }`;
 
 
     getElement(
         "summaryExpenseCount"
     ).textContent =
-        `${expenseCount} pagamento${
-            expenseCount === 1
-                ? ""
-                : "s"
+        `${expenseCount} pagamento${expenseCount === 1
+            ? ""
+            : "s"
         }`;
 
 
     getElement(
         "summaryPendingCount"
     ).textContent =
-        `${pendingCount} pendência${
-            pendingCount === 1
-                ? ""
-                : "s"
+        `${pendingCount} pendência${pendingCount === 1
+            ? ""
+            : "s"
         }`;
 }
 
@@ -1150,17 +1181,15 @@ function createTableRow(
                 <div class="transaction-name">
 
                     <div
-                        class="transaction-icon ${
-                            isIncome
-                                ? "income"
-                                : "expense"
-                        }"
+                        class="transaction-icon ${isIncome
+            ? "income"
+            : "expense"
+        }"
                     >
-                        ${
-                            isIncome
-                                ? "↗"
-                                : "↘"
-                        }
+                        ${isIncome
+            ? "↗"
+            : "↘"
+        }
                     </div>
 
 
@@ -1168,14 +1197,14 @@ function createTableRow(
 
                         <strong>
                             ${escapeHtml(
-                                transaction.description
-                            )}
+            transaction.description
+        )}
                         </strong>
 
                         <small>
                             ${escapeHtml(
-                                transaction.payment
-                            )}
+            transaction.payment
+        )}
                         </small>
 
                     </div>
@@ -1189,8 +1218,8 @@ function createTableRow(
 
                 <span class="category-badge">
                     ${escapeHtml(
-                        transaction.category
-                    )}
+            transaction.category
+        )}
                 </span>
 
             </td>
@@ -1198,8 +1227,8 @@ function createTableRow(
 
             <td>
                 ${formatDate(
-                    transaction.date
-                )}
+            transaction.date
+        )}
             </td>
 
 
@@ -1208,16 +1237,15 @@ function createTableRow(
                 <span
                     class="status-badge ${transaction.status}"
                 >
-                    ${
-                        transaction.status ===
-                        "paid"
+                    ${transaction.status ===
+            "paid"
 
-                            ? isIncome
-                                ? "Recebido"
-                                : "Pago"
+            ? isIncome
+                ? "Recebido"
+                : "Pago"
 
-                            : "Pendente"
-                    }
+            : "Pendente"
+        }
                 </span>
 
             </td>
@@ -1226,22 +1254,20 @@ function createTableRow(
             <td>
 
                 <span
-                    class="amount ${
-                        isIncome
-                            ? "income"
-                            : "expense"
-                    }"
+                    class="amount ${isIncome
+            ? "income"
+            : "expense"
+        }"
                 >
 
-                    ${
-                        isIncome
-                            ? "+"
-                            : "−"
-                    }
+                    ${isIncome
+            ? "+"
+            : "−"
+        }
 
                     ${currency.format(
-                        transaction.amount
-                    )}
+            transaction.amount
+        )}
 
                 </span>
 
@@ -1301,17 +1327,15 @@ function createMobileCard(
                 <div class="mobile-transaction-main">
 
                     <div
-                        class="transaction-icon ${
-                            isIncome
-                                ? "income"
-                                : "expense"
-                        }"
+                        class="transaction-icon ${isIncome
+            ? "income"
+            : "expense"
+        }"
                     >
-                        ${
-                            isIncome
-                                ? "↗"
-                                : "↘"
-                        }
+                        ${isIncome
+            ? "↗"
+            : "↘"
+        }
                     </div>
 
 
@@ -1319,21 +1343,21 @@ function createMobileCard(
 
                         <strong>
                             ${escapeHtml(
-                                transaction.description
-                            )}
+            transaction.description
+        )}
                         </strong>
 
                         <small>
 
                             ${escapeHtml(
-                                transaction.category
-                            )}
+            transaction.category
+        )}
 
                             ·
 
                             ${formatDate(
-                                transaction.date
-                            )}
+            transaction.date
+        )}
 
                         </small>
 
@@ -1343,22 +1367,20 @@ function createMobileCard(
 
 
                 <span
-                    class="amount ${
-                        isIncome
-                            ? "income"
-                            : "expense"
-                    }"
+                    class="amount ${isIncome
+            ? "income"
+            : "expense"
+        }"
                 >
 
-                    ${
-                        isIncome
-                            ? "+"
-                            : "−"
-                    }
+                    ${isIncome
+            ? "+"
+            : "−"
+        }
 
                     ${currency.format(
-                        transaction.amount
-                    )}
+            transaction.amount
+        )}
 
                 </span>
 
@@ -1371,16 +1393,15 @@ function createMobileCard(
                     class="status-badge ${transaction.status}"
                 >
 
-                    ${
-                        transaction.status ===
-                        "paid"
+                    ${transaction.status ===
+            "paid"
 
-                            ? isIncome
-                                ? "Recebido"
-                                : "Pago"
+            ? isIncome
+                ? "Recebido"
+                : "Pago"
 
-                            : "Pendente"
-                    }
+            : "Pendente"
+        }
 
                 </span>
 
@@ -1435,14 +1456,12 @@ function renderTransactions() {
     getElement(
         "resultsText"
     ).textContent =
-        `${total} movimentação${
-            total === 1
-                ? ""
-                : "ões"
-        } encontrada${
-            total === 1
-                ? ""
-                : "s"
+        `${total} movimentação${total === 1
+            ? ""
+            : "ões"
+        } encontrada${total === 1
+            ? ""
+            : "s"
         }`;
 
 
@@ -1681,11 +1700,14 @@ function openEditModal(id) {
     getElement(
         "amount"
     ).value =
-        String(
+        Number(
             transaction.amount
-        ).replace(
-            ".",
-            ","
+        ).toLocaleString(
+            "pt-BR",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
         );
 
 
@@ -2171,7 +2193,7 @@ function exportCsv() {
                     transaction.description,
 
                     transaction.type ===
-                    "income"
+                        "income"
                         ? "Entrada"
                         : "Despesa",
 
@@ -2180,7 +2202,7 @@ function exportCsv() {
                     transaction.date,
 
                     transaction.status ===
-                    "paid"
+                        "paid"
                         ? "Pago ou recebido"
                         : "Pendente",
 
@@ -2557,6 +2579,8 @@ function logout() {
 // =====================================================
 
 function setupEvents() {
+
+    setupMoneyInput();
 
     const openTransaction =
         getElement(

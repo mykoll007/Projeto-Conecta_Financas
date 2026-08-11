@@ -317,6 +317,43 @@ function parseMoney(value) {
     return Number(text);
 }
 
+function setupMoneyInput() {
+
+    const amountInput =
+        getElement("amount");
+
+    if (!amountInput) {
+        return;
+    }
+
+    amountInput.addEventListener(
+        "input",
+        event => {
+
+            let value =
+                event.target.value.replace(/\D/g, "");
+
+            if (!value) {
+
+                event.target.value = "";
+
+                return;
+            }
+
+            const amount =
+                Number(value) / 100;
+
+            event.target.value =
+                amount.toLocaleString(
+                    "pt-BR",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                );
+        }
+    );
+}
 
 // =====================================================
 // USUÁRIO
@@ -603,11 +640,10 @@ function setupPeriodOptions() {
                     return `
                         <option
                             value="${year}"
-                            ${
-                                year === currentYear
-                                    ? "selected"
-                                    : ""
-                            }
+                            ${year === currentYear
+                            ? "selected"
+                            : ""
+                        }
                         >
                             ${year}
                         </option>
@@ -886,42 +922,36 @@ function renderSummary() {
     getElement(
         "fixedIncomeCount"
     ).textContent =
-        `${incomeCount} lançamento${
-            incomeCount === 1
-                ? ""
-                : "s"
-        } ativo${
-            incomeCount === 1
-                ? ""
-                : "s"
+        `${incomeCount} lançamento${incomeCount === 1
+            ? ""
+            : "s"
+        } ativo${incomeCount === 1
+            ? ""
+            : "s"
         }`;
 
 
     getElement(
         "fixedExpenseCount"
     ).textContent =
-        `${expenseCount} lançamento${
-            expenseCount === 1
-                ? ""
-                : "s"
-        } ativo${
-            expenseCount === 1
-                ? ""
-                : "s"
+        `${expenseCount} lançamento${expenseCount === 1
+            ? ""
+            : "s"
+        } ativo${expenseCount === 1
+            ? ""
+            : "s"
         }`;
 
 
     getElement(
         "inactiveFixedCount"
     ).textContent =
-        `${inactiveCount} lançamento${
-            inactiveCount === 1
-                ? ""
-                : "s"
-        } inativo${
-            inactiveCount === 1
-                ? ""
-                : "s"
+        `${inactiveCount} lançamento${inactiveCount === 1
+            ? ""
+            : "s"
+        } inativo${inactiveCount === 1
+            ? ""
+            : "s"
         }`;
 }
 
@@ -939,25 +969,22 @@ function createFixedItem(item) {
 
     return `
         <article
-            class="fixed-item ${
-                item.active
-                    ? ""
-                    : "inactive"
-            }"
+            class="fixed-item ${item.active
+            ? ""
+            : "inactive"
+        }"
         >
 
             <div
-                class="fixed-type-icon ${
-                    isIncome
-                        ? "income"
-                        : "expense"
-                }"
+                class="fixed-type-icon ${isIncome
+            ? "income"
+            : "expense"
+        }"
             >
-                ${
-                    isIncome
-                        ? "↗"
-                        : "↘"
-                }
+                ${isIncome
+            ? "↗"
+            : "↘"
+        }
             </div>
 
 
@@ -965,20 +992,20 @@ function createFixedItem(item) {
 
                 <strong>
                     ${escapeHtml(
-                        item.description
-                    )}
+            item.description
+        )}
                 </strong>
 
                 <span>
                     ${escapeHtml(
-                        item.category
-                    )}
+            item.category
+        )}
 
                     ·
 
                     ${escapeHtml(
-                        item.payment
-                    )}
+            item.payment
+        )}
                 </span>
 
             </div>
@@ -1000,38 +1027,35 @@ function createFixedItem(item) {
                 Ao lançar
 
                 <strong>
-                    ${
-                        item.defaultStatus ===
-                        "paid"
+                    ${item.defaultStatus ===
+            "paid"
 
-                            ? isIncome
-                                ? "Recebido"
-                                : "Pago"
+            ? isIncome
+                ? "Recebido"
+                : "Pago"
 
-                            : "Pendente"
-                    }
+            : "Pendente"
+        }
                 </strong>
 
             </div>
 
 
             <div
-                class="fixed-amount ${
-                    isIncome
-                        ? "income"
-                        : "expense"
-                }"
+                class="fixed-amount ${isIncome
+            ? "income"
+            : "expense"
+        }"
             >
 
-                ${
-                    isIncome
-                        ? "+"
-                        : "−"
-                }
+                ${isIncome
+            ? "+"
+            : "−"
+        }
 
                 ${currency.format(
-                    item.amount
-                )}
+            item.amount
+        )}
 
             </div>
 
@@ -1046,11 +1070,10 @@ function createFixedItem(item) {
                         type="checkbox"
                         class="active-toggle"
                         data-id="${item.id}"
-                        ${
-                            item.active
-                                ? "checked"
-                                : ""
-                        }
+                        ${item.active
+            ? "checked"
+            : ""
+        }
                     >
 
                     <span
@@ -1058,11 +1081,10 @@ function createFixedItem(item) {
                     ></span>
 
                     <span>
-                        ${
-                            item.active
-                                ? "Ativo"
-                                : "Inativo"
-                        }
+                        ${item.active
+            ? "Ativo"
+            : "Inativo"
+        }
                     </span>
 
                 </label>
@@ -1107,14 +1129,12 @@ function renderFixedList() {
     getElement(
         "resultsText"
     ).textContent =
-        `${items.length} lançamento${
-            items.length === 1
-                ? ""
-                : "s"
-        } encontrado${
-            items.length === 1
-                ? ""
-                : "s"
+        `${items.length} lançamento${items.length === 1
+            ? ""
+            : "s"
+        } encontrado${items.length === 1
+            ? ""
+            : "s"
         }`;
 
 
@@ -1373,11 +1393,14 @@ function openEditModal(id) {
     getElement(
         "amount"
     ).value =
-        String(
+        Number(
             item.amount
-        ).replace(
-            ".",
-            ","
+        ).toLocaleString(
+            "pt-BR",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
         );
 
 
@@ -1939,24 +1962,19 @@ function openLaunchModal() {
     getElement(
         "launchConfirmationText"
     ).textContent =
-        `${activeCount} lançamento${
-            activeCount === 1
-                ? ""
-                : "s"
-        } ativo${
-            activeCount === 1
-                ? ""
-                : "s"
-        } será${
-            activeCount === 1
-                ? ""
-                : "ão"
-        } adicionado${
-            activeCount === 1
-                ? ""
-                : "s"
-        } em ${
-            monthNames[month]
+        `${activeCount} lançamento${activeCount === 1
+            ? ""
+            : "s"
+        } ativo${activeCount === 1
+            ? ""
+            : "s"
+        } será${activeCount === 1
+            ? ""
+            : "ão"
+        } adicionado${activeCount === 1
+            ? ""
+            : "s"
+        } em ${monthNames[month]
         } de ${year}.`;
 
 
@@ -2027,8 +2045,7 @@ async function launchFixedTransactions() {
 
         const existingTransactions =
             await apiRequest(
-                `/movimentacoes?mes=${
-                    month + 1
+                `/movimentacoes?mes=${month + 1
                 }&ano=${year}`
             );
 
@@ -2143,24 +2160,21 @@ async function launchFixedTransactions() {
 
 
         let message =
-            `${added} lançamento${
-                added === 1
-                    ? ""
-                    : "s"
-            } adicionado${
-                added === 1
-                    ? ""
-                    : "s"
+            `${added} lançamento${added === 1
+                ? ""
+                : "s"
+            } adicionado${added === 1
+                ? ""
+                : "s"
             } às movimentações.`;
 
 
         if (ignored > 0) {
 
             message +=
-                ` ${ignored} já existia${
-                    ignored === 1
-                        ? ""
-                        : "m"
+                ` ${ignored} já existia${ignored === 1
+                    ? ""
+                    : "m"
                 }.`;
         }
 
@@ -2504,6 +2518,8 @@ function logout() {
 // =====================================================
 
 function setupEvents() {
+
+    setupMoneyInput();
 
     [
         "topAddButton",
