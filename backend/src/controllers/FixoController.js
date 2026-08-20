@@ -42,10 +42,7 @@ class FixoController {
 
 
     async criarFixo(req, res) {
-            console.log("===== POST /FIXOS =====");
-    console.log("usuarioId:", req.usuarioId);
-    console.log("BODY:", req.body);
-    
+
         const {
             descricao,
             tipo,
@@ -57,10 +54,15 @@ class FixoController {
             ativo
         } = req.body;
 
+
+        // =========================
+        // Validações
+        // =========================
+
         if (
             !descricao ||
             !tipo ||
-            !valor ||
+            valor === undefined ||
             !dia_vencimento
         ) {
             return res.status(400).json({
@@ -69,9 +71,42 @@ class FixoController {
             });
         }
 
+
         if (
-            dia_vencimento < 1 ||
-            dia_vencimento > 31
+            tipo !== "income" &&
+            tipo !== "expense" &&
+            tipo !== "saved"
+        ) {
+            return res.status(400).json({
+                message:
+                    "Tipo de lançamento inválido."
+            });
+        }
+
+
+        const valorNumerico =
+            Number(valor);
+
+
+        if (
+            Number.isNaN(valorNumerico) ||
+            valorNumerico <= 0
+        ) {
+            return res.status(400).json({
+                message:
+                    "Informe um valor válido."
+            });
+        }
+
+
+        const dia =
+            Number(dia_vencimento);
+
+
+        if (
+            Number.isNaN(dia) ||
+            dia < 1 ||
+            dia > 31
         ) {
             return res.status(400).json({
                 message:
@@ -79,7 +114,42 @@ class FixoController {
             });
         }
 
+
+        if (
+            status_padrao &&
+            status_padrao !== "paid" &&
+            status_padrao !== "pending"
+        ) {
+            return res.status(400).json({
+                message:
+                    "Status padrão inválido."
+            });
+        }
+
+
         try {
+
+            if (categoria_id) {
+
+                const categoria =
+                    await database("categorias")
+                        .where({
+                            id: categoria_id,
+                            usuario_id:
+                                req.usuarioId
+                        })
+                        .first();
+
+
+                if (!categoria) {
+                    return res.status(404).json({
+                        message:
+                            "Categoria não encontrada."
+                    });
+                }
+            }
+
+
             const [fixoId] =
                 await database("fixos")
                     .insert({
@@ -94,9 +164,11 @@ class FixoController {
 
                         tipo,
 
-                        valor,
+                        valor:
+                            valorNumerico,
 
-                        dia_vencimento,
+                        dia_vencimento:
+                            dia,
 
                         forma_pagamento:
                             forma_pagamento || null,
@@ -116,11 +188,36 @@ class FixoController {
                             database.fn.now()
                     });
 
+
+            const fixoCriado =
+                await database("fixos as f")
+                    .leftJoin(
+                        "categorias as c",
+                        "f.categoria_id",
+                        "c.id"
+                    )
+                    .select(
+                        "f.*",
+                        "c.nome as categoria",
+                        "c.cor as categoria_cor"
+                    )
+                    .where(
+                        "f.id",
+                        fixoId
+                    )
+                    .where(
+                        "f.usuario_id",
+                        req.usuarioId
+                    )
+                    .first();
+
+
             return res.status(201).json({
                 message:
                     "Fixo criado com sucesso.",
 
-                fixoId
+                fixo:
+                    fixoCriado
             });
 
         } catch (error) {
@@ -142,7 +239,9 @@ class FixoController {
             fixoId
         } = req.params;
 
+
         try {
+
             const fixo =
                 await database("fixos")
                     .where({
@@ -152,12 +251,14 @@ class FixoController {
                     })
                     .first();
 
+
             if (!fixo) {
                 return res.status(404).json({
                     message:
                         "Fixo não encontrado."
                 });
             }
+
 
             const {
                 descricao,
@@ -170,6 +271,116 @@ class FixoController {
                 ativo
             } = req.body;
 
+
+            // =========================
+            // Validar tipo
+            // =========================
+
+            if (
+                tipo !== undefined &&
+                tipo !== "income" &&
+                tipo !== "expense" &&
+                tipo !== "saved"
+            ) {
+                return res.status(400).json({
+                    message:
+                        "Tipo de lançamento inválido."
+                });
+            }
+
+
+            // =========================
+            // Validar valor
+            // =========================
+
+            if (
+                valor !== undefined &&
+                (
+                    Number.isNaN(
+                        Number(valor)
+                    ) ||
+                    Number(valor) <= 0
+                )
+            ) {
+                return res.status(400).json({
+                    message:
+                        "Informe um valor válido."
+                });
+            }
+
+
+            // =========================
+            // Validar dia
+            // =========================
+
+            if (
+                dia_vencimento !== undefined
+            ) {
+
+                const dia =
+                    Number(
+                        dia_vencimento
+                    );
+
+
+                if (
+                    Number.isNaN(dia) ||
+                    dia < 1 ||
+                    dia > 31
+                ) {
+                    return res.status(400).json({
+                        message:
+                            "O dia deve estar entre 1 e 31."
+                    });
+                }
+            }
+
+
+            // =========================
+            // Validar status
+            // =========================
+
+            if (
+                status_padrao !== undefined &&
+                status_padrao !== "paid" &&
+                status_padrao !== "pending"
+            ) {
+                return res.status(400).json({
+                    message:
+                        "Status padrão inválido."
+                });
+            }
+
+
+            // =========================
+            // Validar categoria
+            // =========================
+
+            if (
+                categoria_id !== undefined &&
+                categoria_id !== null &&
+                categoria_id !== ""
+            ) {
+
+                const categoria =
+                    await database("categorias")
+                        .where({
+                            id: categoria_id,
+                            usuario_id:
+                                req.usuarioId
+                        })
+                        .first();
+
+
+                if (!categoria) {
+                    return res.status(404).json({
+                        message:
+                            "Categoria não encontrada."
+                    });
+                }
+            }
+
+
             await database("fixos")
                 .where({
                     id: fixoId,
@@ -178,26 +389,35 @@ class FixoController {
                 })
                 .update({
                     descricao:
-                        descricao ?? fixo.descricao,
+                        descricao !== undefined
+                            ? descricao.trim()
+                            : fixo.descricao,
 
                     tipo:
-                        tipo ?? fixo.tipo,
+                        tipo ??
+                        fixo.tipo,
 
                     valor:
-                        valor ?? fixo.valor,
+                        valor !== undefined
+                            ? Number(valor)
+                            : fixo.valor,
 
                     categoria_id:
                         categoria_id === undefined
                             ? fixo.categoria_id
-                            : categoria_id,
+                            : categoria_id || null,
 
                     dia_vencimento:
-                        dia_vencimento ??
-                        fixo.dia_vencimento,
+                        dia_vencimento !== undefined
+                            ? Number(
+                                dia_vencimento
+                            )
+                            : fixo.dia_vencimento,
 
                     forma_pagamento:
-                        forma_pagamento ??
-                        fixo.forma_pagamento,
+                        forma_pagamento !== undefined
+                            ? forma_pagamento
+                            : fixo.forma_pagamento,
 
                     status_padrao:
                         status_padrao ??
@@ -211,6 +431,7 @@ class FixoController {
                     atualizado_em:
                         database.fn.now()
                 });
+
 
             return res.status(200).json({
                 message:
@@ -236,11 +457,14 @@ class FixoController {
             fixoId
         } = req.params;
 
+
         const {
             ativo
         } = req.body;
 
+
         try {
+
             const fixo =
                 await database("fixos")
                     .where({
@@ -250,12 +474,14 @@ class FixoController {
                     })
                     .first();
 
+
             if (!fixo) {
                 return res.status(404).json({
                     message:
                         "Fixo não encontrado."
                 });
             }
+
 
             await database("fixos")
                 .where({
@@ -265,9 +491,11 @@ class FixoController {
                 })
                 .update({
                     ativo,
+
                     atualizado_em:
                         database.fn.now()
                 });
+
 
             return res.status(200).json({
                 message:
@@ -295,7 +523,9 @@ class FixoController {
             fixoId
         } = req.params;
 
+
         try {
+
             const fixo =
                 await database("fixos")
                     .where({
@@ -305,12 +535,14 @@ class FixoController {
                     })
                     .first();
 
+
             if (!fixo) {
                 return res.status(404).json({
                     message:
                         "Fixo não encontrado."
                 });
             }
+
 
             await database("fixos")
                 .where({
@@ -319,6 +551,7 @@ class FixoController {
                         req.usuarioId
                 })
                 .delete();
+
 
             return res.status(200).json({
                 message:
@@ -338,6 +571,7 @@ class FixoController {
         }
     }
 }
+
 
 module.exports =
     new FixoController();

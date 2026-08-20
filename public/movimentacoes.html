@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Movimentações | Conecta Finanças</title>
 
@@ -44,30 +42,17 @@
       </nav>
 
       <div class="topbar-actions">
-        <button
-          type="button"
-          class="icon-button"
-          id="themeToggle"
-          aria-label="Alterar tema"
-        >
+        <button type="button" class="icon-button" id="themeToggle" aria-label="Alterar tema">
           ☾
         </button>
 
-        <button
-          type="button"
-          class="primary-button"
-          id="openTransaction"
-        >
+        <button type="button" class="primary-button" id="openTransaction">
           <span>＋</span>
           Nova movimentação
         </button>
 
         <div class="profile-menu">
-          <button
-            type="button"
-            class="profile-button"
-            id="profileButton"
-          >
+          <button type="button" class="profile-button" id="profileButton">
             <span class="profile-avatar" id="profileAvatar">
               M
             </span>
@@ -91,11 +76,7 @@
           </div>
         </div>
 
-        <button
-          type="button"
-          class="mobile-menu-button"
-          id="mobileMenuButton"
-        >
+        <button type="button" class="mobile-menu-button" id="mobileMenuButton">
           ☰
         </button>
       </div>
@@ -124,22 +105,19 @@
         <h1>Movimentações</h1>
 
         <p>
-          Consulte, filtre e organize todas as suas receitas e
-          despesas.
+          Consulte, filtre e organize suas entradas, despesas
+          e valores guardados.
         </p>
       </div>
 
-      <button
-        type="button"
-        class="primary-button header-button"
-        id="headerAddButton"
-      >
+      <button type="button" class="primary-button header-button" id="headerAddButton">
         <span>＋</span>
         Nova movimentação
       </button>
     </section>
 
     <section class="summary-grid">
+
       <article class="summary-card">
         <span>Total de entradas</span>
 
@@ -151,6 +129,7 @@
           0 recebimentos
         </small>
       </article>
+
 
       <article class="summary-card">
         <span>Total de despesas</span>
@@ -164,6 +143,20 @@
         </small>
       </article>
 
+
+      <article class="summary-card">
+        <span>Total guardado</span>
+
+        <strong class="saved-text" id="summarySaved">
+          R$ 0,00
+        </strong>
+
+        <small id="summarySavedCount">
+          0 movimentações
+        </small>
+      </article>
+
+
       <article class="summary-card">
         <span>Contas pendentes</span>
 
@@ -176,15 +169,19 @@
         </small>
       </article>
 
+
       <article class="summary-card balance-card">
-        <span>Saldo do período</span>
+        <span>Saldo disponível</span>
 
         <strong id="summaryBalance">
           R$ 0,00
         </strong>
 
-        <small>Entradas menos despesas pagas</small>
+        <small>
+          Entradas menos despesas e valores guardados
+        </small>
       </article>
+
     </section>
 
     <section class="filters-card">
@@ -195,11 +192,7 @@
           <h2>Encontre uma movimentação</h2>
         </div>
 
-        <button
-          type="button"
-          class="clear-button"
-          id="clearFilters"
-        >
+        <button type="button" class="clear-button" id="clearFilters">
           Limpar filtros
         </button>
       </div>
@@ -211,11 +204,7 @@
           <div class="search-container">
             <span>⌕</span>
 
-            <input
-              type="search"
-              id="searchInput"
-              placeholder="Descrição, categoria ou pagamento"
-            >
+            <input type="search" id="searchInput" placeholder="Descrição, categoria ou pagamento">
           </div>
         </div>
 
@@ -226,6 +215,7 @@
             <option value="all">Todos</option>
             <option value="income">Entradas</option>
             <option value="expense">Despesas</option>
+            <option value="saved">Guardado</option>
           </select>
         </div>
 
@@ -303,11 +293,7 @@
           </p>
         </div>
 
-        <button
-          type="button"
-          class="secondary-button"
-          id="exportButton"
-        >
+        <button type="button" class="secondary-button" id="exportButton">
           Exportar CSV
         </button>
       </div>
@@ -340,11 +326,7 @@
           Altere os filtros ou adicione uma nova movimentação.
         </p>
 
-        <button
-          type="button"
-          class="primary-button"
-          id="emptyAddButton"
-        >
+        <button type="button" class="primary-button" id="emptyAddButton">
           Adicionar movimentação
         </button>
       </div>
@@ -364,11 +346,7 @@
           </h2>
         </div>
 
-        <button
-          type="button"
-          class="modal-close"
-          data-close-modal="transactionModal"
-        >
+        <button type="button" class="modal-close" data-close-modal="transactionModal">
           ×
         </button>
       </div>
@@ -379,12 +357,7 @@
         <div class="form-group full-width">
           <label for="description">Descrição</label>
 
-          <input
-            type="text"
-            id="description"
-            placeholder="Ex.: Supermercado"
-            required
-          >
+          <input type="text" id="description" placeholder="Ex.: Supermercado" required>
         </div>
 
         <div class="form-group">
@@ -393,20 +366,14 @@
           <select id="transactionType">
             <option value="expense">Despesa</option>
             <option value="income">Entrada</option>
+            <option value="saved">Guardado</option>
           </select>
         </div>
 
         <div class="form-group">
           <label for="amount">Valor</label>
 
-<input
-  type="text"
-  id="amount"
-  inputmode="numeric"
-  placeholder="0,00"
-  autocomplete="off"
-  required
->
+          <input type="text" id="amount" inputmode="numeric" placeholder="0,00" autocomplete="off" required>
         </div>
 
         <div class="form-group">
@@ -418,11 +385,7 @@
         <div class="form-group">
           <label for="date">Data</label>
 
-          <input
-            type="date"
-            id="date"
-            required
-          >
+          <input type="date" id="date" required>
         </div>
 
         <div class="form-group">
@@ -455,18 +418,11 @@
       </div>
 
       <div class="modal-actions">
-        <button
-          type="button"
-          class="secondary-button"
-          data-close-modal="transactionModal"
-        >
+        <button type="button" class="secondary-button" data-close-modal="transactionModal">
           Cancelar
         </button>
 
-        <button
-          type="submit"
-          class="primary-button"
-        >
+        <button type="submit" class="primary-button">
           Salvar movimentação
         </button>
       </div>
@@ -485,19 +441,11 @@
       </p>
 
       <div class="modal-actions">
-        <button
-          type="button"
-          class="secondary-button"
-          data-close-modal="deleteModal"
-        >
+        <button type="button" class="secondary-button" data-close-modal="deleteModal">
           Cancelar
         </button>
 
-        <button
-          type="button"
-          class="danger-button"
-          id="confirmDelete"
-        >
+        <button type="button" class="danger-button" id="confirmDelete">
           Excluir
         </button>
       </div>
@@ -508,4 +456,5 @@
 
   <script src="js/movimentacoes.js"></script>
 </body>
+
 </html>

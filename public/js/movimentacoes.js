@@ -1033,130 +1033,190 @@ function sumTransactions(
 // RESUMO
 // =====================================================
 
-function renderSummary(
-    transactions
-) {
+function renderSummary(transactions) {
 
-    const income =
-        sumTransactions(
-            transactions,
-            transaction =>
-                transaction.type ===
-                "income" &&
-                transaction.status ===
-                "paid"
+    const income = sumTransactions(
+        transactions,
+        transaction =>
+            transaction.type === "income" &&
+            transaction.status === "paid"
+    );
+
+    const expense = sumTransactions(
+        transactions,
+        transaction =>
+            transaction.type === "expense" &&
+            transaction.status === "paid"
+    );
+
+    const saved = sumTransactions(
+        transactions,
+        transaction =>
+            transaction.type === "saved" &&
+            transaction.status === "paid"
+    );
+
+    const pending = sumTransactions(
+        transactions,
+        transaction =>
+            transaction.type === "expense" &&
+            transaction.status === "pending"
+    );
+
+    const incomeCount = transactions.filter(
+        transaction =>
+            transaction.type === "income" &&
+            transaction.status === "paid"
+    ).length;
+
+    const expenseCount = transactions.filter(
+        transaction =>
+            transaction.type === "expense" &&
+            transaction.status === "paid"
+    ).length;
+
+    const savedCount = transactions.filter(
+        transaction =>
+            transaction.type === "saved" &&
+            transaction.status === "paid"
+    ).length;
+
+    const pendingCount = transactions.filter(
+        transaction =>
+            transaction.type === "expense" &&
+            transaction.status === "pending"
+    ).length;
+
+
+    const summaryIncome = getElement("summaryIncome");
+    const summaryExpense = getElement("summaryExpense");
+    const summarySaved = getElement("summarySaved");
+    const summaryPending = getElement("summaryPending");
+    const summaryBalance = getElement("summaryBalance");
+
+    const summaryIncomeCount =
+        getElement("summaryIncomeCount");
+
+    const summaryExpenseCount =
+        getElement("summaryExpenseCount");
+
+    const summarySavedCount =
+        getElement("summarySavedCount");
+
+    const summaryPendingCount =
+        getElement("summaryPendingCount");
+
+
+    if (summaryIncome) {
+        summaryIncome.textContent =
+            currency.format(income);
+    }
+
+    if (summaryExpense) {
+        summaryExpense.textContent =
+            currency.format(expense);
+    }
+
+    if (summarySaved) {
+        summarySaved.textContent =
+            currency.format(saved);
+    }
+
+    if (summaryPending) {
+        summaryPending.textContent =
+            currency.format(pending);
+    }
+
+    if (summaryBalance) {
+
+        const balance =
+            income - expense - saved;
+
+        summaryBalance.textContent =
+            currency.format(balance);
+
+        summaryBalance.classList.toggle(
+            "expense-text",
+            balance < 0
         );
 
-
-    const expense =
-        sumTransactions(
-            transactions,
-            transaction =>
-                transaction.type ===
-                "expense" &&
-                transaction.status ===
-                "paid"
+        summaryBalance.classList.toggle(
+            "income-text",
+            balance >= 0
         );
+    }
 
 
-    const pending =
-        sumTransactions(
-            transactions,
-            transaction =>
-                transaction.type ===
-                "expense" &&
-                transaction.status ===
-                "pending"
-        );
+    if (summaryIncomeCount) {
+        summaryIncomeCount.textContent =
+            `${incomeCount} recebimento${incomeCount === 1 ? "" : "s"
+            }`;
+    }
+
+    if (summaryExpenseCount) {
+        summaryExpenseCount.textContent =
+            `${expenseCount} pagamento${expenseCount === 1 ? "" : "s"
+            }`;
+    }
+
+    if (summarySavedCount) {
+        summarySavedCount.textContent =
+            `${savedCount} valor${savedCount === 1 ? "" : "es"
+            } guardado${savedCount === 1 ? "" : "s"
+            }`;
+    }
+
+    if (summaryPendingCount) {
+        summaryPendingCount.textContent =
+            `${pendingCount} pendência${pendingCount === 1 ? "" : "s"
+            }`;
+    }
+}
+
+function getTransactionTypeInfo(type) {
+
+    if (type === "income") {
+        return {
+            className: "income",
+            icon: "↗",
+            signal: "+",
+            label: "Entrada"
+        };
+    }
+
+    if (type === "saved") {
+        return {
+            className: "saved",
+            icon: "◆",
+            signal: "",
+            label: "Guardado"
+        };
+    }
+
+    return {
+        className: "expense",
+        icon: "↘",
+        signal: "−",
+        label: "Despesa"
+    };
+}
 
 
-    const incomeCount =
-        transactions.filter(
-            transaction =>
-                transaction.type ===
-                "income" &&
-                transaction.status ===
-                "paid"
-        ).length;
+function getTransactionStatusLabel(transaction) {
 
+    if (transaction.status === "pending") {
+        return "Pendente";
+    }
 
-    const expenseCount =
-        transactions.filter(
-            transaction =>
-                transaction.type ===
-                "expense" &&
-                transaction.status ===
-                "paid"
-        ).length;
+    if (transaction.type === "income") {
+        return "Recebido";
+    }
 
+    if (transaction.type === "saved") {
+        return "Guardado";
+    }
 
-    const pendingCount =
-        transactions.filter(
-            transaction =>
-                transaction.type ===
-                "expense" &&
-                transaction.status ===
-                "pending"
-        ).length;
-
-
-    getElement(
-        "summaryIncome"
-    ).textContent =
-        currency.format(
-            income
-        );
-
-
-    getElement(
-        "summaryExpense"
-    ).textContent =
-        currency.format(
-            expense
-        );
-
-
-    getElement(
-        "summaryPending"
-    ).textContent =
-        currency.format(
-            pending
-        );
-
-
-    getElement(
-        "summaryBalance"
-    ).textContent =
-        currency.format(
-            income - expense
-        );
-
-
-    getElement(
-        "summaryIncomeCount"
-    ).textContent =
-        `${incomeCount} recebimento${incomeCount === 1
-            ? ""
-            : "s"
-        }`;
-
-
-    getElement(
-        "summaryExpenseCount"
-    ).textContent =
-        `${expenseCount} pagamento${expenseCount === 1
-            ? ""
-            : "s"
-        }`;
-
-
-    getElement(
-        "summaryPendingCount"
-    ).textContent =
-        `${pendingCount} pendência${pendingCount === 1
-            ? ""
-            : "s"
-        }`;
+    return "Pago";
 }
 
 
@@ -1164,118 +1224,87 @@ function renderSummary(
 // TABELA
 // =====================================================
 
-function createTableRow(
-    transaction
-) {
+function createTableRow(transaction) {
 
-    const isIncome =
-        transaction.type ===
-        "income";
+    const typeInfo =
+        getTransactionTypeInfo(
+            transaction.type
+        );
 
+    const statusLabel =
+        getTransactionStatusLabel(
+            transaction
+        );
 
     return `
         <tr>
 
             <td>
-
                 <div class="transaction-name">
 
                     <div
-                        class="transaction-icon ${isIncome
-            ? "income"
-            : "expense"
-        }"
+                        class="transaction-icon ${typeInfo.className}"
                     >
-                        ${isIncome
-            ? "↗"
-            : "↘"
-        }
+                        ${typeInfo.icon}
                     </div>
 
-
                     <div>
-
                         <strong>
                             ${escapeHtml(
-            transaction.description
-        )}
+        transaction.description
+    )}
                         </strong>
 
                         <small>
                             ${escapeHtml(
-            transaction.payment
-        )}
+        transaction.payment
+    )}
                         </small>
-
                     </div>
 
                 </div>
-
             </td>
 
 
             <td>
-
                 <span class="category-badge">
                     ${escapeHtml(
-            transaction.category
-        )}
+        transaction.category
+    )}
                 </span>
-
             </td>
 
 
             <td>
                 ${formatDate(
-            transaction.date
-        )}
+        transaction.date
+    )}
             </td>
 
 
             <td>
-
                 <span
                     class="status-badge ${transaction.status}"
                 >
-                    ${transaction.status ===
-            "paid"
-
-            ? isIncome
-                ? "Recebido"
-                : "Pago"
-
-            : "Pendente"
-        }
+                    ${statusLabel}
                 </span>
-
             </td>
 
 
             <td>
-
                 <span
-                    class="amount ${isIncome
-            ? "income"
-            : "expense"
-        }"
+                    class="amount ${typeInfo.className}"
                 >
-
-                    ${isIncome
-            ? "+"
-            : "−"
-        }
+                    ${typeInfo.signal}
 
                     ${currency.format(
-            transaction.amount
-        )}
-
+        transaction.amount
+    )}
                 </span>
-
             </td>
 
 
             <td>
-
                 <div class="actions">
 
                     <button
@@ -1287,7 +1316,6 @@ function createTableRow(
                         ✎
                     </button>
 
-
                     <button
                         type="button"
                         class="action-button delete delete-button"
@@ -1298,7 +1326,6 @@ function createTableRow(
                     </button>
 
                 </div>
-
             </td>
 
         </tr>
@@ -1310,14 +1337,17 @@ function createTableRow(
 // CARD MOBILE
 // =====================================================
 
-function createMobileCard(
-    transaction
-) {
+function createMobileCard(transaction) {
 
-    const isIncome =
-        transaction.type ===
-        "income";
+    const typeInfo =
+        getTransactionTypeInfo(
+            transaction.type
+        );
 
+    const statusLabel =
+        getTransactionStatusLabel(
+            transaction
+        );
 
     return `
         <article class="mobile-transaction-card">
@@ -1327,38 +1357,29 @@ function createMobileCard(
                 <div class="mobile-transaction-main">
 
                     <div
-                        class="transaction-icon ${isIncome
-            ? "income"
-            : "expense"
-        }"
+                        class="transaction-icon ${typeInfo.className}"
                     >
-                        ${isIncome
-            ? "↗"
-            : "↘"
-        }
+                        ${typeInfo.icon}
                     </div>
-
 
                     <div>
 
                         <strong>
                             ${escapeHtml(
-            transaction.description
-        )}
+        transaction.description
+    )}
                         </strong>
 
                         <small>
-
                             ${escapeHtml(
-            transaction.category
-        )}
+        transaction.category
+    )}
 
                             ·
 
                             ${formatDate(
-            transaction.date
-        )}
-
+        transaction.date
+    )}
                         </small>
 
                     </div>
@@ -1367,21 +1388,13 @@ function createMobileCard(
 
 
                 <span
-                    class="amount ${isIncome
-            ? "income"
-            : "expense"
-        }"
+                    class="amount ${typeInfo.className}"
                 >
-
-                    ${isIncome
-            ? "+"
-            : "−"
-        }
+                    ${typeInfo.signal}
 
                     ${currency.format(
-            transaction.amount
-        )}
-
+        transaction.amount
+    )}
                 </span>
 
             </div>
@@ -1392,17 +1405,7 @@ function createMobileCard(
                 <span
                     class="status-badge ${transaction.status}"
                 >
-
-                    ${transaction.status ===
-            "paid"
-
-            ? isIncome
-                ? "Recebido"
-                : "Pago"
-
-            : "Pendente"
-        }
-
+                    ${statusLabel}
                 </span>
 
 
@@ -1415,7 +1418,6 @@ function createMobileCard(
                     >
                         ✎
                     </button>
-
 
                     <button
                         type="button"
@@ -2192,10 +2194,11 @@ function exportCsv() {
 
                     transaction.description,
 
-                    transaction.type ===
-                        "income"
+                    transaction.type === "income"
                         ? "Entrada"
-                        : "Despesa",
+                        : transaction.type === "saved"
+                            ? "Guardado"
+                            : "Despesa",
 
                     transaction.category,
 

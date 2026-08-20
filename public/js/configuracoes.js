@@ -20,7 +20,7 @@ let usuarioAtual = null;
 let configuracoes = {
     moeda: "BRL",
     orcamento_mensal: 0,
-    dia_inicio_mes: 1,
+    inicio_mes: 1,
     forma_pagamento_padrao: "Pix",
     incluir_pendencias: true,
     confirmar_exclusao: true
@@ -595,58 +595,42 @@ async function loadFinanceSettings() {
                 "/configuracoes"
             );
 
-
-        /*
-            Suporta alguns formatos diferentes
-            para não quebrar caso seu Controller
-            use nomes um pouco diferentes.
-        */
-
         configuracoes = {
 
             moeda:
                 data.moeda ??
-                data.currency ??
                 "BRL",
 
             orcamento_mensal:
                 Number(
                     data.orcamento_mensal ??
-                    data.orcamento ??
-                    data.monthlyBudget ??
                     0
                 ),
 
-            dia_inicio_mes:
+            inicio_mes:
                 Number(
-                    data.dia_inicio_mes ??
-                    data.monthStartDay ??
+                    data.inicio_mes ??
                     1
                 ),
 
             forma_pagamento_padrao:
                 data.forma_pagamento_padrao ??
-                data.defaultPayment ??
                 "Pix",
 
             incluir_pendencias:
                 Boolean(
                     data.incluir_pendencias ??
-                    data.includePending ??
                     true
                 ),
 
             confirmar_exclusao:
                 Boolean(
                     data.confirmar_exclusao ??
-                    data.confirmDelete ??
                     true
                 )
         };
 
-
         renderFinanceSettings();
-
 
     } catch (error) {
 
@@ -654,7 +638,6 @@ async function loadFinanceSettings() {
             "Erro ao carregar configurações:",
             error
         );
-
 
         showToast(
             "Erro ao carregar preferências financeiras."
@@ -687,7 +670,7 @@ function renderFinanceSettings() {
         "monthStartDay"
     ).value =
         String(
-            configuracoes.dia_inicio_mes ||
+            configuracoes.inicio_mes ||
             1
         );
 
@@ -723,9 +706,7 @@ function renderFinanceSettings() {
 // SALVAR CONFIGURAÇÕES
 // =====================================================
 
-async function saveFinanceSettings(
-    event
-) {
+async function saveFinanceSettings(event) {
 
     event.preventDefault();
 
@@ -751,6 +732,28 @@ async function saveFinanceSettings(
     }
 
 
+    const inicioMes =
+        Number(
+            getElement(
+                "monthStartDay"
+            ).value
+        );
+
+
+    if (
+        Number.isNaN(inicioMes) ||
+        inicioMes < 1 ||
+        inicioMes > 31
+    ) {
+
+        showToast(
+            "O início do mês deve estar entre 1 e 31."
+        );
+
+        return;
+    }
+
+
     const body = {
 
         moeda:
@@ -761,12 +764,8 @@ async function saveFinanceSettings(
         orcamento_mensal:
             budget,
 
-        dia_inicio_mes:
-            Number(
-                getElement(
-                    "monthStartDay"
-                ).value
-            ),
+        inicio_mes:
+            inicioMes,
 
         forma_pagamento_padrao:
             getElement(
@@ -796,7 +795,6 @@ async function saveFinanceSettings(
         submitButton.disabled =
             true;
 
-
         submitButton.textContent =
             "Salvando...";
 
@@ -805,8 +803,7 @@ async function saveFinanceSettings(
             await apiRequest(
                 "/configuracoes",
                 {
-                    method:
-                        "PUT",
+                    method: "PUT",
 
                     body:
                         JSON.stringify(
@@ -835,7 +832,6 @@ async function saveFinanceSettings(
             error
         );
 
-
         showToast(
             error.message
         );
@@ -845,7 +841,6 @@ async function saveFinanceSettings(
 
         submitButton.disabled =
             false;
-
 
         submitButton.textContent =
             "Salvar preferências";

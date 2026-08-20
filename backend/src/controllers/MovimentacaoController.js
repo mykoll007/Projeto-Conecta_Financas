@@ -42,7 +42,8 @@ class MovimentacaoController {
 
         if (
             tipo !== "income" &&
-            tipo !== "expense"
+            tipo !== "expense" &&
+            tipo !== "saved"
         ) {
             return res.status(400).json({
                 success: false,

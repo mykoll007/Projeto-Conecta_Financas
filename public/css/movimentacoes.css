@@ -677,6 +677,23 @@ td {
   font-size: 0.76rem;
 }
 
+.saved-text {
+    color: #2563eb;
+}
+.saved-text {
+    color: #2563eb;
+}
+
+.amount.saved {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+.transaction-icon.saved {
+    color: #2563eb;
+    background: rgba(37, 99, 235, 0.10);
+}
+
 /* MODAIS */
 
 .modal {

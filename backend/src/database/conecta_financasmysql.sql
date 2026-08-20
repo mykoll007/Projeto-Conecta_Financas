@@ -55,7 +55,8 @@ CREATE TABLE fixos (
 
     tipo ENUM(
         'income',
-        'expense'
+        'expense',
+        'saved'
     ) NOT NULL,
 
     valor DECIMAL(12,2) NOT NULL,
@@ -102,7 +103,8 @@ CREATE TABLE movimentacoes (
 
     tipo ENUM(
         'income',
-        'expense'
+        'expense',
+        'saved'
     ) NOT NULL,
 
     valor DECIMAL(12,2) NOT NULL,
