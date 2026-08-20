@@ -778,6 +778,24 @@ select:focus {
   font-size: 0.76rem;
 }
 
+.saved-text {
+  color: #2563eb;
+}
+
+.saved-icon {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.10);
+}
+
+.fixed-type-icon.saved {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.10);
+}
+
+.fixed-amount.saved {
+  color: #2563eb;
+}
+
 /* Modais */
 
 .modal {

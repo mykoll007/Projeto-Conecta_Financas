@@ -910,6 +910,23 @@ button.quick-action-card {
   line-height: 1.5;
 }
 
+.saved-value {
+  color: #2563eb;
+}
+
+.saved-icon {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.10);
+}
+
+.saved-dot {
+  background: #2563eb;
+}
+
+.bar.saved {
+  background: #2563eb;
+}
+
 /* MODAIS */
 
 .modal {

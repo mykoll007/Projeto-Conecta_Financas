@@ -1059,7 +1059,10 @@ function renderSummary(transactions) {
     const pending = sumTransactions(
         transactions,
         transaction =>
-            transaction.type === "expense" &&
+            (
+                transaction.type === "expense" ||
+                transaction.type === "saved"
+            ) &&
             transaction.status === "pending"
     );
 
@@ -1083,7 +1086,10 @@ function renderSummary(transactions) {
 
     const pendingCount = transactions.filter(
         transaction =>
-            transaction.type === "expense" &&
+            (
+                transaction.type === "expense" ||
+                transaction.type === "saved"
+            ) &&
             transaction.status === "pending"
     ).length;
 
@@ -1129,8 +1135,9 @@ function renderSummary(transactions) {
 
     if (summaryBalance) {
 
+        // Guardado NÃO altera o saldo
         const balance =
-            income - expense - saved;
+            income - expense;
 
         summaryBalance.textContent =
             currency.format(balance);

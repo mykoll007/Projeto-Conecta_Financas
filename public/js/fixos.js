@@ -843,8 +843,7 @@ function renderSummary() {
 
     const activeItems =
         appData.fixed.filter(
-            item =>
-                item.active
+            item => item.active
         );
 
 
@@ -852,8 +851,7 @@ function renderSummary() {
         sumItems(
             activeItems,
             item =>
-                item.type ===
-                "income"
+                item.type === "income"
         );
 
 
@@ -861,24 +859,36 @@ function renderSummary() {
         sumItems(
             activeItems,
             item =>
-                item.type ===
-                "expense"
+                item.type === "expense"
+        );
+
+
+    const saved =
+        sumItems(
+            activeItems,
+            item =>
+                item.type === "saved"
         );
 
 
     const incomeCount =
         activeItems.filter(
             item =>
-                item.type ===
-                "income"
+                item.type === "income"
         ).length;
 
 
     const expenseCount =
         activeItems.filter(
             item =>
-                item.type ===
-                "expense"
+                item.type === "expense"
+        ).length;
+
+
+    const savedCount =
+        activeItems.filter(
+            item =>
+                item.type === "saved"
         ).length;
 
 
@@ -889,72 +899,201 @@ function renderSummary() {
         ).length;
 
 
-    getElement(
-        "fixedIncomeValue"
-    ).textContent =
-        currency.format(
-            income
+    const fixedIncomeValue =
+        getElement(
+            "fixedIncomeValue"
         );
 
 
-    getElement(
-        "fixedExpenseValue"
-    ).textContent =
-        currency.format(
-            expenses
+    const fixedExpenseValue =
+        getElement(
+            "fixedExpenseValue"
         );
 
 
-    getElement(
-        "fixedBalanceValue"
-    ).textContent =
-        currency.format(
-            income - expenses
+    const fixedSavedValue =
+        getElement(
+            "fixedSavedValue"
         );
 
 
-    getElement(
-        "activeFixedCount"
-    ).textContent =
-        activeItems.length;
+    const fixedBalanceValue =
+        getElement(
+            "fixedBalanceValue"
+        );
 
 
-    getElement(
-        "fixedIncomeCount"
-    ).textContent =
-        `${incomeCount} lançamento${incomeCount === 1
-            ? ""
-            : "s"
-        } ativo${incomeCount === 1
-            ? ""
-            : "s"
-        }`;
+    const activeFixedCount =
+        getElement(
+            "activeFixedCount"
+        );
 
 
-    getElement(
-        "fixedExpenseCount"
-    ).textContent =
-        `${expenseCount} lançamento${expenseCount === 1
-            ? ""
-            : "s"
-        } ativo${expenseCount === 1
-            ? ""
-            : "s"
-        }`;
+    const fixedIncomeCount =
+        getElement(
+            "fixedIncomeCount"
+        );
 
 
-    getElement(
-        "inactiveFixedCount"
-    ).textContent =
-        `${inactiveCount} lançamento${inactiveCount === 1
-            ? ""
-            : "s"
-        } inativo${inactiveCount === 1
-            ? ""
-            : "s"
-        }`;
+    const fixedExpenseCount =
+        getElement(
+            "fixedExpenseCount"
+        );
+
+
+    const fixedSavedCount =
+        getElement(
+            "fixedSavedCount"
+        );
+
+
+    const inactiveFixedCount =
+        getElement(
+            "inactiveFixedCount"
+        );
+
+
+    if (fixedIncomeValue) {
+
+        fixedIncomeValue.textContent =
+            currency.format(
+                income
+            );
+    }
+
+
+    if (fixedExpenseValue) {
+
+        fixedExpenseValue.textContent =
+            currency.format(
+                expenses
+            );
+    }
+
+
+    if (fixedSavedValue) {
+
+        fixedSavedValue.textContent =
+            currency.format(
+                saved
+            );
+    }
+
+
+    /*
+        Guardado NÃO altera o saldo previsto.
+
+        Saldo previsto =
+        receitas - despesas
+    */
+
+    if (fixedBalanceValue) {
+
+        fixedBalanceValue.textContent =
+            currency.format(
+                income - expenses
+            );
+    }
+
+
+    if (activeFixedCount) {
+
+        activeFixedCount.textContent =
+            activeItems.length;
+    }
+
+
+    if (fixedIncomeCount) {
+
+        fixedIncomeCount.textContent =
+            `${incomeCount} lançamento${
+                incomeCount === 1
+                    ? ""
+                    : "s"
+            } ativo${
+                incomeCount === 1
+                    ? ""
+                    : "s"
+            }`;
+    }
+
+
+    if (fixedExpenseCount) {
+
+        fixedExpenseCount.textContent =
+            `${expenseCount} lançamento${
+                expenseCount === 1
+                    ? ""
+                    : "s"
+            } ativo${
+                expenseCount === 1
+                    ? ""
+                    : "s"
+            }`;
+    }
+
+
+    if (fixedSavedCount) {
+
+        fixedSavedCount.textContent =
+            `${savedCount} lançamento${
+                savedCount === 1
+                    ? ""
+                    : "s"
+            } ativo${
+                savedCount === 1
+                    ? ""
+                    : "s"
+            }`;
+    }
+
+
+    if (inactiveFixedCount) {
+
+        inactiveFixedCount.textContent =
+            `${inactiveCount} lançamento${
+                inactiveCount === 1
+                    ? ""
+                    : "s"
+            } inativo${
+                inactiveCount === 1
+                    ? ""
+                    : "s"
+            }`;
+    }
 }
 
+function getFixedTypeInfo(type) {
+
+    if (type === "income") {
+
+        return {
+            className: "income",
+            icon: "↗",
+            signal: "+",
+            paidLabel: "Recebido"
+        };
+    }
+
+
+    if (type === "saved") {
+
+        return {
+            className: "saved",
+            icon: "◆",
+            signal: "",
+            paidLabel: "Guardado"
+        };
+    }
+
+
+    return {
+        className: "expense",
+        icon: "↘",
+        signal: "−",
+        paidLabel: "Pago"
+    };
+}
 
 // =====================================================
 // ITEM FIXO
@@ -962,29 +1101,31 @@ function renderSummary() {
 
 function createFixedItem(item) {
 
-    const isIncome =
-        item.type ===
-        "income";
+    const typeInfo =
+        getFixedTypeInfo(
+            item.type
+        );
+
+
+    const statusText =
+        item.defaultStatus === "paid"
+            ? typeInfo.paidLabel
+            : "Pendente";
 
 
     return `
         <article
-            class="fixed-item ${item.active
-            ? ""
-            : "inactive"
-        }"
+            class="fixed-item ${
+                item.active
+                    ? ""
+                    : "inactive"
+            }"
         >
 
             <div
-                class="fixed-type-icon ${isIncome
-            ? "income"
-            : "expense"
-        }"
+                class="fixed-type-icon ${typeInfo.className}"
             >
-                ${isIncome
-            ? "↗"
-            : "↘"
-        }
+                ${typeInfo.icon}
             </div>
 
 
@@ -992,20 +1133,22 @@ function createFixedItem(item) {
 
                 <strong>
                     ${escapeHtml(
-            item.description
-        )}
+                        item.description
+                    )}
                 </strong>
 
                 <span>
+
                     ${escapeHtml(
-            item.category
-        )}
+                        item.category
+                    )}
 
                     ·
 
                     ${escapeHtml(
-            item.payment
-        )}
+                        item.payment
+                    )}
+
                 </span>
 
             </div>
@@ -1027,35 +1170,21 @@ function createFixedItem(item) {
                 Ao lançar
 
                 <strong>
-                    ${item.defaultStatus ===
-            "paid"
-
-            ? isIncome
-                ? "Recebido"
-                : "Pago"
-
-            : "Pendente"
-        }
+                    ${statusText}
                 </strong>
 
             </div>
 
 
             <div
-                class="fixed-amount ${isIncome
-            ? "income"
-            : "expense"
-        }"
+                class="fixed-amount ${typeInfo.className}"
             >
 
-                ${isIncome
-            ? "+"
-            : "−"
-        }
+                ${typeInfo.signal}
 
                 ${currency.format(
-            item.amount
-        )}
+                    item.amount
+                )}
 
             </div>
 
@@ -1070,10 +1199,11 @@ function createFixedItem(item) {
                         type="checkbox"
                         class="active-toggle"
                         data-id="${item.id}"
-                        ${item.active
-            ? "checked"
-            : ""
-        }
+                        ${
+                            item.active
+                                ? "checked"
+                                : ""
+                        }
                     >
 
                     <span
@@ -1081,10 +1211,11 @@ function createFixedItem(item) {
                     ></span>
 
                     <span>
-                        ${item.active
-            ? "Ativo"
-            : "Inativo"
-        }
+                        ${
+                            item.active
+                                ? "Ativo"
+                                : "Inativo"
+                        }
                     </span>
 
                 </label>

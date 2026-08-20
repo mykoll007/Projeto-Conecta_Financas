@@ -708,108 +708,210 @@ async function loadSummary() {
 
     const income =
         Number(
-            resumo.entradas ||
-            0
+            resumo.entradas || 0
         );
 
 
     const expense =
         Number(
-            resumo.despesas ||
-            0
+            resumo.despesas || 0
+        );
+
+
+    const saved =
+        Number(
+            resumo.guardado || 0
         );
 
 
     const pending =
         Number(
-            resumo.pendentes ||
-            0
+            resumo.pendentes || 0
         );
 
+
+    /*
+        IMPORTANTE:
+
+        Guardado NÃO participa do saldo.
+
+        Saldo = entradas - despesas
+    */
 
     const balance =
-        Number(
-            resumo.saldo ||
-            0
-        );
+        income - expense;
 
 
     appData.budget =
         Number(
-            resumo.orcamento ||
-            0
+            resumo.orcamento || 0
         );
 
 
-    getElement(
-        "balanceValue"
-    ).textContent =
-        currency.format(
-            balance
+    // =============================================
+    // VALORES
+    // =============================================
+
+    const balanceValue =
+        getElement(
+            "balanceValue"
+        );
+
+    const incomeValue =
+        getElement(
+            "incomeValue"
+        );
+
+    const expenseValue =
+        getElement(
+            "expenseValue"
+        );
+
+    const savedValue =
+        getElement(
+            "savedValue"
+        );
+
+    const pendingValue =
+        getElement(
+            "pendingValue"
         );
 
 
-    getElement(
-        "incomeValue"
-    ).textContent =
-        currency.format(
-            income
-        );
+    if (balanceValue) {
+
+        balanceValue.textContent =
+            currency.format(
+                balance
+            );
+    }
 
 
-    getElement(
-        "expenseValue"
-    ).textContent =
-        currency.format(
-            expense
-        );
+    if (incomeValue) {
+
+        incomeValue.textContent =
+            currency.format(
+                income
+            );
+    }
 
 
-    getElement(
-        "pendingValue"
-    ).textContent =
-        currency.format(
-            pending
-        );
+    if (expenseValue) {
 
+        expenseValue.textContent =
+            currency.format(
+                expense
+            );
+    }
+
+
+    if (savedValue) {
+
+        savedValue.textContent =
+            currency.format(
+                saved
+            );
+    }
+
+
+    if (pendingValue) {
+
+        pendingValue.textContent =
+            currency.format(
+                pending
+            );
+    }
+
+
+    // =============================================
+    // CONTADORES
+    // =============================================
 
     const incomeCount =
         Number(
-            resumo.quantidadeEntradas ||
-            0
+            resumo.quantidadeEntradas || 0
         );
 
 
     const expenseCount =
         Number(
-            resumo.quantidadeDespesas ||
-            0
+            resumo.quantidadeDespesas || 0
         );
 
 
-    getElement(
-        "incomeCount"
-    ).textContent =
-        incomeCount === 0
-            ? "Nenhum recebimento"
-            : `${incomeCount} recebimento${
-                incomeCount > 1
-                    ? "s"
-                    : ""
-            }`;
+    const savedCount =
+        Number(
+            resumo.quantidadeGuardado || 0
+        );
 
 
-    getElement(
-        "expenseCount"
-    ).textContent =
-        expenseCount === 0
-            ? "Nenhum pagamento"
-            : `${expenseCount} pagamento${
-                expenseCount > 1
-                    ? "s"
-                    : ""
-            }`;
+    const incomeCountElement =
+        getElement(
+            "incomeCount"
+        );
 
+
+    const expenseCountElement =
+        getElement(
+            "expenseCount"
+        );
+
+
+    const savedCountElement =
+        getElement(
+            "savedCount"
+        );
+
+
+    if (incomeCountElement) {
+
+        incomeCountElement.textContent =
+            incomeCount === 0
+                ? "Nenhum recebimento"
+                : `${incomeCount} recebimento${
+                    incomeCount > 1
+                        ? "s"
+                        : ""
+                }`;
+    }
+
+
+    if (expenseCountElement) {
+
+        expenseCountElement.textContent =
+            expenseCount === 0
+                ? "Nenhum pagamento"
+                : `${expenseCount} pagamento${
+                    expenseCount > 1
+                        ? "s"
+                        : ""
+                }`;
+    }
+
+
+    if (savedCountElement) {
+
+        savedCountElement.textContent =
+            savedCount === 0
+                ? "Nenhum valor guardado"
+                : `${savedCount} valor${
+                    savedCount === 1
+                        ? ""
+                        : "es"
+                } guardado${
+                    savedCount === 1
+                        ? ""
+                        : "s"
+                }`;
+    }
+
+
+    /*
+        O orçamento continua considerando
+        somente despesas pagas.
+
+        Guardado NÃO consome orçamento.
+    */
 
     renderBudget(
         expense
@@ -992,7 +1094,7 @@ function getLastSixMonths() {
 
 
 // =====================================================
-// GRÁFICO ENTRADAS / DESPESAS
+// GRÁFICO ENTRADAS / DESPESAS / GUARDADO
 // =====================================================
 
 function renderBarChart() {
@@ -1002,63 +1104,75 @@ function renderBarChart() {
 
 
     const values =
-        periods.map(period => {
+        periods.map(
+            period => {
 
-            const periodTransactions =
-                appData.transactions.filter(
-                    transaction => {
+                const periodTransactions =
+                    appData.transactions.filter(
+                        transaction => {
 
-                        if (
-                            !transaction.date
-                        ) {
-                            return false;
-                        }
+                            if (
+                                !transaction.date
+                            ) {
+                                return false;
+                            }
 
 
-                        const date =
-                            new Date(
-                                `${transaction.date}T12:00:00`
+                            const date =
+                                new Date(
+                                    `${transaction.date}T12:00:00`
+                                );
+
+
+                            return (
+                                date.getMonth() ===
+                                    period.month &&
+
+                                date.getFullYear() ===
+                                    period.year &&
+
+                                transaction.status ===
+                                    "paid"
                             );
+                        }
+                    );
 
 
-                        return (
-                            date.getMonth() ===
-                                period.month &&
-
-                            date.getFullYear() ===
-                                period.year &&
-
-                            transaction.status ===
-                                "paid"
-                        );
-                    }
-                );
+                const income =
+                    sumTransactions(
+                        periodTransactions,
+                        transaction =>
+                            transaction.type ===
+                            "income"
+                    );
 
 
-            const income =
-                sumTransactions(
-                    periodTransactions,
-                    transaction =>
-                        transaction.type ===
-                        "income"
-                );
+                const expense =
+                    sumTransactions(
+                        periodTransactions,
+                        transaction =>
+                            transaction.type ===
+                            "expense"
+                    );
 
 
-            const expense =
-                sumTransactions(
-                    periodTransactions,
-                    transaction =>
-                        transaction.type ===
-                        "expense"
-                );
+                const saved =
+                    sumTransactions(
+                        periodTransactions,
+                        transaction =>
+                            transaction.type ===
+                            "saved"
+                    );
 
 
-            return {
-                ...period,
-                income,
-                expense
-            };
-        });
+                return {
+                    ...period,
+                    income,
+                    expense,
+                    saved
+                };
+            }
+        );
 
 
     const maximum =
@@ -1066,7 +1180,8 @@ function renderBarChart() {
             ...values.flatMap(
                 item => [
                     item.income,
-                    item.expense
+                    item.expense,
+                    item.saved
                 ]
             ),
             1
@@ -1074,62 +1189,92 @@ function renderBarChart() {
 
 
     const chart =
-        getElement("barChart");
+        getElement(
+            "barChart"
+        );
+
+
+    if (!chart) {
+        return;
+    }
 
 
     chart.innerHTML =
         values
-            .map(item => {
+            .map(
+                item => {
 
-                const incomeHeight =
-                    Math.max(
-                        (
-                            item.income /
-                            maximum
-                        ) * 90,
+                    const incomeHeight =
+                        Math.max(
+                            (
+                                item.income /
+                                maximum
+                            ) * 90,
 
-                        item.income > 0
-                            ? 3
-                            : 0
-                    );
-
-
-                const expenseHeight =
-                    Math.max(
-                        (
-                            item.expense /
-                            maximum
-                        ) * 90,
-
-                        item.expense > 0
-                            ? 3
-                            : 0
-                    );
+                            item.income > 0
+                                ? 3
+                                : 0
+                        );
 
 
-                return `
-                    <div class="bar-group">
+                    const expenseHeight =
+                        Math.max(
+                            (
+                                item.expense /
+                                maximum
+                            ) * 90,
 
-                        <div
-                            class="bar income"
-                            style="height: ${incomeHeight}%"
-                            title="Entradas: ${currency.format(item.income)}"
-                        ></div>
+                            item.expense > 0
+                                ? 3
+                                : 0
+                        );
 
-                        <div
-                            class="bar expense"
-                            style="height: ${expenseHeight}%"
-                            title="Despesas: ${currency.format(item.expense)}"
-                        ></div>
 
-                        <label>
-                            ${item.label}
-                        </label>
+                    const savedHeight =
+                        Math.max(
+                            (
+                                item.saved /
+                                maximum
+                            ) * 90,
 
-                    </div>
-                `;
+                            item.saved > 0
+                                ? 3
+                                : 0
+                        );
 
-            })
+
+                    return `
+                        <div class="bar-group">
+
+                            <div
+                                class="bar income"
+                                style="height: ${incomeHeight}%"
+                                title="Entradas: ${currency.format(item.income)}"
+                            ></div>
+
+
+                            <div
+                                class="bar expense"
+                                style="height: ${expenseHeight}%"
+                                title="Despesas: ${currency.format(item.expense)}"
+                            ></div>
+
+
+                            <div
+                                class="bar saved"
+                                style="height: ${savedHeight}%"
+                                title="Guardado: ${currency.format(item.saved)}"
+                            ></div>
+
+
+                            <label>
+                                ${item.label}
+                            </label>
+
+                        </div>
+                    `;
+                }
+            )
             .join("");
 }
 
@@ -1323,6 +1468,59 @@ function renderCategoryChart() {
 }
 
 
+function getTransactionTypeInfo(type) {
+
+    if (type === "income") {
+
+        return {
+            className:
+                "income",
+
+            icon:
+                "↗",
+
+            signal:
+                "+",
+
+            statusText:
+                "Recebido"
+        };
+    }
+
+
+    if (type === "saved") {
+
+        return {
+            className:
+                "saved",
+
+            icon:
+                "◆",
+
+            signal:
+                "",
+
+            statusText:
+                "Guardado"
+        };
+    }
+
+
+    return {
+        className:
+            "expense",
+
+        icon:
+            "↘",
+
+        signal:
+            "−",
+
+        statusText:
+            "Pago"
+    };
+}
+
 // =====================================================
 // MOVIMENTAÇÕES RECENTES
 // =====================================================
@@ -1341,7 +1539,10 @@ function renderRecentTransactions() {
                         first.date
                     )
             )
-            .slice(0, 5);
+            .slice(
+                0,
+                5
+            );
 
 
     const container =
@@ -1382,32 +1583,28 @@ function renderRecentTransactions() {
             .map(
                 transaction => {
 
-                    const isIncome =
-                        transaction.type ===
-                        "income";
+                    const typeInfo =
+                        getTransactionTypeInfo(
+                            transaction.type
+                        );
 
 
-                    const signal =
-                        isIncome
-                            ? "+"
-                            : "−";
+                    const statusText =
+                        transaction.status ===
+                        "pending"
+
+                            ? "Pendente"
+
+                            : typeInfo.statusText;
 
 
                     return `
                         <article class="transaction-item">
 
                             <div
-                                class="transaction-icon ${
-                                    isIncome
-                                        ? "income"
-                                        : "expense"
-                                }"
+                                class="transaction-icon ${typeInfo.className}"
                             >
-                                ${
-                                    isIncome
-                                        ? "↗"
-                                        : "↘"
-                                }
+                                ${typeInfo.icon}
                             </div>
 
 
@@ -1420,6 +1617,7 @@ function renderRecentTransactions() {
                                 </strong>
 
                                 <span>
+
                                     ${escapeHtml(
                                         transaction.category
                                     )}
@@ -1429,6 +1627,7 @@ function renderRecentTransactions() {
                                     ${escapeHtml(
                                         transaction.payment
                                     )}
+
                                 </span>
 
                             </div>
@@ -1437,33 +1636,20 @@ function renderRecentTransactions() {
                             <span
                                 class="transaction-status ${transaction.status}"
                             >
-
-                                ${
-                                    transaction.status ===
-                                    "paid"
-
-                                        ? isIncome
-                                            ? "Recebido"
-                                            : "Pago"
-
-                                        : "Pendente"
-                                }
-
+                                ${statusText}
                             </span>
 
 
                             <div
-                                class="transaction-amount ${
-                                    isIncome
-                                        ? "income"
-                                        : "expense"
-                                }"
+                                class="transaction-amount ${typeInfo.className}"
                             >
 
-                                ${signal}
+                                ${typeInfo.signal}
+
                                 ${currency.format(
                                     transaction.amount
                                 )}
+
 
                                 <span class="transaction-date">
 
@@ -1477,7 +1663,6 @@ function renderRecentTransactions() {
 
                         </article>
                     `;
-
                 }
             )
             .join("");

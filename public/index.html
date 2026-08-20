@@ -196,6 +196,26 @@
 
       <article class="summary-card">
         <div class="summary-card-top">
+          <div class="summary-icon saved-icon">
+            ◆
+          </div>
+
+          <span class="summary-status">
+            Guardado
+          </span>
+        </div>
+
+        <strong class="summary-value saved-value" id="savedValue">
+          R$ 0,00
+        </strong>
+
+        <p id="savedCount">
+          Nenhum valor guardado
+        </p>
+      </article>
+
+      <article class="summary-card">
+        <div class="summary-card-top">
           <div class="summary-icon pending-icon">
             !
           </div>
@@ -258,7 +278,7 @@
         <div class="card-header">
           <div>
             <span class="card-label">
-              Entradas e despesas
+              Entradas, despesas e guardado
             </span>
 
             <h2>
@@ -276,10 +296,15 @@
               <i class="legend-dot expense-dot"></i>
               Despesas
             </span>
+
+            <span>
+              <i class="legend-dot saved-dot"></i>
+              Guardado
+            </span>
           </div>
         </div>
 
-        <div class="bar-chart" id="barChart" aria-label="Gráfico de entradas e despesas"></div>
+        <div class="bar-chart" id="barChart" aria-label="Gráfico de entradas, despesas e valores guardados"></div>
       </article>
 
       <article class="content-card category-card">
@@ -368,7 +393,7 @@
           <strong>Nova movimentação</strong>
 
           <p>
-            Cadastre uma receita ou despesa.
+            Cadastre uma entrada, despesa ou valor guardado.
           </p>
         </button>
 
@@ -444,6 +469,7 @@
           <select id="transactionType">
             <option value="expense">Despesa</option>
             <option value="income">Entrada</option>
+            <option value="saved">Guardado</option>
           </select>
         </div>
 
@@ -485,7 +511,7 @@
           </label>
 
           <select id="status">
-            <option value="paid">Pago</option>
+            <option value="paid">Concluído</option>
             <option value="pending">Pendente</option>
           </select>
         </div>
