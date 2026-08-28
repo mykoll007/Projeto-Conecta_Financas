@@ -893,7 +893,7 @@ async function loadSummary() {
 
         savedCountElement.textContent =
             savedCount === 0
-                ? "Nenhum valor guardado"
+                ? "Nenhum valor reservado"
                 : `${savedCount} valor${
                     savedCount === 1
                         ? ""
@@ -1094,7 +1094,7 @@ function getLastSixMonths() {
 
 
 // =====================================================
-// GRÁFICO ENTRADAS / DESPESAS / GUARDADO
+// GRÁFICO ENTRADAS / DESPESAS / RESERVAS
 // =====================================================
 
 function renderBarChart() {
