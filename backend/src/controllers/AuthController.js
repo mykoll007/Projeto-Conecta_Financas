@@ -104,6 +104,11 @@ class AuthController {
                 },
                 {
                     usuario_id: usuarioId,
+                    nome: "Reservas",
+                    cor: "#2563eb"
+                },
+                {
+                    usuario_id: usuarioId,
                     nome: "Outros",
                     cor: "#95a19a"
                 }
