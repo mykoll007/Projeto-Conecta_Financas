@@ -11,19 +11,42 @@
   <link rel="stylesheet" href="css/movimentacoes.css">
 </head>
 
+
 <body>
+
+  <!-- =====================================================
+       TOPO
+  ====================================================== -->
+
   <header class="topbar">
+
     <div class="topbar-container">
+
       <a href="index.html" class="brand">
-        <div class="brand-icon">$</div>
+
+        <div class="brand-icon">
+          $
+        </div>
 
         <div class="brand-text">
-          <strong>Conecta Finanças</strong>
-          <span>Seu dinheiro, sem complicação</span>
+
+          <strong>
+            Conecta Finanças
+          </strong>
+
+          <span>
+            Seu dinheiro, sem complicação
+          </span>
+
         </div>
+
       </a>
 
+
+      <!-- MENU DESKTOP -->
+
       <nav class="desktop-nav">
+
         <a href="index.html" class="nav-link">
           Início
         </a>
@@ -39,33 +62,55 @@
         <a href="relatorios.html" class="nav-link">
           Relatórios
         </a>
+
       </nav>
 
+
+      <!-- AÇÕES TOPO -->
+
       <div class="topbar-actions">
+
         <button type="button" class="icon-button" id="themeToggle" aria-label="Alterar tema">
           ☾
         </button>
 
+
         <button type="button" class="primary-button" id="openTransaction">
           <span>＋</span>
+
           Nova movimentação
         </button>
 
+
+        <!-- PERFIL -->
+
         <div class="profile-menu">
+
           <button type="button" class="profile-button" id="profileButton">
+
             <span class="profile-avatar" id="profileAvatar">
               M
             </span>
 
             <span class="profile-info">
+
               <strong id="profileName"></strong>
-              <small>Minha conta</small>
+
+              <small>
+                Minha conta
+              </small>
+
             </span>
 
-            <span>⌄</span>
+            <span>
+              ⌄
+            </span>
+
           </button>
 
+
           <div class="profile-dropdown" id="profileDropdown">
+
             <a href="configuracoes.html">
               Configurações
             </a>
@@ -73,53 +118,484 @@
             <button type="button" id="logoutButton">
               Sair da conta
             </button>
+
           </div>
+
         </div>
+
 
         <button type="button" class="mobile-menu-button" id="mobileMenuButton">
           ☰
         </button>
+
       </div>
+
     </div>
 
+
+    <!-- MENU MOBILE -->
+
     <nav class="mobile-nav" id="mobileNav">
-      <a href="index.html">Início</a>
+
+      <a href="index.html">
+        Início
+      </a>
 
       <a href="movimentacoes.html" class="active">
         Movimentações
       </a>
 
-      <a href="fixos.html">Fixos mensais</a>
-      <a href="relatorios.html">Relatórios</a>
-      <a href="configuracoes.html">Configurações</a>
+      <a href="fixos.html">
+        Fixos mensais
+      </a>
+
+      <a href="relatorios.html">
+        Relatórios
+      </a>
+
+      <a href="configuracoes.html">
+        Configurações
+      </a>
+
     </nav>
+
   </header>
 
+
+  <!-- =====================================================
+       CONTEÚDO
+  ====================================================== -->
+
   <main class="page-container">
+
+
+    <!-- =====================================================
+         CABEÇALHO
+    ====================================================== -->
+
     <section class="page-header">
+
       <div>
+
         <span class="section-label">
           Controle financeiro
         </span>
 
-        <h1>Movimentações</h1>
+        <h1>
+          Movimentações
+        </h1>
 
         <p>
           Consulte, filtre e organize suas entradas, despesas
           e valores reservados.
         </p>
+
       </div>
 
+
       <button type="button" class="primary-button header-button" id="headerAddButton">
-        <span>＋</span>
+
+        <span>
+          ＋
+        </span>
+
         Nova movimentação
+
       </button>
+
     </section>
+
+    <!-- =====================================================
+     FILTROS
+====================================================== -->
+
+    <section class="filters-card filters-collapsible">
+
+      <!-- CABEÇALHO CLICÁVEL -->
+      <div class="filters-header filters-toggle-area" id="toggleFilters" role="button" tabindex="0"
+        aria-expanded="false" aria-controls="filtersContent">
+
+        <div>
+
+          <span class="card-label">
+            Filtros
+          </span>
+
+          <h2>
+            Encontre uma movimentação
+          </h2>
+
+        </div>
+
+
+        <div class="filters-header-actions">
+
+          <button type="button" class="clear-button" id="clearFilters">
+            Limpar filtros
+          </button>
+
+          <span class="filter-toggle-icon" id="filterToggleIcon" aria-hidden="true"></span>
+
+        </div>
+
+      </div>
+
+
+      <!-- CONTEÚDO QUE ABRE E FECHA -->
+      <div class="filters-content" id="filtersContent" hidden>
+
+        <div class="filters-grid">
+
+          <!-- TIPO -->
+
+          <div class="filter-field">
+
+            <label for="typeFilter">
+              Tipo
+            </label>
+
+            <select id="typeFilter">
+
+              <option value="all">
+                Todos
+              </option>
+
+              <option value="income">
+                Entradas
+              </option>
+
+              <option value="expense">
+                Despesas
+              </option>
+
+              <option value="saved">
+                Reservas
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- STATUS -->
+
+          <div class="filter-field">
+
+            <label for="statusFilter">
+              Status
+            </label>
+
+            <select id="statusFilter">
+
+              <option value="all">
+                Todos
+              </option>
+
+              <option value="paid">
+                Concluído
+              </option>
+
+              <option value="pending">
+                Pendente
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- CATEGORIA -->
+
+          <div class="filter-field">
+
+            <label for="categoryFilter">
+              Categoria
+            </label>
+
+            <select id="categoryFilter">
+
+              <option value="all">
+                Todas
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- MÊS -->
+
+          <div class="filter-field">
+
+            <label for="monthFilter">
+              Mês
+            </label>
+
+            <select id="monthFilter">
+
+              <option value="all">Todos</option>
+              <option value="0">Janeiro</option>
+              <option value="1">Fevereiro</option>
+              <option value="2">Março</option>
+              <option value="3">Abril</option>
+              <option value="4">Maio</option>
+              <option value="5">Junho</option>
+              <option value="6">Julho</option>
+              <option value="7">Agosto</option>
+              <option value="8">Setembro</option>
+              <option value="9">Outubro</option>
+              <option value="10">Novembro</option>
+              <option value="11">Dezembro</option>
+
+            </select>
+
+          </div>
+
+
+          <!-- ANO -->
+
+          <div class="filter-field">
+
+            <label for="yearFilter">
+              Ano
+            </label>
+
+            <select id="yearFilter">
+
+              <option value="all">
+                Todos
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- ORDENAR -->
+
+          <div class="filter-field">
+
+            <label for="orderFilter">
+              Ordenar por
+            </label>
+
+            <select id="orderFilter">
+
+              <option value="newest">
+                Mais recentes
+              </option>
+
+              <option value="oldest">
+                Mais antigas
+              </option>
+
+              <option value="highest">
+                Maior valor
+              </option>
+
+              <option value="lowest">
+                Menor valor
+              </option>
+
+              <option value="description">
+                Descrição
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+     <!-- =====================================================
+     HISTÓRICO
+====================================================== -->
+
+<section class="transactions-card transactions-collapsible">
+
+  <!-- CABEÇALHO CLICÁVEL -->
+  <div
+    class="transactions-toggle-area"
+    id="toggleHistory"
+    role="button"
+    tabindex="0"
+    aria-expanded="false"
+    aria-controls="historyContent"
+  >
+
+    <div>
+
+      <span class="card-label">
+        Histórico
+      </span>
+
+      <h2>
+        Todas as movimentações
+      </h2>
+
+      <p id="resultsText">
+        0 movimentações encontradas
+      </p>
+
+    </div>
+
+
+    <div class="transactions-header-actions">
+
+      <button
+        type="button"
+        class="secondary-button"
+        id="exportButton"
+      >
+        Exportar CSV
+      </button>
+
+
+      <span
+        class="history-toggle-icon"
+        id="historyToggleIcon"
+        aria-hidden="true"
+      ></span>
+
+    </div>
+
+  </div>
+
+
+  <!-- CONTEÚDO DO ACCORDION -->
+  <div
+    class="history-content"
+    id="historyContent"
+    hidden
+  >
+
+    <!-- PESQUISA -->
+
+    <div class="transactions-search">
+
+      <div class="search-container">
+
+        <span>
+          ⌕
+        </span>
+
+        <input
+          type="search"
+          id="searchInput"
+          placeholder="Pesquisar por descrição, categoria ou pagamento..."
+        >
+
+      </div>
+
+    </div>
+
+
+    <!-- TABELA DESKTOP -->
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Movimentação
+            </th>
+
+            <th>
+              Categoria
+            </th>
+
+            <th>
+              Data
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Valor
+            </th>
+
+            <th>
+              Ações
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody id="transactionsBody"></tbody>
+
+      </table>
+
+    </div>
+
+
+    <!-- MOBILE -->
+
+    <div
+      class="mobile-transactions"
+      id="mobileTransactions"
+    ></div>
+
+
+    <!-- VAZIO -->
+
+    <div
+      class="empty-state"
+      id="emptyState"
+      hidden
+    >
+
+      <div class="empty-icon">
+        ↔
+      </div>
+
+      <strong>
+        Nenhuma movimentação encontrada
+      </strong>
+
+      <p>
+        Altere os filtros ou adicione uma nova movimentação.
+      </p>
+
+      <button
+        type="button"
+        class="primary-button"
+        id="emptyAddButton"
+      >
+        Adicionar movimentação
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+    <!-- =====================================================
+         RESUMO
+    ====================================================== -->
 
     <section class="summary-grid">
 
+
+      <!-- ENTRADAS -->
+
       <article class="summary-card">
-        <span>Total de entradas</span>
+
+        <span>
+          Total de entradas
+        </span>
 
         <strong class="income-text" id="summaryIncome">
           R$ 0,00
@@ -128,11 +604,17 @@
         <small id="summaryIncomeCount">
           0 recebimentos
         </small>
+
       </article>
 
 
+      <!-- DESPESAS -->
+
       <article class="summary-card">
-        <span>Total de despesas</span>
+
+        <span>
+          Total de despesas
+        </span>
 
         <strong class="expense-text" id="summaryExpense">
           R$ 0,00
@@ -141,24 +623,36 @@
         <small id="summaryExpenseCount">
           0 pagamentos
         </small>
+
       </article>
 
 
+      <!-- RESERVAS -->
+
       <article class="summary-card">
-        <span>Total reservado</span>
+
+        <span>
+          Total reservado
+        </span>
 
         <strong class="saved-text" id="summarySaved">
           R$ 0,00
         </strong>
 
         <small id="summarySavedCount">
-          0 movimentações
+          0 valores reservados
         </small>
+
       </article>
 
 
+      <!-- PENDENTES -->
+
       <article class="summary-card">
-        <span>Contas pendentes</span>
+
+        <span>
+          Contas pendentes
+        </span>
 
         <strong class="warning-text" id="summaryPending">
           R$ 0,00
@@ -167,176 +661,45 @@
         <small id="summaryPendingCount">
           0 pendências
         </small>
+
       </article>
 
 
+      <!-- SALDO -->
+
       <article class="summary-card balance-card">
-        <span>Saldo disponível</span>
+
+        <span>
+          Saldo disponível
+        </span>
 
         <strong id="summaryBalance">
           R$ 0,00
         </strong>
 
         <small>
-          Entradas menos despesas e valores reservados
+          Entradas menos despesas pagas
         </small>
+
       </article>
 
     </section>
 
-    <section class="filters-card">
-      <div class="filters-header">
-        <div>
-          <span class="card-label">Filtros</span>
-
-          <h2>Encontre uma movimentação</h2>
-        </div>
-
-        <button type="button" class="clear-button" id="clearFilters">
-          Limpar filtros
-        </button>
-      </div>
-
-      <div class="filters-grid">
-        <div class="search-field">
-          <label for="searchInput">Pesquisar</label>
-
-          <div class="search-container">
-            <span>⌕</span>
-
-            <input type="search" id="searchInput" placeholder="Descrição, categoria ou pagamento">
-          </div>
-        </div>
-
-        <div class="filter-field">
-          <label for="typeFilter">Tipo</label>
-
-          <select id="typeFilter">
-            <option value="all">Todos</option>
-            <option value="income">Entradas</option>
-            <option value="expense">Despesas</option>
-            <option value="saved">Reservas</option>
-          </select>
-        </div>
-
-        <div class="filter-field">
-          <label for="statusFilter">Status</label>
-
-          <select id="statusFilter">
-            <option value="all">Todos</option>
-            <option value="paid">Concluído</option>
-            <option value="pending">Pendente</option>
-          </select>
-        </div>
-
-        <div class="filter-field">
-          <label for="categoryFilter">Categoria</label>
-
-          <select id="categoryFilter">
-            <option value="all">Todas</option>
-          </select>
-        </div>
-
-        <div class="filter-field">
-          <label for="monthFilter">Mês</label>
-
-          <select id="monthFilter">
-            <option value="all">Todos</option>
-            <option value="0">Janeiro</option>
-            <option value="1">Fevereiro</option>
-            <option value="2">Março</option>
-            <option value="3">Abril</option>
-            <option value="4">Maio</option>
-            <option value="5">Junho</option>
-            <option value="6">Julho</option>
-            <option value="7">Agosto</option>
-            <option value="8">Setembro</option>
-            <option value="9">Outubro</option>
-            <option value="10">Novembro</option>
-            <option value="11">Dezembro</option>
-          </select>
-        </div>
-
-        <div class="filter-field">
-          <label for="yearFilter">Ano</label>
-
-          <select id="yearFilter">
-            <option value="all">Todos</option>
-          </select>
-        </div>
-
-        <div class="filter-field">
-          <label for="orderFilter">Ordenar por</label>
-
-          <select id="orderFilter">
-            <option value="newest">Mais recentes</option>
-            <option value="oldest">Mais antigas</option>
-            <option value="highest">Maior valor</option>
-            <option value="lowest">Menor valor</option>
-            <option value="description">Descrição</option>
-          </select>
-        </div>
-      </div>
-    </section>
-
-    <section class="transactions-card">
-      <div class="transactions-header">
-        <div>
-          <span class="card-label">
-            Histórico
-          </span>
-
-          <h2>Todas as movimentações</h2>
-
-          <p id="resultsText">
-            0 movimentações encontradas
-          </p>
-        </div>
-
-        <button type="button" class="secondary-button" id="exportButton">
-          Exportar CSV
-        </button>
-      </div>
-
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Movimentação</th>
-              <th>Categoria</th>
-              <th>Data</th>
-              <th>Status</th>
-              <th>Valor</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-
-          <tbody id="transactionsBody"></tbody>
-        </table>
-      </div>
-
-      <div class="mobile-transactions" id="mobileTransactions"></div>
-
-      <div class="empty-state" id="emptyState" hidden>
-        <div class="empty-icon">↔</div>
-
-        <strong>Nenhuma movimentação encontrada</strong>
-
-        <p>
-          Altere os filtros ou adicione uma nova movimentação.
-        </p>
-
-        <button type="button" class="primary-button" id="emptyAddButton">
-          Adicionar movimentação
-        </button>
-      </div>
-    </section>
   </main>
 
+
+  <!-- =====================================================
+       MODAL MOVIMENTAÇÃO
+  ====================================================== -->
+
   <dialog class="modal" id="transactionModal">
+
     <form class="modal-card" id="transactionForm">
+
       <div class="modal-header">
+
         <div>
+
           <span class="card-label" id="modalLabel">
             Novo lançamento
           </span>
@@ -344,80 +707,179 @@
           <h2 id="modalTitle">
             Adicionar movimentação
           </h2>
+
         </div>
 
-        <button type="button" class="modal-close" data-close-modal="transactionModal">
+
+        <button type="button" class="modal-close" data-close-modal="transactionModal" aria-label="Fechar">
           ×
         </button>
+
       </div>
+
 
       <input type="hidden" id="transactionId">
 
+
       <div class="form-grid">
+
+
+        <!-- DESCRIÇÃO -->
+
         <div class="form-group full-width">
-          <label for="description">Descrição</label>
+
+          <label for="description">
+            Descrição
+          </label>
 
           <input type="text" id="description" placeholder="Ex.: Supermercado" required>
+
         </div>
 
+
+        <!-- TIPO -->
+
         <div class="form-group">
-          <label for="transactionType">Tipo</label>
+
+          <label for="transactionType">
+            Tipo
+          </label>
 
           <select id="transactionType">
-            <option value="expense">Despesa</option>
-            <option value="income">Entrada</option>
-            <option value="saved">Reservas</option>
+
+            <option value="expense">
+              Despesa
+            </option>
+
+            <option value="income">
+              Entrada
+            </option>
+
+            <option value="saved">
+              Reserva
+            </option>
+
           </select>
+
         </div>
 
+
+        <!-- VALOR -->
+
         <div class="form-group">
-          <label for="amount">Valor</label>
+
+          <label for="amount">
+            Valor
+          </label>
 
           <input type="text" id="amount" inputmode="numeric" placeholder="0,00" autocomplete="off" required>
+
         </div>
 
-        <div class="form-group">
-          <label for="category">Categoria</label>
 
-          <select id="category"></select>
+        <!-- CATEGORIA -->
+
+        <div class="form-group">
+
+          <label for="category">
+            Categoria
+          </label>
+
+          <select id="category">
+
+            <option value="">
+              Carregando categorias...
+            </option>
+
+          </select>
+
+
+          <button type="button" class="add-category-inline" id="openCategoryModal">
+            ＋ Adicionar categoria
+          </button>
+
         </div>
 
+
+        <!-- DATA -->
+
         <div class="form-group">
-          <label for="date">Data</label>
+
+          <label for="date">
+            Data
+          </label>
 
           <input type="date" id="date" required>
+
         </div>
 
+
+        <!-- STATUS -->
+
         <div class="form-group">
-          <label for="status">Status</label>
+
+          <label for="status">
+            Status
+          </label>
 
           <select id="status">
-            <option value="paid">Concluído</option>
-            <option value="pending">Pendente</option>
+
+            <option value="paid">
+              Concluído
+            </option>
+
+            <option value="pending">
+              Pendente
+            </option>
+
           </select>
+
         </div>
 
+
+        <!-- FORMA DE PAGAMENTO -->
+
         <div class="form-group">
+
           <label for="payment">
             Forma de pagamento
           </label>
 
           <select id="payment">
-            <option value="Pix">Pix</option>
+
+            <option value="Pix">
+              Pix
+            </option>
+
             <option value="Cartão de crédito">
               Cartão de crédito
             </option>
+
             <option value="Cartão de débito">
               Cartão de débito
             </option>
-            <option value="Dinheiro">Dinheiro</option>
-            <option value="Boleto">Boleto</option>
-            <option value="Transferência">Transferência</option>
+
+            <option value="Dinheiro">
+              Dinheiro
+            </option>
+
+            <option value="Boleto">
+              Boleto
+            </option>
+
+            <option value="Transferência">
+              Transferência
+            </option>
+
           </select>
+
         </div>
+
       </div>
 
+
       <div class="modal-actions">
+
         <button type="button" class="secondary-button" data-close-modal="transactionModal">
           Cancelar
         </button>
@@ -425,36 +887,137 @@
         <button type="submit" class="primary-button">
           Salvar movimentação
         </button>
+
       </div>
+
     </form>
+
   </dialog>
 
-  <dialog class="modal delete-modal" id="deleteModal">
-    <div class="modal-card small-modal">
-      <div class="delete-icon">!</div>
 
-      <h2>Excluir movimentação?</h2>
+  <!-- =====================================================
+       MODAL NOVA CATEGORIA
+  ====================================================== -->
 
-      <p>
-        Essa ação não poderá ser desfeita. A movimentação será
-        removida permanentemente.
-      </p>
+  <dialog class="modal" id="categoryModal">
+
+    <form class="modal-card small-modal" id="categoryForm">
+
+      <div class="modal-header">
+
+        <div>
+
+          <span class="card-label">
+            Categoria
+          </span>
+
+          <h2>
+            Nova categoria
+          </h2>
+
+        </div>
+
+
+        <button type="button" class="modal-close" data-close-modal="categoryModal" aria-label="Fechar">
+          ×
+        </button>
+
+      </div>
+
+
+      <!-- NOME -->
+
+      <div class="form-group">
+
+        <label for="newCategoryName">
+          Nome da categoria
+        </label>
+
+        <input type="text" id="newCategoryName" placeholder="Ex.: Viagem" maxlength="80" required>
+
+      </div>
+
+
+      <!-- COR -->
+
+      <div class="form-group">
+
+        <label for="newCategoryColor">
+          Cor
+        </label>
+
+        <input type="color" id="newCategoryColor" value="#168a52">
+
+      </div>
+
 
       <div class="modal-actions">
+
+        <button type="button" class="secondary-button" data-close-modal="categoryModal">
+          Cancelar
+        </button>
+
+
+        <button type="submit" class="primary-button">
+          Adicionar categoria
+        </button>
+
+      </div>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- =====================================================
+       MODAL EXCLUIR
+  ====================================================== -->
+
+  <dialog class="modal delete-modal" id="deleteModal">
+
+    <div class="modal-card small-modal">
+
+      <div class="delete-icon">
+        !
+      </div>
+
+      <h2>
+        Excluir movimentação?
+      </h2>
+
+      <p>
+        Essa ação não poderá ser desfeita.
+        A movimentação será removida permanentemente.
+      </p>
+
+
+      <div class="modal-actions">
+
         <button type="button" class="secondary-button" data-close-modal="deleteModal">
           Cancelar
         </button>
 
+
         <button type="button" class="danger-button" id="confirmDelete">
           Excluir
         </button>
+
       </div>
+
     </div>
+
   </dialog>
+
+
+  <!-- =====================================================
+       TOAST
+  ====================================================== -->
 
   <div class="toast" id="toast"></div>
 
+
   <script src="js/movimentacoes.js"></script>
+
 </body>
 
 </html>

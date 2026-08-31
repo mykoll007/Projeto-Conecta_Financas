@@ -610,6 +610,255 @@ function renderCategorySelect() {
             .join("");
 }
 
+// =====================================================
+// MODAL DE CATEGORIA
+// =====================================================
+
+function openCategoryModal() {
+
+    const modal =
+        getElement(
+            "categoryModal"
+        );
+
+    const form =
+        getElement(
+            "categoryForm"
+        );
+
+
+    if (
+        !modal ||
+        !form
+    ) {
+        return;
+    }
+
+
+    form.reset();
+
+
+    const colorInput =
+        getElement(
+            "newCategoryColor"
+        );
+
+
+    if (colorInput) {
+
+        colorInput.value =
+            "#168a52";
+    }
+
+
+    modal.showModal();
+
+
+    window.setTimeout(
+        () => {
+
+            getElement(
+                "newCategoryName"
+            )?.focus();
+
+        },
+        100
+    );
+}
+
+
+// =====================================================
+// SALVAR CATEGORIA
+// =====================================================
+
+async function saveCategory(event) {
+
+    event.preventDefault();
+
+
+    const name =
+        getElement(
+            "newCategoryName"
+        )?.value.trim();
+
+
+    const color =
+        getElement(
+            "newCategoryColor"
+        )?.value ||
+        "#168a52";
+
+
+    // =========================
+    // VALIDAÇÕES
+    // =========================
+
+    if (!name) {
+
+        showToast(
+            "Informe o nome da categoria."
+        );
+
+        return;
+    }
+
+
+    const duplicate =
+        appData.categories.some(
+            category => {
+
+                return (
+                    String(
+                        category.nome
+                    )
+                        .trim()
+                        .toLowerCase() ===
+                    name.toLowerCase()
+                );
+            }
+        );
+
+
+    if (duplicate) {
+
+        showToast(
+            "Essa categoria já existe."
+        );
+
+        return;
+    }
+
+
+    const form =
+        getElement(
+            "categoryForm"
+        );
+
+
+    const saveButton =
+        form?.querySelector(
+            'button[type="submit"]'
+        );
+
+
+    try {
+
+        if (saveButton) {
+
+            saveButton.disabled =
+                true;
+
+            saveButton.textContent =
+                "Adicionando...";
+        }
+
+
+        // =========================
+        // CRIAR NA API
+        // =========================
+
+        const result =
+            await apiRequest(
+                "/categorias",
+                {
+                    method: "POST",
+
+                    body:
+                        JSON.stringify({
+                            nome: name,
+                            cor: color
+                        })
+                }
+            );
+
+
+        // =========================
+        // FECHAR MODAL
+        // =========================
+
+        closeModal(
+            "categoryModal"
+        );
+
+
+        // =========================
+        // RECARREGAR CATEGORIAS
+        // =========================
+
+        await loadCategories();
+
+
+        // =========================
+        // SELECIONAR A NOVA
+        // =========================
+
+        const createdCategory =
+            appData.categories.find(
+                category => {
+
+                    return (
+                        String(
+                            category.nome
+                        )
+                            .trim()
+                            .toLowerCase() ===
+                        name.toLowerCase()
+                    );
+                }
+            );
+
+
+        if (createdCategory) {
+
+            const categorySelect =
+                getElement(
+                    "category"
+                );
+
+
+            if (categorySelect) {
+
+                categorySelect.value =
+                    String(
+                        createdCategory.id
+                    );
+            }
+        }
+
+
+        showToast(
+            result?.message ||
+            "Categoria adicionada com sucesso."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao criar categoria:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Erro ao criar categoria."
+        );
+
+
+    } finally {
+
+        if (saveButton) {
+
+            saveButton.disabled =
+                false;
+
+            saveButton.textContent =
+                "Adicionar categoria";
+        }
+    }
+}
+
 
 // =====================================================
 // CARREGAR MOVIMENTAÇÕES
@@ -868,10 +1117,9 @@ async function loadSummary() {
         incomeCountElement.textContent =
             incomeCount === 0
                 ? "Nenhum recebimento"
-                : `${incomeCount} recebimento${
-                    incomeCount > 1
-                        ? "s"
-                        : ""
+                : `${incomeCount} recebimento${incomeCount > 1
+                    ? "s"
+                    : ""
                 }`;
     }
 
@@ -881,10 +1129,9 @@ async function loadSummary() {
         expenseCountElement.textContent =
             expenseCount === 0
                 ? "Nenhum pagamento"
-                : `${expenseCount} pagamento${
-                    expenseCount > 1
-                        ? "s"
-                        : ""
+                : `${expenseCount} pagamento${expenseCount > 1
+                    ? "s"
+                    : ""
                 }`;
     }
 
@@ -894,14 +1141,12 @@ async function loadSummary() {
         savedCountElement.textContent =
             savedCount === 0
                 ? "Nenhum valor reservado"
-                : `${savedCount} valor${
-                    savedCount === 1
-                        ? ""
-                        : "es"
-                } guardado${
-                    savedCount === 1
-                        ? ""
-                        : "s"
+                : `${savedCount} valor${savedCount === 1
+                    ? ""
+                    : "es"
+                } guardado${savedCount === 1
+                    ? ""
+                    : "s"
                 }`;
     }
 
@@ -1034,9 +1279,9 @@ function isInSelectedPeriod(
 
     return (
         date.getMonth() ===
-            selectedMonth &&
+        selectedMonth &&
         date.getFullYear() ===
-            selectedYear
+        selectedYear
     );
 }
 
@@ -1126,13 +1371,13 @@ function renderBarChart() {
 
                             return (
                                 date.getMonth() ===
-                                    period.month &&
+                                period.month &&
 
                                 date.getFullYear() ===
-                                    period.year &&
+                                period.year &&
 
                                 transaction.status ===
-                                    "paid"
+                                "paid"
                             );
                         }
                     );
@@ -1291,10 +1536,10 @@ function renderCategoryChart() {
                 transaction =>
 
                     transaction.type ===
-                        "expense" &&
+                    "expense" &&
 
                     transaction.status ===
-                        "paid"
+                    "paid"
             );
 
 
@@ -1591,7 +1836,7 @@ function renderRecentTransactions() {
 
                     const statusText =
                         transaction.status ===
-                        "pending"
+                            "pending"
 
                             ? "Pendente"
 
@@ -1612,21 +1857,21 @@ function renderRecentTransactions() {
 
                                 <strong>
                                     ${escapeHtml(
-                                        transaction.description
-                                    )}
+                        transaction.description
+                    )}
                                 </strong>
 
                                 <span>
 
                                     ${escapeHtml(
-                                        transaction.category
-                                    )}
+                        transaction.category
+                    )}
 
                                     ·
 
                                     ${escapeHtml(
-                                        transaction.payment
-                                    )}
+                        transaction.payment
+                    )}
 
                                 </span>
 
@@ -1647,15 +1892,15 @@ function renderRecentTransactions() {
                                 ${typeInfo.signal}
 
                                 ${currency.format(
-                                    transaction.amount
-                                )}
+                        transaction.amount
+                    )}
 
 
                                 <span class="transaction-date">
 
                                     ${formatDate(
-                                        transaction.date
-                                    )}
+                        transaction.date
+                    )}
 
                                 </span>
 
@@ -2577,16 +2822,16 @@ function setupModalClosing() {
 
                         const clickedOutside =
                             event.clientX <
-                                rectangle.left ||
+                            rectangle.left ||
 
                             event.clientX >
-                                rectangle.right ||
+                            rectangle.right ||
 
                             event.clientY <
-                                rectangle.top ||
+                            rectangle.top ||
 
                             event.clientY >
-                                rectangle.bottom;
+                            rectangle.bottom;
 
 
                         if (
@@ -2632,7 +2877,16 @@ function setupEvents() {
         getElement(
             "editBudget"
         );
+    const openCategoryButton =
+        getElement(
+            "openCategoryModal"
+        );
 
+
+    const categoryForm =
+        getElement(
+            "categoryForm"
+        );
 
     const budgetForm =
         getElement(
@@ -2680,6 +2934,22 @@ function setupEvents() {
             openBudgetModal
         );
     }
+    if (openCategoryButton) {
+
+    openCategoryButton.addEventListener(
+        "click",
+        openCategoryModal
+    );
+}
+
+
+if (categoryForm) {
+
+    categoryForm.addEventListener(
+        "submit",
+        saveCategory
+    );
+}
 
 
     if (budgetForm) {

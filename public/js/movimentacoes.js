@@ -599,6 +599,266 @@ function renderCategoryOptions() {
     }
 }
 
+// =====================================================
+// MODAL NOVA CATEGORIA
+// =====================================================
+
+function openCategoryModal() {
+
+    const modal =
+        getElement(
+            "categoryModal"
+        );
+
+
+    const form =
+        getElement(
+            "categoryForm"
+        );
+
+
+    if (
+        !modal ||
+        !form
+    ) {
+        return;
+    }
+
+
+    form.reset();
+
+
+    const colorInput =
+        getElement(
+            "newCategoryColor"
+        );
+
+
+    if (colorInput) {
+
+        colorInput.value =
+            "#168a52";
+    }
+
+
+    modal.showModal();
+
+
+    window.setTimeout(
+        () => {
+
+            getElement(
+                "newCategoryName"
+            )?.focus();
+
+        },
+        100
+    );
+}
+
+
+// =====================================================
+// SALVAR NOVA CATEGORIA
+// =====================================================
+
+async function saveCategory(event) {
+
+    event.preventDefault();
+
+
+    const name =
+        getElement(
+            "newCategoryName"
+        )?.value.trim();
+
+
+    const color =
+        getElement(
+            "newCategoryColor"
+        )?.value ||
+        "#168a52";
+
+
+    // =========================
+    // VALIDAR NOME
+    // =========================
+
+    if (!name) {
+
+        showToast(
+            "Informe o nome da categoria."
+        );
+
+        return;
+    }
+
+
+    // =========================
+    // VERIFICAR DUPLICADA
+    // =========================
+
+    const duplicate =
+        appData.categories.some(
+            category => {
+
+                return (
+                    String(
+                        category.nome
+                    )
+                        .trim()
+                        .toLowerCase() ===
+                    name.toLowerCase()
+                );
+            }
+        );
+
+
+    if (duplicate) {
+
+        showToast(
+            "Essa categoria já existe."
+        );
+
+        return;
+    }
+
+
+    const form =
+        getElement(
+            "categoryForm"
+        );
+
+
+    const submitButton =
+        form?.querySelector(
+            'button[type="submit"]'
+        );
+
+
+    try {
+
+        if (submitButton) {
+
+            submitButton.disabled =
+                true;
+
+
+            submitButton.textContent =
+                "Adicionando...";
+        }
+
+
+        // =========================
+        // CRIAR NA API
+        // =========================
+
+        const resultado =
+            await apiRequest(
+                "/categorias",
+                {
+                    method:
+                        "POST",
+
+                    body:
+                        JSON.stringify({
+                            nome:
+                                name,
+
+                            cor:
+                                color
+                        })
+                }
+            );
+
+
+        // =========================
+        // FECHAR MODAL
+        // =========================
+
+        getElement(
+            "categoryModal"
+        ).close();
+
+
+        // =========================
+        // RECARREGAR CATEGORIAS
+        // =========================
+
+        await loadCategories();
+
+
+        // =========================
+        // SELECIONAR A CATEGORIA
+        // RECÉM-CRIADA
+        // =========================
+
+        const createdCategory =
+            appData.categories.find(
+                category => {
+
+                    return (
+                        String(
+                            category.nome
+                        )
+                            .trim()
+                            .toLowerCase() ===
+                        name.toLowerCase()
+                    );
+                }
+            );
+
+
+        if (createdCategory) {
+
+            const categorySelect =
+                getElement(
+                    "category"
+                );
+
+
+            if (categorySelect) {
+
+                categorySelect.value =
+                    String(
+                        createdCategory.id
+                    );
+            }
+        }
+
+
+        showToast(
+            resultado?.message ||
+            "Categoria adicionada com sucesso."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao criar categoria:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Erro ao criar categoria."
+        );
+
+
+    } finally {
+
+        if (submitButton) {
+
+            submitButton.disabled =
+                false;
+
+
+            submitButton.textContent =
+                "Adicionar categoria";
+        }
+    }
+}
 
 // =====================================================
 // CARREGAR MOVIMENTAÇÕES
@@ -2484,6 +2744,137 @@ function setupTheme() {
     );
 }
 
+// =====================================================
+// ABRIR / FECHAR FILTROS
+// =====================================================
+
+function toggleFiltersSection() {
+
+    const button =
+        getElement(
+            "toggleFilters"
+        );
+
+
+    const content =
+        getElement(
+            "filtersContent"
+        );
+
+
+    const text =
+        getElement(
+            "toggleFiltersText"
+        );
+
+
+    if (
+        !button ||
+        !content
+    ) {
+        return;
+    }
+
+
+    const isOpen =
+        !content.hidden;
+
+
+    if (isOpen) {
+
+        content.hidden =
+            true;
+
+
+        button.classList.remove(
+            "active"
+        );
+
+
+        button.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+
+        if (text) {
+
+            text.textContent =
+                "Abrir filtros";
+        }
+
+
+    } else {
+
+        content.hidden =
+            false;
+
+
+        button.classList.add(
+            "active"
+        );
+
+
+        button.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+
+
+        if (text) {
+
+            text.textContent =
+                "Fechar filtros";
+        }
+    }
+}
+
+// =====================================================
+// ABRIR / FECHAR HISTÓRICO
+// =====================================================
+
+function toggleHistorySection() {
+
+    const header =
+        getElement(
+            "toggleHistory"
+        );
+
+
+    const content =
+        getElement(
+            "historyContent"
+        );
+
+
+    if (
+        !header ||
+        !content
+    ) {
+        return;
+    }
+
+
+    const isOpen =
+        !content.hidden;
+
+
+    content.hidden =
+        isOpen;
+
+
+    header.classList.toggle(
+        "active",
+        !isOpen
+    );
+
+
+    header.setAttribute(
+        "aria-expanded",
+        String(!isOpen)
+    );
+}
+
 
 // =====================================================
 // MENU MOBILE
@@ -2592,6 +2983,11 @@ function setupEvents() {
 
     setupMoneyInput();
 
+
+    // =========================
+    // MOVIMENTAÇÃO
+    // =========================
+
     const openTransaction =
         getElement(
             "openTransaction"
@@ -2616,17 +3012,59 @@ function setupEvents() {
         );
 
 
+    // =========================
+    // CATEGORIA
+    // =========================
+
+    const openCategoryButton =
+        getElement(
+            "openCategoryModal"
+        );
+
+
+    const categoryForm =
+        getElement(
+            "categoryForm"
+        );
+
+
+    // =========================
+    // EXCLUSÃO
+    // =========================
+
     const confirmDelete =
         getElement(
             "confirmDelete"
         );
 
 
+    // =========================
+    // FILTROS
+    // =========================
+
     const clearFiltersButton =
         getElement(
             "clearFilters"
         );
 
+        const toggleFilters =
+    getElement(
+        "toggleFilters"
+    );
+
+    // =========================
+    // HISTORICO
+    // =========================
+
+    const toggleHistory =
+    getElement(
+        "toggleHistory"
+    );
+
+
+    // =========================
+    // EXPORTAÇÃO
+    // =========================
 
     const exportButton =
         getElement(
@@ -2634,11 +3072,19 @@ function setupEvents() {
         );
 
 
+    // =========================
+    // LOGOUT
+    // =========================
+
     const logoutButton =
         getElement(
             "logoutButton"
         );
 
+
+    // =====================================================
+    // ABRIR NOVA MOVIMENTAÇÃO
+    // =====================================================
 
     if (openTransaction) {
 
@@ -2667,6 +3113,10 @@ function setupEvents() {
     }
 
 
+    // =====================================================
+    // SALVAR MOVIMENTAÇÃO
+    // =====================================================
+
     if (transactionForm) {
 
         transactionForm.addEventListener(
@@ -2675,6 +3125,32 @@ function setupEvents() {
         );
     }
 
+
+    // =====================================================
+    // NOVA CATEGORIA
+    // =====================================================
+
+    if (openCategoryButton) {
+
+        openCategoryButton.addEventListener(
+            "click",
+            openCategoryModal
+        );
+    }
+
+
+    if (categoryForm) {
+
+        categoryForm.addEventListener(
+            "submit",
+            saveCategory
+        );
+    }
+
+
+    // =====================================================
+    // EXCLUIR
+    // =====================================================
 
     if (confirmDelete) {
 
@@ -2685,6 +3161,10 @@ function setupEvents() {
     }
 
 
+    // =====================================================
+    // LIMPAR FILTROS
+    // =====================================================
+
     if (clearFiltersButton) {
 
         clearFiltersButton.addEventListener(
@@ -2694,6 +3174,92 @@ function setupEvents() {
     }
 
 
+ if (toggleFilters) {
+
+    toggleFilters.addEventListener(
+        "click",
+        event => {
+
+            /*
+                Se clicar em Limpar filtros,
+                não abre nem fecha o accordion.
+            */
+
+            if (
+                event.target.closest(
+                    "#clearFilters"
+                )
+            ) {
+                return;
+            }
+
+
+            toggleFiltersSection();
+        }
+    );
+
+
+    toggleFilters.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Enter" ||
+                event.key === " "
+            ) {
+
+                event.preventDefault();
+
+                toggleFiltersSection();
+            }
+        }
+    );
+}
+
+// =====================================================
+// ACCORDION HISTÓRICO
+// =====================================================
+
+if (toggleHistory) {
+
+    toggleHistory.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target.closest(
+                    "#exportButton"
+                )
+            ) {
+                return;
+            }
+
+
+            toggleHistorySection();
+        }
+    );
+
+
+    toggleHistory.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Enter" ||
+                event.key === " "
+            ) {
+
+                event.preventDefault();
+
+                toggleHistorySection();
+            }
+        }
+    );
+}
+    // =====================================================
+    // EXPORTAR
+    // =====================================================
+
     if (exportButton) {
 
         exportButton.addEventListener(
@@ -2702,6 +3268,10 @@ function setupEvents() {
         );
     }
 
+
+    // =====================================================
+    // LOGOUT
+    // =====================================================
 
     if (logoutButton) {
 

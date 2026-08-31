@@ -680,6 +680,35 @@ input:focus {
   margin-top: 26px;
 }
 
+.add-category-inline {
+  align-self: flex-start;
+
+  margin-top: 8px;
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: var(--primary);
+
+  font-size: 0.82rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.add-category-inline:hover {
+  opacity: 0.75;
+}
+
+.add-category-inline:active {
+  transform: translateY(1px);
+}
+
 .donut-chart {
   width: 190px;
   height: 190px;
@@ -1166,7 +1195,7 @@ button.quick-action-card {
   .content-card,
   .transactions-card,
   .quick-actions {
-    padding: 20px;
+    padding: 26px;
     border-radius: 17px;
   }
 
