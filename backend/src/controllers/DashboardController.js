@@ -27,6 +27,10 @@ class DashboardController {
 
         try {
 
+            // =====================================================
+            // MOVIMENTAÇÕES DO MÊS SELECIONADO
+            // =====================================================
+
             const movimentacoes =
                 await database(
                     "movimentacoes"
@@ -74,8 +78,7 @@ class DashboardController {
                         item.status === "paid"
                     ) {
 
-                        entradas +=
-                            valor;
+                        entradas += valor;
 
                         quantidadeEntradas++;
                     }
@@ -90,8 +93,7 @@ class DashboardController {
                         item.status === "paid"
                     ) {
 
-                        despesas +=
-                            valor;
+                        despesas += valor;
 
                         quantidadeDespesas++;
                     }
@@ -106,8 +108,7 @@ class DashboardController {
                         item.status === "paid"
                     ) {
 
-                        guardado +=
-                            valor;
+                        guardado += valor;
 
                         quantidadeGuardado++;
                     }
@@ -118,37 +119,125 @@ class DashboardController {
                     // =========================
 
                     if (
-                        item.status ===
-                        "pending"
+                        item.status === "pending" &&
+                        (
+                            item.tipo === "expense" ||
+                            item.tipo === "saved"
+                        )
                     ) {
 
-                        /*
-                            Aqui não incluímos
-                            entradas pendentes.
-
-                            Consideramos apenas
-                            valores que ainda vão
-                            sair do disponível.
-                        */
-
-                        if (
-                            item.tipo ===
-                                "expense" ||
-                            item.tipo ===
-                                "saved"
-                        ) {
-
-                            pendentes +=
-                                valor;
-                        }
+                        pendentes += valor;
                     }
                 }
             );
 
 
-            // =========================
+            // =====================================================
+            // ÚLTIMO DIA DO MÊS SELECIONADO
+            // =====================================================
+
+            const ultimoDiaDoMes =
+                new Date(
+                    anoSelecionado,
+                    mesSelecionado,
+                    0
+                );
+
+
+            const dataLimite =
+                `${ultimoDiaDoMes.getFullYear()}-${String(
+                    ultimoDiaDoMes.getMonth() + 1
+                ).padStart(
+                    2,
+                    "0"
+                )}-${String(
+                    ultimoDiaDoMes.getDate()
+                ).padStart(
+                    2,
+                    "0"
+                )}`;
+
+
+            // =====================================================
+            // MOVIMENTAÇÕES ACUMULADAS
+            // =====================================================
+
+            const movimentacoesAcumuladas =
+                await database(
+                    "movimentacoes"
+                )
+                    .where(
+                        "usuario_id",
+                        req.usuarioId
+                    )
+                    .where(
+                        "data_movimentacao",
+                        "<=",
+                        dataLimite
+                    )
+                    .where(
+                        "status",
+                        "paid"
+                    );
+
+
+            let entradasAcumuladas = 0;
+            let despesasAcumuladas = 0;
+
+
+            movimentacoesAcumuladas.forEach(
+                item => {
+
+                    const valor =
+                        Number(
+                            item.valor
+                        );
+
+
+                    // =========================
+                    // ENTRADAS ACUMULADAS
+                    // =========================
+
+                    if (
+                        item.tipo === "income"
+                    ) {
+
+                        entradasAcumuladas += valor;
+                    }
+
+
+                    // =========================
+                    // DESPESAS ACUMULADAS
+                    // =========================
+
+                    if (
+                        item.tipo === "expense"
+                    ) {
+
+                        despesasAcumuladas += valor;
+                    }
+
+
+                    /*
+                        saved NÃO altera
+                        o saldo disponível.
+                    */
+                }
+            );
+
+
+            // =====================================================
+            // SALDO ACUMULADO
+            // =====================================================
+
+            const saldo =
+                entradasAcumuladas -
+                despesasAcumuladas;
+
+
+            // =====================================================
             // CONFIGURAÇÕES
-            // =========================
+            // =====================================================
 
             const configuracao =
                 await database(
@@ -161,15 +250,9 @@ class DashboardController {
                     .first();
 
 
-            // =========================
-            // SALDO
-            // =========================
-
-            const saldo =
-                entradas -
-                despesas -
-                guardado;
-
+            // =====================================================
+            // RESPOSTA
+            // =====================================================
 
             return res.status(200).json({
 
