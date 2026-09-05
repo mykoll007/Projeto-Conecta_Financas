@@ -31,6 +31,34 @@ async function garantirSaldoAnterior(
     ano
 ) {
 
+    const hoje = new Date();
+
+const mesAtual =
+    hoje.getMonth() + 1;
+
+const anoAtual =
+    hoje.getFullYear();
+
+
+const periodoSolicitado =
+    ano * 100 + mes;
+
+const periodoAtual =
+    anoAtual * 100 + mesAtual;
+
+
+// =====================================================
+// NÃO CRIAR SALDO EM MÊS FUTURO
+// =====================================================
+
+if (
+    periodoSolicitado >
+    periodoAtual
+) {
+
+    return 0;
+}
+
     // =====================================================
     // DESCOBRIR MÊS ANTERIOR
     // =====================================================
