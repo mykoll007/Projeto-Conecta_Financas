@@ -205,6 +205,177 @@
 
     </section>
 
+         <!-- =====================================================
+     HISTÓRICO
+====================================================== -->
+
+<section class="transactions-card transactions-collapsible">
+
+  <!-- CABEÇALHO CLICÁVEL -->
+  <div
+    class="transactions-toggle-area"
+    id="toggleHistory"
+    role="button"
+    tabindex="0"
+    aria-expanded="false"
+    aria-controls="historyContent"
+  >
+
+    <div>
+
+      <span class="card-label">
+        Histórico
+      </span>
+
+      <h2>
+        Todas as movimentações
+      </h2>
+
+      <p id="resultsText">
+        0 movimentações encontradas
+      </p>
+
+    </div>
+
+
+    <div class="transactions-header-actions">
+
+      <button
+        type="button"
+        class="secondary-button"
+        id="exportButton"
+      >
+        Exportar CSV
+      </button>
+
+
+      <span
+        class="history-toggle-icon"
+        id="historyToggleIcon"
+        aria-hidden="true"
+      ></span>
+
+    </div>
+
+  </div>
+
+
+  <!-- CONTEÚDO DO ACCORDION -->
+  <div
+    class="history-content"
+    id="historyContent"
+    hidden
+  >
+
+    <!-- PESQUISA -->
+
+    <div class="transactions-search">
+
+      <div class="search-container">
+
+        <span>
+          ⌕
+        </span>
+
+        <input
+          type="search"
+          id="searchInput"
+          placeholder="Pesquisar por descrição, categoria ou pagamento..."
+        >
+
+      </div>
+
+    </div>
+
+
+    <!-- TABELA DESKTOP -->
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Movimentação
+            </th>
+
+            <th>
+              Categoria
+            </th>
+
+            <th>
+              Data
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Valor
+            </th>
+
+            <th>
+              Ações
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody id="transactionsBody"></tbody>
+
+      </table>
+
+    </div>
+
+
+    <!-- MOBILE -->
+
+    <div
+      class="mobile-transactions"
+      id="mobileTransactions"
+    ></div>
+
+
+    <!-- VAZIO -->
+
+    <div
+      class="empty-state"
+      id="emptyState"
+      hidden
+    >
+
+      <div class="empty-icon">
+        ↔
+      </div>
+
+      <strong>
+        Nenhuma movimentação encontrada
+      </strong>
+
+      <p>
+        Altere os filtros ou adicione uma nova movimentação.
+      </p>
+
+      <button
+        type="button"
+        class="primary-button"
+        id="emptyAddButton"
+      >
+        Adicionar movimentação
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
     <!-- =====================================================
      FILTROS
 ====================================================== -->
@@ -411,176 +582,7 @@
 
     </section>
 
-     <!-- =====================================================
-     HISTÓRICO
-====================================================== -->
 
-<section class="transactions-card transactions-collapsible">
-
-  <!-- CABEÇALHO CLICÁVEL -->
-  <div
-    class="transactions-toggle-area"
-    id="toggleHistory"
-    role="button"
-    tabindex="0"
-    aria-expanded="false"
-    aria-controls="historyContent"
-  >
-
-    <div>
-
-      <span class="card-label">
-        Histórico
-      </span>
-
-      <h2>
-        Todas as movimentações
-      </h2>
-
-      <p id="resultsText">
-        0 movimentações encontradas
-      </p>
-
-    </div>
-
-
-    <div class="transactions-header-actions">
-
-      <button
-        type="button"
-        class="secondary-button"
-        id="exportButton"
-      >
-        Exportar CSV
-      </button>
-
-
-      <span
-        class="history-toggle-icon"
-        id="historyToggleIcon"
-        aria-hidden="true"
-      ></span>
-
-    </div>
-
-  </div>
-
-
-  <!-- CONTEÚDO DO ACCORDION -->
-  <div
-    class="history-content"
-    id="historyContent"
-    hidden
-  >
-
-    <!-- PESQUISA -->
-
-    <div class="transactions-search">
-
-      <div class="search-container">
-
-        <span>
-          ⌕
-        </span>
-
-        <input
-          type="search"
-          id="searchInput"
-          placeholder="Pesquisar por descrição, categoria ou pagamento..."
-        >
-
-      </div>
-
-    </div>
-
-
-    <!-- TABELA DESKTOP -->
-
-    <div class="table-wrapper">
-
-      <table>
-
-        <thead>
-
-          <tr>
-
-            <th>
-              Movimentação
-            </th>
-
-            <th>
-              Categoria
-            </th>
-
-            <th>
-              Data
-            </th>
-
-            <th>
-              Status
-            </th>
-
-            <th>
-              Valor
-            </th>
-
-            <th>
-              Ações
-            </th>
-
-          </tr>
-
-        </thead>
-
-
-        <tbody id="transactionsBody"></tbody>
-
-      </table>
-
-    </div>
-
-
-    <!-- MOBILE -->
-
-    <div
-      class="mobile-transactions"
-      id="mobileTransactions"
-    ></div>
-
-
-    <!-- VAZIO -->
-
-    <div
-      class="empty-state"
-      id="emptyState"
-      hidden
-    >
-
-      <div class="empty-icon">
-        ↔
-      </div>
-
-      <strong>
-        Nenhuma movimentação encontrada
-      </strong>
-
-      <p>
-        Altere os filtros ou adicione uma nova movimentação.
-      </p>
-
-      <button
-        type="button"
-        class="primary-button"
-        id="emptyAddButton"
-      >
-        Adicionar movimentação
-      </button>
-
-    </div>
-
-  </div>
-
-</section>
 
     <!-- =====================================================
          RESUMO
