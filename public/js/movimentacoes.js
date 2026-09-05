@@ -25,7 +25,12 @@ const currency = new Intl.NumberFormat("pt-BR", {
 
 let appData = {
     transactions: [],
-    categories: []
+    categories: [],
+
+    summary: {
+        saldo: 0,
+        saldoAnterior: 0
+    }
 };
 
 let transactionToDelete = null;
@@ -1288,6 +1293,139 @@ function sumTransactions(
         );
 }
 
+// =====================================================
+// CARREGAR SALDO ACUMULADO
+// =====================================================
+
+async function loadAccumulatedBalance() {
+
+    const monthFilter =
+        getElement(
+            "monthFilter"
+        );
+
+
+    const yearFilter =
+        getElement(
+            "yearFilter"
+        );
+
+
+    if (
+        !monthFilter ||
+        !yearFilter
+    ) {
+
+        return;
+    }
+
+
+    const monthValue =
+        monthFilter.value;
+
+
+    const yearValue =
+        yearFilter.value;
+
+
+    // =====================================================
+    // TODOS OS MESES / TODOS OS ANOS
+    // =====================================================
+
+    /*
+        Quando não existe um mês e ano específicos
+        selecionados, não mostramos saldo anterior.
+
+        O saldo geral será calculado normalmente
+        pelas movimentações.
+    */
+
+    if (
+        monthValue === "all" ||
+        yearValue === "all"
+    ) {
+
+        appData.summary.saldo =
+            null;
+
+
+        appData.summary.saldoAnterior =
+            null;
+
+
+        renderTransactions();
+
+        return;
+    }
+
+
+    try {
+
+        /*
+            O select usa:
+            Janeiro = 0
+            Fevereiro = 1
+            ...
+
+            A API usa:
+            Janeiro = 1
+            Fevereiro = 2
+            ...
+        */
+
+        const mes =
+            Number(
+                monthValue
+            ) + 1;
+
+
+        const ano =
+            Number(
+                yearValue
+            );
+
+
+        const resumo =
+            await apiRequest(
+                `/dashboard/resumo?mes=${mes}&ano=${ano}`
+            );
+
+
+        appData.summary.saldo =
+            Number(
+                resumo.saldo || 0
+            );
+
+
+        appData.summary.saldoAnterior =
+            Number(
+                resumo.saldoAnterior || 0
+            );
+
+
+        renderTransactions();
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao carregar saldo acumulado:",
+            error
+        );
+
+
+        appData.summary.saldo =
+            null;
+
+
+        appData.summary.saldoAnterior =
+            null;
+
+
+        renderTransactions();
+    }
+}
+
 
 // =====================================================
 // RESUMO
@@ -1295,117 +1433,404 @@ function sumTransactions(
 
 function renderSummary(transactions) {
 
-    const income = sumTransactions(
-        transactions,
-        transaction =>
-            transaction.type === "income" &&
-            transaction.status === "paid"
-    );
+    // =====================================================
+    // ENTRADAS
+    // =====================================================
 
-    const expense = sumTransactions(
-        transactions,
-        transaction =>
-            transaction.type === "expense" &&
-            transaction.status === "paid"
-    );
-
-    const saved = sumTransactions(
-        transactions,
-        transaction =>
-            transaction.type === "saved" &&
-            transaction.status === "paid"
-    );
-
-    const pending = sumTransactions(
-        transactions,
-        transaction =>
-            (
-                transaction.type === "expense" ||
-                transaction.type === "saved"
-            ) &&
-            transaction.status === "pending"
-    );
-
-    const incomeCount = transactions.filter(
-        transaction =>
-            transaction.type === "income" &&
-            transaction.status === "paid"
-    ).length;
-
-    const expenseCount = transactions.filter(
-        transaction =>
-            transaction.type === "expense" &&
-            transaction.status === "paid"
-    ).length;
-
-    const savedCount = transactions.filter(
-        transaction =>
-            transaction.type === "saved" &&
-            transaction.status === "paid"
-    ).length;
-
-    const pendingCount = transactions.filter(
-        transaction =>
-            (
-                transaction.type === "expense" ||
-                transaction.type === "saved"
-            ) &&
-            transaction.status === "pending"
-    ).length;
+    const income =
+        sumTransactions(
+            transactions,
+            transaction =>
+                transaction.type === "income" &&
+                transaction.status === "paid"
+        );
 
 
-    const summaryIncome = getElement("summaryIncome");
-    const summaryExpense = getElement("summaryExpense");
-    const summarySaved = getElement("summarySaved");
-    const summaryPending = getElement("summaryPending");
-    const summaryBalance = getElement("summaryBalance");
+    // =====================================================
+    // DESPESAS
+    // =====================================================
+
+    const expense =
+        sumTransactions(
+            transactions,
+            transaction =>
+                transaction.type === "expense" &&
+                transaction.status === "paid"
+        );
+
+
+    // =====================================================
+    // RESERVAS
+    // =====================================================
+
+    const saved =
+        sumTransactions(
+            transactions,
+            transaction =>
+                transaction.type === "saved" &&
+                transaction.status === "paid"
+        );
+
+
+    // =====================================================
+    // PENDENTES
+    // =====================================================
+
+    const pending =
+        sumTransactions(
+            transactions,
+            transaction =>
+                (
+                    transaction.type === "expense" ||
+                    transaction.type === "saved"
+                ) &&
+                transaction.status === "pending"
+        );
+
+
+    // =====================================================
+    // CONTADORES
+    // =====================================================
+
+    const incomeCount =
+        transactions.filter(
+            transaction =>
+                transaction.type === "income" &&
+                transaction.status === "paid"
+        ).length;
+
+
+    const expenseCount =
+        transactions.filter(
+            transaction =>
+                transaction.type === "expense" &&
+                transaction.status === "paid"
+        ).length;
+
+
+    const savedCount =
+        transactions.filter(
+            transaction =>
+                transaction.type === "saved" &&
+                transaction.status === "paid"
+        ).length;
+
+
+    const pendingCount =
+        transactions.filter(
+            transaction =>
+                (
+                    transaction.type === "expense" ||
+                    transaction.type === "saved"
+                ) &&
+                transaction.status === "pending"
+        ).length;
+
+
+    // =====================================================
+    // ELEMENTOS
+    // =====================================================
+
+    const summaryIncome =
+        getElement(
+            "summaryIncome"
+        );
+
+
+    const summaryExpense =
+        getElement(
+            "summaryExpense"
+        );
+
+
+    const summarySaved =
+        getElement(
+            "summarySaved"
+        );
+
+
+    const summaryPending =
+        getElement(
+            "summaryPending"
+        );
+
+
+    const summaryBalance =
+        getElement(
+            "summaryBalance"
+        );
+
+
+    const summaryPreviousBalance =
+        getElement(
+            "summaryPreviousBalance"
+        );
+
+
+    const summaryPreviousBalanceText =
+        getElement(
+            "summaryPreviousBalanceText"
+        );
+
 
     const summaryIncomeCount =
-        getElement("summaryIncomeCount");
+        getElement(
+            "summaryIncomeCount"
+        );
+
 
     const summaryExpenseCount =
-        getElement("summaryExpenseCount");
+        getElement(
+            "summaryExpenseCount"
+        );
+
 
     const summarySavedCount =
-        getElement("summarySavedCount");
+        getElement(
+            "summarySavedCount"
+        );
+
 
     const summaryPendingCount =
-        getElement("summaryPendingCount");
+        getElement(
+            "summaryPendingCount"
+        );
 
+
+    // =====================================================
+    // VALORES DO PERÍODO
+    // =====================================================
 
     if (summaryIncome) {
+
         summaryIncome.textContent =
-            currency.format(income);
+            currency.format(
+                income
+            );
     }
+
 
     if (summaryExpense) {
+
         summaryExpense.textContent =
-            currency.format(expense);
+            currency.format(
+                expense
+            );
     }
+
 
     if (summarySaved) {
+
         summarySaved.textContent =
-            currency.format(saved);
+            currency.format(
+                saved
+            );
     }
 
+
     if (summaryPending) {
+
         summaryPending.textContent =
-            currency.format(pending);
+            currency.format(
+                pending
+            );
     }
+
+
+    // =====================================================
+    // VERIFICAR MÊS / ANO
+    // =====================================================
+
+    const monthFilter =
+        getElement(
+            "monthFilter"
+        );
+
+
+    const yearFilter =
+        getElement(
+            "yearFilter"
+        );
+
+
+    const specificPeriod =
+        monthFilter &&
+        yearFilter &&
+        monthFilter.value !== "all" &&
+        yearFilter.value !== "all";
+
+
+    // =====================================================
+    // SALDO ANTERIOR
+    // =====================================================
+
+    if (summaryPreviousBalance) {
+
+        if (
+            specificPeriod &&
+            appData.summary.saldoAnterior !== null
+        ) {
+
+            const previousBalance =
+                Number(
+                    appData.summary.saldoAnterior || 0
+                );
+
+
+            summaryPreviousBalance.textContent =
+                currency.format(
+                    previousBalance
+                );
+
+
+            summaryPreviousBalance.classList.toggle(
+                "expense-text",
+                previousBalance < 0
+            );
+
+
+            summaryPreviousBalance.classList.toggle(
+                "income-text",
+                previousBalance >= 0
+            );
+
+
+        } else {
+
+            summaryPreviousBalance.textContent =
+                "—";
+
+
+            summaryPreviousBalance.classList.remove(
+                "expense-text"
+            );
+
+
+            summaryPreviousBalance.classList.remove(
+                "income-text"
+            );
+        }
+    }
+
+
+    // =====================================================
+    // TEXTO SALDO ANTERIOR
+    // =====================================================
+
+    if (summaryPreviousBalanceText) {
+
+        if (specificPeriod) {
+
+            const monthNames = [
+                "Janeiro",
+                "Fevereiro",
+                "Março",
+                "Abril",
+                "Maio",
+                "Junho",
+                "Julho",
+                "Agosto",
+                "Setembro",
+                "Outubro",
+                "Novembro",
+                "Dezembro"
+            ];
+
+
+            const selectedMonth =
+                Number(
+                    monthFilter.value
+                );
+
+
+            const selectedYear =
+                Number(
+                    yearFilter.value
+                );
+
+
+            let previousMonth =
+                selectedMonth - 1;
+
+
+            let previousYear =
+                selectedYear;
+
+
+            if (previousMonth < 0) {
+
+                previousMonth =
+                    11;
+
+
+                previousYear--;
+            }
+
+
+            summaryPreviousBalanceText.textContent =
+                `Saldo acumulado até ${monthNames[previousMonth]} de ${previousYear}`;
+
+
+        } else {
+
+            summaryPreviousBalanceText.textContent =
+                "Selecione um mês e ano";
+        }
+    }
+
+
+    // =====================================================
+    // SALDO DISPONÍVEL
+    // =====================================================
 
     if (summaryBalance) {
 
-        // Guardado NÃO altera o saldo
-        const balance =
-            income - expense;
+        let balance;
+
+
+        if (
+            specificPeriod &&
+            appData.summary.saldo !== null
+        ) {
+
+            /*
+                Saldo acumulado retornado
+                pelo backend.
+            */
+
+            balance =
+                Number(
+                    appData.summary.saldo || 0
+                );
+
+
+        } else {
+
+            /*
+                Sem mês específico:
+                calcula com as movimentações
+                exibidas atualmente.
+
+                Reserva NÃO altera o saldo.
+            */
+
+            balance =
+                income -
+                expense;
+        }
+
 
         summaryBalance.textContent =
-            currency.format(balance);
+            currency.format(
+                balance
+            );
+
 
         summaryBalance.classList.toggle(
             "expense-text",
             balance < 0
         );
+
 
         summaryBalance.classList.toggle(
             "income-text",
@@ -1414,28 +1839,66 @@ function renderSummary(transactions) {
     }
 
 
+    // =====================================================
+    // CONTADOR ENTRADAS
+    // =====================================================
+
     if (summaryIncomeCount) {
+
         summaryIncomeCount.textContent =
-            `${incomeCount} recebimento${incomeCount === 1 ? "" : "s"
+            `${incomeCount} recebimento${
+                incomeCount === 1
+                    ? ""
+                    : "s"
             }`;
     }
+
+
+    // =====================================================
+    // CONTADOR DESPESAS
+    // =====================================================
 
     if (summaryExpenseCount) {
+
         summaryExpenseCount.textContent =
-            `${expenseCount} pagamento${expenseCount === 1 ? "" : "s"
+            `${expenseCount} pagamento${
+                expenseCount === 1
+                    ? ""
+                    : "s"
             }`;
     }
+
+
+    // =====================================================
+    // CONTADOR RESERVAS
+    // =====================================================
 
     if (summarySavedCount) {
+
         summarySavedCount.textContent =
-            `${savedCount} valor${savedCount === 1 ? "" : "es"
-            } guardado${savedCount === 1 ? "" : "s"
+            `${savedCount} valor${
+                savedCount === 1
+                    ? ""
+                    : "es"
+            } guardado${
+                savedCount === 1
+                    ? ""
+                    : "s"
             }`;
     }
 
+
+    // =====================================================
+    // CONTADOR PENDENTES
+    // =====================================================
+
     if (summaryPendingCount) {
+
         summaryPendingCount.textContent =
-            `${pendingCount} pendência${pendingCount === 1 ? "" : "s"
+            `${pendingCount} pendência${
+                pendingCount === 1
+                    ? ""
+                    : "s"
             }`;
     }
 }
@@ -2416,6 +2879,14 @@ function clearFilters() {
         "newest";
 
 
+    appData.summary.saldo =
+        null;
+
+
+    appData.summary.saldoAnterior =
+        null;
+
+
     renderTransactions();
 }
 
@@ -2594,10 +3065,13 @@ function setupFilters() {
         id => {
 
             const element =
-                getElement(id);
+                getElement(
+                    id
+                );
 
 
             if (!element) {
+
                 return;
             }
 
@@ -2608,12 +3082,33 @@ function setupFilters() {
                     ? "input"
                     : "change",
 
-                renderTransactions
+                async () => {
+
+                    // =============================================
+                    // MÊS OU ANO
+                    // =============================================
+
+                    if (
+                        id === "monthFilter" ||
+                        id === "yearFilter"
+                    ) {
+
+                        await loadAccumulatedBalance();
+
+                        return;
+                    }
+
+
+                    // =============================================
+                    // OUTROS FILTROS
+                    // =============================================
+
+                    renderTransactions();
+                }
             );
         }
     );
 }
-
 
 // =====================================================
 // MENU PERFIL

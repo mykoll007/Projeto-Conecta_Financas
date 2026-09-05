@@ -159,7 +159,33 @@ class DashboardController {
 
 
             // =====================================================
-            // MOVIMENTAÇÕES ACUMULADAS
+            // ÚLTIMO DIA DO MÊS ANTERIOR
+            // =====================================================
+
+            const ultimoDiaMesAnterior =
+                new Date(
+                    anoSelecionado,
+                    mesSelecionado - 1,
+                    0
+                );
+
+
+            const dataLimiteAnterior =
+                `${ultimoDiaMesAnterior.getFullYear()}-${String(
+                    ultimoDiaMesAnterior.getMonth() + 1
+                ).padStart(
+                    2,
+                    "0"
+                )}-${String(
+                    ultimoDiaMesAnterior.getDate()
+                ).padStart(
+                    2,
+                    "0"
+                )}`;
+
+
+            // =====================================================
+            // MOVIMENTAÇÕES ACUMULADAS ATÉ O MÊS SELECIONADO
             // =====================================================
 
             const movimentacoesAcumuladas =
@@ -194,10 +220,6 @@ class DashboardController {
                         );
 
 
-                    // =========================
-                    // ENTRADAS ACUMULADAS
-                    // =========================
-
                     if (
                         item.tipo === "income"
                     ) {
@@ -205,10 +227,6 @@ class DashboardController {
                         entradasAcumuladas += valor;
                     }
 
-
-                    // =========================
-                    // DESPESAS ACUMULADAS
-                    // =========================
 
                     if (
                         item.tipo === "expense"
@@ -227,12 +245,81 @@ class DashboardController {
 
 
             // =====================================================
-            // SALDO ACUMULADO
+            // SALDO ACUMULADO ATÉ O MÊS SELECIONADO
             // =====================================================
 
             const saldo =
                 entradasAcumuladas -
                 despesasAcumuladas;
+
+
+            // =====================================================
+            // MOVIMENTAÇÕES ACUMULADAS ATÉ O MÊS ANTERIOR
+            // =====================================================
+
+            const movimentacoesAnteriores =
+                await database(
+                    "movimentacoes"
+                )
+                    .where(
+                        "usuario_id",
+                        req.usuarioId
+                    )
+                    .where(
+                        "data_movimentacao",
+                        "<=",
+                        dataLimiteAnterior
+                    )
+                    .where(
+                        "status",
+                        "paid"
+                    );
+
+
+            let entradasAnteriores = 0;
+            let despesasAnteriores = 0;
+
+
+            movimentacoesAnteriores.forEach(
+                item => {
+
+                    const valor =
+                        Number(
+                            item.valor
+                        );
+
+
+                    if (
+                        item.tipo === "income"
+                    ) {
+
+                        entradasAnteriores += valor;
+                    }
+
+
+                    if (
+                        item.tipo === "expense"
+                    ) {
+
+                        despesasAnteriores += valor;
+                    }
+
+
+                    /*
+                        saved também NÃO altera
+                        o saldo anterior.
+                    */
+                }
+            );
+
+
+            // =====================================================
+            // SALDO DO MÊS ANTERIOR
+            // =====================================================
+
+            const saldoAnterior =
+                entradasAnteriores -
+                despesasAnteriores;
 
 
             // =====================================================
@@ -257,6 +344,8 @@ class DashboardController {
             return res.status(200).json({
 
                 saldo,
+
+                saldoAnterior,
 
                 entradas,
 
