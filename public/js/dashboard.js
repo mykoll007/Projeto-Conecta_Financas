@@ -955,6 +955,10 @@ async function loadSummary() {
         );
 
 
+    // =====================================================
+    // VALORES DO MÊS
+    // =====================================================
+
     const income =
         Number(
             resumo.entradas || 0
@@ -979,17 +983,30 @@ async function loadSummary() {
         );
 
 
+    // =====================================================
+    // SALDO ACUMULADO
+    // =====================================================
+
     /*
-        IMPORTANTE:
+        Agora o saldo vem pronto do backend.
 
-        Guardado NÃO participa do saldo.
+        Ele considera:
+        - meses anteriores
+        - entradas pagas
+        - despesas pagas
 
-        Saldo = entradas - despesas
+        Reserva NÃO altera o saldo.
     */
 
     const balance =
-        income - expense;
+        Number(
+            resumo.saldo || 0
+        );
 
+
+    // =====================================================
+    // ORÇAMENTO
+    // =====================================================
 
     appData.budget =
         Number(
@@ -997,29 +1014,33 @@ async function loadSummary() {
         );
 
 
-    // =============================================
-    // VALORES
-    // =============================================
+    // =====================================================
+    // ELEMENTOS
+    // =====================================================
 
     const balanceValue =
         getElement(
             "balanceValue"
         );
 
+
     const incomeValue =
         getElement(
             "incomeValue"
         );
+
 
     const expenseValue =
         getElement(
             "expenseValue"
         );
 
+
     const savedValue =
         getElement(
             "savedValue"
         );
+
 
     const pendingValue =
         getElement(
@@ -1027,12 +1048,22 @@ async function loadSummary() {
         );
 
 
+    // =====================================================
+    // VALORES
+    // =====================================================
+
     if (balanceValue) {
 
         balanceValue.textContent =
             currency.format(
                 balance
             );
+
+
+        balanceValue.classList.toggle(
+            "expense-value",
+            balance < 0
+        );
     }
 
 
@@ -1072,9 +1103,9 @@ async function loadSummary() {
     }
 
 
-    // =============================================
+    // =====================================================
     // CONTADORES
-    // =============================================
+    // =====================================================
 
     const incomeCount =
         Number(
@@ -1117,9 +1148,10 @@ async function loadSummary() {
         incomeCountElement.textContent =
             incomeCount === 0
                 ? "Nenhum recebimento"
-                : `${incomeCount} recebimento${incomeCount > 1
-                    ? "s"
-                    : ""
+                : `${incomeCount} recebimento${
+                    incomeCount > 1
+                        ? "s"
+                        : ""
                 }`;
     }
 
@@ -1129,9 +1161,10 @@ async function loadSummary() {
         expenseCountElement.textContent =
             expenseCount === 0
                 ? "Nenhum pagamento"
-                : `${expenseCount} pagamento${expenseCount > 1
-                    ? "s"
-                    : ""
+                : `${expenseCount} pagamento${
+                    expenseCount > 1
+                        ? "s"
+                        : ""
                 }`;
     }
 
@@ -1141,21 +1174,27 @@ async function loadSummary() {
         savedCountElement.textContent =
             savedCount === 0
                 ? "Nenhum valor reservado"
-                : `${savedCount} valor${savedCount === 1
-                    ? ""
-                    : "es"
-                } guardado${savedCount === 1
-                    ? ""
-                    : "s"
+                : `${savedCount} valor${
+                    savedCount === 1
+                        ? ""
+                        : "es"
+                } reservado${
+                    savedCount === 1
+                        ? ""
+                        : "s"
                 }`;
     }
 
 
+    // =====================================================
+    // ORÇAMENTO
+    // =====================================================
+
     /*
         O orçamento continua considerando
-        somente despesas pagas.
+        somente despesas pagas do mês.
 
-        Guardado NÃO consome orçamento.
+        Reserva NÃO consome orçamento.
     */
 
     renderBudget(
