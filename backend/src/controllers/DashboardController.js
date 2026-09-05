@@ -33,31 +33,31 @@ async function garantirSaldoAnterior(
 
     const hoje = new Date();
 
-const mesAtual =
-    hoje.getMonth() + 1;
+    const mesAtual =
+        hoje.getMonth() + 1;
 
-const anoAtual =
-    hoje.getFullYear();
-
-
-const periodoSolicitado =
-    ano * 100 + mes;
-
-const periodoAtual =
-    anoAtual * 100 + mesAtual;
+    const anoAtual =
+        hoje.getFullYear();
 
 
-// =====================================================
-// NÃO CRIAR SALDO EM MÊS FUTURO
-// =====================================================
+    const periodoSolicitado =
+        ano * 100 + mes;
 
-if (
-    periodoSolicitado >
-    periodoAtual
-) {
+    const periodoAtual =
+        anoAtual * 100 + mesAtual;
 
-    return 0;
-}
+
+    // =====================================================
+    // NÃO CRIAR SALDO EM MÊS FUTURO
+    // =====================================================
+
+    if (
+        periodoSolicitado >
+        periodoAtual
+    ) {
+
+        return 0;
+    }
 
     // =====================================================
     // DESCOBRIR MÊS ANTERIOR
@@ -132,60 +132,66 @@ if (
             );
 
 
-    let entradas = 0;
-    let despesas = 0;
+let entradas = 0;
+let despesas = 0;
+let guardado = 0;
 
 
-    movimentacoesAnteriores.forEach(
-        item => {
+movimentacoesAnteriores.forEach(
+    item => {
 
-            const valor =
-                Number(
-                    item.valor
-                );
-
-
-            // =========================
-            // ENTRADAS
-            // =========================
-
-            if (
-                item.tipo === "income"
-            ) {
-
-                entradas +=
-                    valor;
-            }
+        const valor =
+            Number(
+                item.valor
+            );
 
 
-            // =========================
-            // DESPESAS
-            // =========================
+        // =========================
+        // ENTRADAS
+        // =========================
 
-            if (
-                item.tipo === "expense"
-            ) {
+        if (
+            item.tipo === "income"
+        ) {
 
-                despesas +=
-                    valor;
-            }
-
-
-            /*
-                saved / reserva
-                NÃO altera o saldo.
-            */
+            entradas += valor;
         }
-    );
 
 
-    // =====================================================
-    // SALDO FINAL DO MÊS ANTERIOR
-    // =====================================================
+        // =========================
+        // DESPESAS
+        // =========================
 
-    const saldoAnterior =
-        entradas -
-        despesas;
+        if (
+            item.tipo === "expense"
+        ) {
+
+            despesas += valor;
+        }
+
+
+        // =========================
+        // RESERVAS
+        // =========================
+
+        if (
+            item.tipo === "saved"
+        ) {
+
+            guardado += valor;
+        }
+    }
+);
+
+
+// =====================================================
+// SALDO QUE VAI PARA O PRÓXIMO MÊS
+// =====================================================
+
+const saldoAnterior =
+    entradas -
+    despesas -
+    guardado;
 
 
     // =====================================================
@@ -256,7 +262,7 @@ if (
 
     const nomeMesAnterior =
         meses[
-            mesAnterior - 1
+        mesAnterior - 1
         ];
 
 
@@ -547,10 +553,10 @@ class DashboardController {
 
                 Reserva não altera.
             */
-
             const saldo =
                 entradas -
-                despesas;
+                despesas -
+                guardado;
 
 
             // =====================================================

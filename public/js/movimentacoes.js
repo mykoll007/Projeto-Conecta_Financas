@@ -1408,9 +1408,10 @@ function renderSummary(transactions) {
         saldo anterior separadamente.
     */
 
-    const balance =
-        income -
-        expense;
+const balance =
+    income -
+    expense -
+    saved;
 
 
     // =====================================================
