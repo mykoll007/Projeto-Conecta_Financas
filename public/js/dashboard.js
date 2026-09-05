@@ -943,15 +943,58 @@ async function loadTransactions() {
 // CARREGAR RESUMO
 // =====================================================
 
+// =====================================================
+// CARREGAR RESUMO
+// =====================================================
+
 async function loadSummary() {
 
     const mes =
         selectedMonth + 1;
 
 
+    const ano =
+        selectedYear;
+
+
+    // =====================================================
+    // VERIFICAR SE O MÊS SELECIONADO É FUTURO
+    // =====================================================
+
+    const hoje =
+        new Date();
+
+
+    const mesAtual =
+        hoje.getMonth() + 1;
+
+
+    const anoAtual =
+        hoje.getFullYear();
+
+
+    const periodoSelecionado =
+        ano * 100 +
+        mes;
+
+
+    const periodoAtual =
+        anoAtual * 100 +
+        mesAtual;
+
+
+    const mesFuturo =
+        periodoSelecionado >
+        periodoAtual;
+
+
+    // =====================================================
+    // BUSCAR RESUMO NA API
+    // =====================================================
+
     const resumo =
         await apiRequest(
-            `/dashboard/resumo?mes=${mes}&ano=${selectedYear}`
+            `/dashboard/resumo?mes=${mes}&ano=${ano}`
         );
 
 
@@ -984,18 +1027,18 @@ async function loadSummary() {
 
 
     // =====================================================
-    // SALDO ACUMULADO
+    // SALDO DISPONÍVEL
     // =====================================================
 
     /*
-        Agora o saldo vem pronto do backend.
+        O backend já devolve o saldo do mês.
 
-        Ele considera:
-        - meses anteriores
-        - entradas pagas
-        - despesas pagas
+        Quando o mês for o mês atual ou passado,
+        o saldo transportado pode existir como uma
+        movimentação real.
 
-        Reserva NÃO altera o saldo.
+        Quando for um mês futuro, o backend NÃO
+        deve criar movimentação de saldo anterior.
     */
 
     const balance =
@@ -1049,7 +1092,7 @@ async function loadSummary() {
 
 
     // =====================================================
-    // VALORES
+    // MOSTRAR VALORES
     // =====================================================
 
     if (balanceValue) {
@@ -1191,8 +1234,8 @@ async function loadSummary() {
     // =====================================================
 
     /*
-        O orçamento continua considerando
-        somente despesas pagas do mês.
+        O orçamento considera apenas
+        despesas pagas do mês.
 
         Reserva NÃO consome orçamento.
     */
@@ -1200,6 +1243,28 @@ async function loadSummary() {
     renderBudget(
         expense
     );
+
+
+    // =====================================================
+    // MÊS FUTURO
+    // =====================================================
+
+    /*
+        Não precisamos alterar os valores aqui.
+
+        Essa variável existe apenas para deixar explícito
+        que o front sabe que o período é futuro.
+
+        A regra de NÃO criar movimentação futura
+        deve continuar protegida no backend.
+    */
+
+    if (mesFuturo) {
+
+        console.log(
+            "Período futuro selecionado. Nenhum saldo será transportado automaticamente."
+        );
+    }
 }
 
 
