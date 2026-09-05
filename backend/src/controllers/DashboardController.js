@@ -3,6 +3,345 @@ const database = require("../database/connection");
 
 class DashboardController {
 
+    // =====================================================
+    // NOMES DOS MESES
+    // =====================================================
+
+    obterNomeMes(mes) {
+
+        const meses = [
+            "Janeiro",
+            "Fevereiro",
+            "Março",
+            "Abril",
+            "Maio",
+            "Junho",
+            "Julho",
+            "Agosto",
+            "Setembro",
+            "Outubro",
+            "Novembro",
+            "Dezembro"
+        ];
+
+
+        return meses[
+            mes - 1
+        ];
+    }
+
+
+    // =====================================================
+    // GARANTIR SALDO DO MÊS ANTERIOR
+    // =====================================================
+
+    async garantirSaldoAnterior(
+        usuarioId,
+        mes,
+        ano
+    ) {
+
+        // Janeiro precisa buscar dezembro
+        // do ano anterior.
+
+        let mesAnterior =
+            mes - 1;
+
+        let anoAnterior =
+            ano;
+
+
+        if (mesAnterior === 0) {
+
+            mesAnterior =
+                12;
+
+            anoAnterior =
+                ano - 1;
+        }
+
+
+        // =====================================================
+        // PRIMEIRO DIA DO MÊS ATUAL
+        // =====================================================
+
+        const dataMovimentacao =
+            `${ano}-${String(
+                mes
+            ).padStart(
+                2,
+                "0"
+            )}-01`;
+
+
+        // =====================================================
+        // IDENTIFICADOR DA MOVIMENTAÇÃO
+        // =====================================================
+
+        /*
+            Usamos observacao para saber que
+            essa movimentação foi criada
+            automaticamente pelo sistema.
+
+            Isso evita duplicar o saldo.
+        */
+
+        const identificador =
+            `SALDO_TRANSPORTADO:${anoAnterior}-${String(
+                mesAnterior
+            ).padStart(
+                2,
+                "0"
+            )}`;
+
+
+        // =====================================================
+        // BUSCAR MOVIMENTAÇÕES DO MÊS ANTERIOR
+        // =====================================================
+
+        const movimentacoesAnterior =
+            await database(
+                "movimentacoes"
+            )
+                .where(
+                    "usuario_id",
+                    usuarioId
+                )
+                .whereRaw(
+                    "MONTH(data_movimentacao) = ?",
+                    [mesAnterior]
+                )
+                .whereRaw(
+                    "YEAR(data_movimentacao) = ?",
+                    [anoAnterior]
+                )
+                .where(
+                    "status",
+                    "paid"
+                );
+
+
+        let entradas = 0;
+        let despesas = 0;
+
+
+        movimentacoesAnterior.forEach(
+            item => {
+
+                const valor =
+                    Number(
+                        item.valor
+                    );
+
+
+                if (
+                    item.tipo === "income"
+                ) {
+
+                    entradas += valor;
+                }
+
+
+                if (
+                    item.tipo === "expense"
+                ) {
+
+                    despesas += valor;
+                }
+
+
+                /*
+                    saved continua sem
+                    alterar o saldo.
+                */
+            }
+        );
+
+
+        // =====================================================
+        // SALDO FINAL DO MÊS ANTERIOR
+        // =====================================================
+
+        const saldoAnterior =
+            entradas -
+            despesas;
+
+
+        // =====================================================
+        // VERIFICAR SE JÁ EXISTE
+        // =====================================================
+
+        const movimentacaoExistente =
+            await database(
+                "movimentacoes"
+            )
+                .where({
+                    usuario_id:
+                        usuarioId,
+
+                    observacao:
+                        identificador
+                })
+                .first();
+
+
+        // =====================================================
+        // SE O SALDO FOR ZERO
+        // =====================================================
+
+        /*
+            Se antes existia uma movimentação
+            automática e agora o saldo virou 0,
+            removemos ela.
+        */
+
+        if (saldoAnterior === 0) {
+
+            if (movimentacaoExistente) {
+
+                await database(
+                    "movimentacoes"
+                )
+                    .where(
+                        "id",
+                        movimentacaoExistente.id
+                    )
+                    .delete();
+            }
+
+
+            return 0;
+        }
+
+
+        // =====================================================
+        // TIPO DA MOVIMENTAÇÃO
+        // =====================================================
+
+        /*
+            Saldo positivo:
+            vira Entrada.
+
+            Saldo negativo:
+            vira Despesa.
+        */
+
+        const tipo =
+            saldoAnterior >= 0
+                ? "income"
+                : "expense";
+
+
+        const valor =
+            Math.abs(
+                saldoAnterior
+            );
+
+
+        const nomeMesAnterior =
+            this.obterNomeMes(
+                mesAnterior
+            );
+
+
+        const descricao =
+            `Saldo de ${nomeMesAnterior}/${anoAnterior}`;
+
+
+        // =====================================================
+        // ATUALIZAR SE JÁ EXISTIR
+        // =====================================================
+
+        if (movimentacaoExistente) {
+
+            await database(
+                "movimentacoes"
+            )
+                .where(
+                    "id",
+                    movimentacaoExistente.id
+                )
+                .update({
+
+                    descricao,
+
+                    tipo,
+
+                    valor,
+
+                    data_movimentacao:
+                        dataMovimentacao,
+
+                    status:
+                        "paid",
+
+                    categoria_id:
+                        null,
+
+                    forma_pagamento:
+                        null,
+
+                    atualizado_em:
+                        database.fn.now()
+                });
+
+
+            return saldoAnterior;
+        }
+
+
+        // =====================================================
+        // CRIAR MOVIMENTAÇÃO
+        // =====================================================
+
+        await database(
+            "movimentacoes"
+        )
+            .insert({
+
+                usuario_id:
+                    usuarioId,
+
+                categoria_id:
+                    null,
+
+                fixo_id:
+                    null,
+
+                descricao,
+
+                tipo,
+
+                valor,
+
+                data_movimentacao:
+                    dataMovimentacao,
+
+                status:
+                    "paid",
+
+                forma_pagamento:
+                    null,
+
+                observacao:
+                    identificador,
+
+                criado_em:
+                    database.fn.now(),
+
+                atualizado_em:
+                    database.fn.now()
+            });
+
+
+        return saldoAnterior;
+    }
+
+
+    // =====================================================
+    // BUSCAR RESUMO
+    // =====================================================
+
     async buscarResumo(req, res) {
 
         const {
@@ -28,8 +367,26 @@ class DashboardController {
         try {
 
             // =====================================================
-            // MOVIMENTAÇÕES DO MÊS SELECIONADO
+            // CRIAR / ATUALIZAR SALDO DO MÊS ANTERIOR
             // =====================================================
+
+            await this.garantirSaldoAnterior(
+                req.usuarioId,
+                mesSelecionado,
+                anoSelecionado
+            );
+
+
+            // =====================================================
+            // MOVIMENTAÇÕES DO MÊS ATUAL
+            // =====================================================
+
+            /*
+                Aqui o saldo transportado já está
+                dentro das movimentações do mês.
+
+                Portanto NÃO usamos saldo acumulado.
+            */
 
             const movimentacoes =
                 await database(
@@ -70,7 +427,7 @@ class DashboardController {
 
 
                     // =========================
-                    // ENTRADA
+                    // ENTRADAS
                     // =========================
 
                     if (
@@ -85,7 +442,7 @@ class DashboardController {
 
 
                     // =========================
-                    // DESPESA
+                    // DESPESAS
                     // =========================
 
                     if (
@@ -100,7 +457,7 @@ class DashboardController {
 
 
                     // =========================
-                    // GUARDADO
+                    // RESERVAS
                     // =========================
 
                     if (
@@ -133,193 +490,24 @@ class DashboardController {
 
 
             // =====================================================
-            // ÚLTIMO DIA DO MÊS SELECIONADO
+            // SALDO DO MÊS
             // =====================================================
 
-            const ultimoDiaDoMes =
-                new Date(
-                    anoSelecionado,
-                    mesSelecionado,
-                    0
-                );
+            /*
+                Como "Saldo de Agosto" virou
+                uma entrada real em Setembro:
 
+                saldo =
+                entradas do mês
+                -
+                despesas do mês
 
-            const dataLimite =
-                `${ultimoDiaDoMes.getFullYear()}-${String(
-                    ultimoDiaDoMes.getMonth() + 1
-                ).padStart(
-                    2,
-                    "0"
-                )}-${String(
-                    ultimoDiaDoMes.getDate()
-                ).padStart(
-                    2,
-                    "0"
-                )}`;
-
-
-            // =====================================================
-            // ÚLTIMO DIA DO MÊS ANTERIOR
-            // =====================================================
-
-            const ultimoDiaMesAnterior =
-                new Date(
-                    anoSelecionado,
-                    mesSelecionado - 1,
-                    0
-                );
-
-
-            const dataLimiteAnterior =
-                `${ultimoDiaMesAnterior.getFullYear()}-${String(
-                    ultimoDiaMesAnterior.getMonth() + 1
-                ).padStart(
-                    2,
-                    "0"
-                )}-${String(
-                    ultimoDiaMesAnterior.getDate()
-                ).padStart(
-                    2,
-                    "0"
-                )}`;
-
-
-            // =====================================================
-            // MOVIMENTAÇÕES ACUMULADAS ATÉ O MÊS SELECIONADO
-            // =====================================================
-
-            const movimentacoesAcumuladas =
-                await database(
-                    "movimentacoes"
-                )
-                    .where(
-                        "usuario_id",
-                        req.usuarioId
-                    )
-                    .where(
-                        "data_movimentacao",
-                        "<=",
-                        dataLimite
-                    )
-                    .where(
-                        "status",
-                        "paid"
-                    );
-
-
-            let entradasAcumuladas = 0;
-            let despesasAcumuladas = 0;
-
-
-            movimentacoesAcumuladas.forEach(
-                item => {
-
-                    const valor =
-                        Number(
-                            item.valor
-                        );
-
-
-                    if (
-                        item.tipo === "income"
-                    ) {
-
-                        entradasAcumuladas += valor;
-                    }
-
-
-                    if (
-                        item.tipo === "expense"
-                    ) {
-
-                        despesasAcumuladas += valor;
-                    }
-
-
-                    /*
-                        saved NÃO altera
-                        o saldo disponível.
-                    */
-                }
-            );
-
-
-            // =====================================================
-            // SALDO ACUMULADO ATÉ O MÊS SELECIONADO
-            // =====================================================
+                Reserva NÃO altera.
+            */
 
             const saldo =
-                entradasAcumuladas -
-                despesasAcumuladas;
-
-
-            // =====================================================
-            // MOVIMENTAÇÕES ACUMULADAS ATÉ O MÊS ANTERIOR
-            // =====================================================
-
-            const movimentacoesAnteriores =
-                await database(
-                    "movimentacoes"
-                )
-                    .where(
-                        "usuario_id",
-                        req.usuarioId
-                    )
-                    .where(
-                        "data_movimentacao",
-                        "<=",
-                        dataLimiteAnterior
-                    )
-                    .where(
-                        "status",
-                        "paid"
-                    );
-
-
-            let entradasAnteriores = 0;
-            let despesasAnteriores = 0;
-
-
-            movimentacoesAnteriores.forEach(
-                item => {
-
-                    const valor =
-                        Number(
-                            item.valor
-                        );
-
-
-                    if (
-                        item.tipo === "income"
-                    ) {
-
-                        entradasAnteriores += valor;
-                    }
-
-
-                    if (
-                        item.tipo === "expense"
-                    ) {
-
-                        despesasAnteriores += valor;
-                    }
-
-
-                    /*
-                        saved também NÃO altera
-                        o saldo anterior.
-                    */
-                }
-            );
-
-
-            // =====================================================
-            // SALDO DO MÊS ANTERIOR
-            // =====================================================
-
-            const saldoAnterior =
-                entradasAnteriores -
-                despesasAnteriores;
+                entradas -
+                despesas;
 
 
             // =====================================================
@@ -344,8 +532,6 @@ class DashboardController {
             return res.status(200).json({
 
                 saldo,
-
-                saldoAnterior,
 
                 entradas,
 

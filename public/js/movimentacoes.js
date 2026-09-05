@@ -25,12 +25,7 @@ const currency = new Intl.NumberFormat("pt-BR", {
 
 let appData = {
     transactions: [],
-    categories: [],
-
-    summary: {
-        saldo: 0,
-        saldoAnterior: 0
-    }
+    categories: []
 };
 
 let transactionToDelete = null;
@@ -1293,138 +1288,7 @@ function sumTransactions(
         );
 }
 
-// =====================================================
-// CARREGAR SALDO ACUMULADO
-// =====================================================
 
-async function loadAccumulatedBalance() {
-
-    const monthFilter =
-        getElement(
-            "monthFilter"
-        );
-
-
-    const yearFilter =
-        getElement(
-            "yearFilter"
-        );
-
-
-    if (
-        !monthFilter ||
-        !yearFilter
-    ) {
-
-        return;
-    }
-
-
-    const monthValue =
-        monthFilter.value;
-
-
-    const yearValue =
-        yearFilter.value;
-
-
-    // =====================================================
-    // TODOS OS MESES / TODOS OS ANOS
-    // =====================================================
-
-    /*
-        Quando não existe um mês e ano específicos
-        selecionados, não mostramos saldo anterior.
-
-        O saldo geral será calculado normalmente
-        pelas movimentações.
-    */
-
-    if (
-        monthValue === "all" ||
-        yearValue === "all"
-    ) {
-
-        appData.summary.saldo =
-            null;
-
-
-        appData.summary.saldoAnterior =
-            null;
-
-
-        renderTransactions();
-
-        return;
-    }
-
-
-    try {
-
-        /*
-            O select usa:
-            Janeiro = 0
-            Fevereiro = 1
-            ...
-
-            A API usa:
-            Janeiro = 1
-            Fevereiro = 2
-            ...
-        */
-
-        const mes =
-            Number(
-                monthValue
-            ) + 1;
-
-
-        const ano =
-            Number(
-                yearValue
-            );
-
-
-        const resumo =
-            await apiRequest(
-                `/dashboard/resumo?mes=${mes}&ano=${ano}`
-            );
-
-
-        appData.summary.saldo =
-            Number(
-                resumo.saldo || 0
-            );
-
-
-        appData.summary.saldoAnterior =
-            Number(
-                resumo.saldoAnterior || 0
-            );
-
-
-        renderTransactions();
-
-
-    } catch (error) {
-
-        console.error(
-            "Erro ao carregar saldo acumulado:",
-            error
-        );
-
-
-        appData.summary.saldo =
-            null;
-
-
-        appData.summary.saldoAnterior =
-            null;
-
-
-        renderTransactions();
-    }
-}
 
 
 // =====================================================
@@ -1528,6 +1392,28 @@ function renderSummary(transactions) {
 
 
     // =====================================================
+    // SALDO
+    // =====================================================
+
+    /*
+        O saldo transportado do mês anterior
+        já é uma movimentação do tipo income.
+
+        Exemplo:
+
+        Saldo de Agosto/2026
+        + R$ 800,00
+
+        Portanto não precisamos somar
+        saldo anterior separadamente.
+    */
+
+    const balance =
+        income -
+        expense;
+
+
+    // =====================================================
     // ELEMENTOS
     // =====================================================
 
@@ -1561,18 +1447,6 @@ function renderSummary(transactions) {
         );
 
 
-    const summaryPreviousBalance =
-        getElement(
-            "summaryPreviousBalance"
-        );
-
-
-    const summaryPreviousBalanceText =
-        getElement(
-            "summaryPreviousBalanceText"
-        );
-
-
     const summaryIncomeCount =
         getElement(
             "summaryIncomeCount"
@@ -1598,7 +1472,7 @@ function renderSummary(transactions) {
 
 
     // =====================================================
-    // VALORES DO PERÍODO
+    // VALORES
     // =====================================================
 
     if (summaryIncome) {
@@ -1637,188 +1511,7 @@ function renderSummary(transactions) {
     }
 
 
-    // =====================================================
-    // VERIFICAR MÊS / ANO
-    // =====================================================
-
-    const monthFilter =
-        getElement(
-            "monthFilter"
-        );
-
-
-    const yearFilter =
-        getElement(
-            "yearFilter"
-        );
-
-
-    const specificPeriod =
-        monthFilter &&
-        yearFilter &&
-        monthFilter.value !== "all" &&
-        yearFilter.value !== "all";
-
-
-    // =====================================================
-    // SALDO ANTERIOR
-    // =====================================================
-
-    if (summaryPreviousBalance) {
-
-        if (
-            specificPeriod &&
-            appData.summary.saldoAnterior !== null
-        ) {
-
-            const previousBalance =
-                Number(
-                    appData.summary.saldoAnterior || 0
-                );
-
-
-            summaryPreviousBalance.textContent =
-                currency.format(
-                    previousBalance
-                );
-
-
-            summaryPreviousBalance.classList.toggle(
-                "expense-text",
-                previousBalance < 0
-            );
-
-
-            summaryPreviousBalance.classList.toggle(
-                "income-text",
-                previousBalance >= 0
-            );
-
-
-        } else {
-
-            summaryPreviousBalance.textContent =
-                "—";
-
-
-            summaryPreviousBalance.classList.remove(
-                "expense-text"
-            );
-
-
-            summaryPreviousBalance.classList.remove(
-                "income-text"
-            );
-        }
-    }
-
-
-    // =====================================================
-    // TEXTO SALDO ANTERIOR
-    // =====================================================
-
-    if (summaryPreviousBalanceText) {
-
-        if (specificPeriod) {
-
-            const monthNames = [
-                "Janeiro",
-                "Fevereiro",
-                "Março",
-                "Abril",
-                "Maio",
-                "Junho",
-                "Julho",
-                "Agosto",
-                "Setembro",
-                "Outubro",
-                "Novembro",
-                "Dezembro"
-            ];
-
-
-            const selectedMonth =
-                Number(
-                    monthFilter.value
-                );
-
-
-            const selectedYear =
-                Number(
-                    yearFilter.value
-                );
-
-
-            let previousMonth =
-                selectedMonth - 1;
-
-
-            let previousYear =
-                selectedYear;
-
-
-            if (previousMonth < 0) {
-
-                previousMonth =
-                    11;
-
-
-                previousYear--;
-            }
-
-
-            summaryPreviousBalanceText.textContent =
-                `Saldo acumulado até ${monthNames[previousMonth]} de ${previousYear}`;
-
-
-        } else {
-
-            summaryPreviousBalanceText.textContent =
-                "Selecione um mês e ano";
-        }
-    }
-
-
-    // =====================================================
-    // SALDO DISPONÍVEL
-    // =====================================================
-
     if (summaryBalance) {
-
-        let balance;
-
-
-        if (
-            specificPeriod &&
-            appData.summary.saldo !== null
-        ) {
-
-            /*
-                Saldo acumulado retornado
-                pelo backend.
-            */
-
-            balance =
-                Number(
-                    appData.summary.saldo || 0
-                );
-
-
-        } else {
-
-            /*
-                Sem mês específico:
-                calcula com as movimentações
-                exibidas atualmente.
-
-                Reserva NÃO altera o saldo.
-            */
-
-            balance =
-                income -
-                expense;
-        }
-
 
         summaryBalance.textContent =
             currency.format(
@@ -1840,7 +1533,7 @@ function renderSummary(transactions) {
 
 
     // =====================================================
-    // CONTADOR ENTRADAS
+    // CONTADORES
     // =====================================================
 
     if (summaryIncomeCount) {
@@ -1854,10 +1547,6 @@ function renderSummary(transactions) {
     }
 
 
-    // =====================================================
-    // CONTADOR DESPESAS
-    // =====================================================
-
     if (summaryExpenseCount) {
 
         summaryExpenseCount.textContent =
@@ -1868,10 +1557,6 @@ function renderSummary(transactions) {
             }`;
     }
 
-
-    // =====================================================
-    // CONTADOR RESERVAS
-    // =====================================================
 
     if (summarySavedCount) {
 
@@ -1888,10 +1573,6 @@ function renderSummary(transactions) {
     }
 
 
-    // =====================================================
-    // CONTADOR PENDENTES
-    // =====================================================
-
     if (summaryPendingCount) {
 
         summaryPendingCount.textContent =
@@ -1902,6 +1583,171 @@ function renderSummary(transactions) {
             }`;
     }
 }
+
+// =====================================================
+// GERAR SALDO DO MÊS ANTERIOR
+// =====================================================
+
+async function ensurePreviousMonthBalance() {
+
+    const monthFilter =
+        getElement(
+            "monthFilter"
+        );
+
+
+    const yearFilter =
+        getElement(
+            "yearFilter"
+        );
+
+
+    if (
+        !monthFilter ||
+        !yearFilter
+    ) {
+
+        return;
+    }
+
+
+    const monthValue =
+        monthFilter.value;
+
+
+    const yearValue =
+        yearFilter.value;
+
+
+    // Precisa ter mês específico
+    if (
+        monthValue === "all"
+    ) {
+
+        return;
+    }
+
+
+    // =====================================================
+    // SE O ANO ESTIVER "TODOS"
+    // USA O ANO ATUAL
+    // =====================================================
+
+    if (
+        yearValue === "all"
+    ) {
+
+        const currentYear =
+            new Date()
+                .getFullYear();
+
+
+        const optionExists =
+            [...yearFilter.options]
+                .some(
+                    option =>
+                        Number(
+                            option.value
+                        ) === currentYear
+                );
+
+
+        if (optionExists) {
+
+            yearFilter.value =
+                String(
+                    currentYear
+                );
+        }
+    }
+
+
+    if (
+        yearFilter.value === "all"
+    ) {
+
+        return;
+    }
+
+
+    const mes =
+        Number(
+            monthValue
+        ) + 1;
+
+
+    const ano =
+        Number(
+            yearFilter.value
+        );
+
+
+    try {
+
+        // =====================================================
+        // CHAMA O BACKEND
+        // =====================================================
+
+        /*
+            Essa chamada fará o backend:
+
+            1. calcular o saldo do mês anterior
+            2. criar/atualizar a movimentação
+               "Saldo de Agosto/2026"
+            3. salvar no MySQL
+        */
+
+        await apiRequest(
+            `/dashboard/resumo?mes=${mes}&ano=${ano}`
+        );
+
+
+        // =====================================================
+        // BUSCA NOVAMENTE AS MOVIMENTAÇÕES
+        // =====================================================
+
+        /*
+            Isso é necessário porque a chamada acima
+            pode ter acabado de criar uma nova
+            movimentação no banco.
+        */
+
+        await loadTransactions();
+
+
+        renderYearOptions();
+
+
+        // Mantém o mês selecionado
+        monthFilter.value =
+            monthValue;
+
+
+        // Mantém o ano selecionado
+        yearFilter.value =
+            String(
+                ano
+            );
+
+
+        renderTransactions();
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao gerar saldo do mês anterior:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Erro ao atualizar saldo anterior."
+        );
+    }
+}
+
 
 function getTransactionTypeInfo(type) {
 
@@ -2879,14 +2725,6 @@ function clearFilters() {
         "newest";
 
 
-    appData.summary.saldo =
-        null;
-
-
-    appData.summary.saldoAnterior =
-        null;
-
-
     renderTransactions();
 }
 
@@ -3047,7 +2885,7 @@ function exportCsv() {
 }
 
 
-// =====================================================
+/// =====================================================
 // FILTROS
 // =====================================================
 
@@ -3084,24 +2922,64 @@ function setupFilters() {
 
                 async () => {
 
-                    // =============================================
-                    // MÊS OU ANO
-                    // =============================================
+                    // =================================================
+                    // MUDOU O MÊS
+                    // =================================================
 
                     if (
-                        id === "monthFilter" ||
-                        id === "yearFilter"
+                        id === "monthFilter"
                     ) {
 
-                        await loadAccumulatedBalance();
+                        if (
+                            element.value !== "all"
+                        ) {
+
+                            await ensurePreviousMonthBalance();
+
+                        } else {
+
+                            renderTransactions();
+                        }
+
 
                         return;
                     }
 
 
-                    // =============================================
-                    // OUTROS FILTROS
-                    // =============================================
+                    // =================================================
+                    // MUDOU O ANO
+                    // =================================================
+
+                    if (
+                        id === "yearFilter"
+                    ) {
+
+                        const monthFilter =
+                            getElement(
+                                "monthFilter"
+                            );
+
+
+                        if (
+                            element.value !== "all" &&
+                            monthFilter?.value !== "all"
+                        ) {
+
+                            await ensurePreviousMonthBalance();
+
+                        } else {
+
+                            renderTransactions();
+                        }
+
+
+                        return;
+                    }
+
+
+                    // =================================================
+                    // DEMAIS FILTROS
+                    // =================================================
 
                     renderTransactions();
                 }
@@ -3109,6 +2987,7 @@ function setupFilters() {
         }
     );
 }
+
 
 // =====================================================
 // MENU PERFIL
