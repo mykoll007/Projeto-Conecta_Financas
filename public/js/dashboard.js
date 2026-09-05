@@ -1961,11 +1961,43 @@ async function renderDashboard() {
 
     try {
 
-        await Promise.all([
-            loadTransactions(),
-            loadSummary()
-        ]);
+        // =====================================================
+        // 1. ATUALIZAR RESUMO
+        // =====================================================
 
+        /*
+            Primeiro chamamos o resumo.
+
+            O backend verifica o saldo do mês anterior
+            e cria/atualiza a movimentação automática:
+
+            Exemplo:
+            Saldo de Agosto/2026
+            + R$ 800,00
+            em 01/09/2026
+        */
+
+        await loadSummary();
+
+
+        // =====================================================
+        // 2. CARREGAR MOVIMENTAÇÕES
+        // =====================================================
+
+        /*
+            Agora buscamos as movimentações.
+
+            Dessa forma, se o backend acabou de criar
+            "Saldo de Agosto/2026", ela já vem nesta
+            consulta e aparece no dashboard.
+        */
+
+        await loadTransactions();
+
+
+        // =====================================================
+        // 3. RENDERIZAR COMPONENTES
+        // =====================================================
 
         renderBarChart();
 
@@ -1988,7 +2020,6 @@ async function renderDashboard() {
         );
     }
 }
-
 
 // =====================================================
 // MODAL DE MOVIMENTAÇÃO
