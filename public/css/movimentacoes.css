@@ -1109,6 +1109,8 @@ input::placeholder {
 ===================================================== */
 
 .history-content {
+  min-width: 0;
+
   padding:
     0 24px 24px;
 
@@ -1135,10 +1137,12 @@ input::placeholder {
 
 .search-container {
   position: relative;
+
+  width: 100%;
 }
 
 
-.search-container span {
+.search-icon {
   position: absolute;
 
   top: 50%;
@@ -1155,18 +1159,173 @@ input::placeholder {
 
 
 .search-container input {
+  width: 100%;
+
   padding-left: 40px;
+  padding-right: 44px;
 }
 
+
+/* =====================================================
+   LOADING DA PESQUISA
+===================================================== */
+
+.search-loading {
+  position: absolute;
+
+  top: 50%;
+  right: 14px;
+
+  width: 16px;
+  height: 16px;
+
+  transform:
+    translateY(-50%);
+
+  border:
+    2px solid var(--border);
+
+  border-top-color:
+    var(--primary);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  animation:
+    search-spin 0.65s linear infinite;
+}
+
+
+.search-loading[hidden] {
+  display: none;
+}
+
+
+@keyframes search-spin {
+
+  from {
+    transform:
+      translateY(-50%)
+      rotate(0deg);
+  }
+
+  to {
+    transform:
+      translateY(-50%)
+      rotate(360deg);
+  }
+}
+/* =====================================================
+   VER TODAS AS MOVIMENTAÇÕES
+===================================================== */
+
+.history-view-all-wrapper {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding-top: 20px;
+}
+
+
+.history-view-all-button {
+  min-height: 40px;
+
+  max-width: 100%;
+
+  padding:
+    0 18px;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 10px;
+
+  color:
+    var(--primary);
+
+  background:
+    var(--surface);
+
+  font-size: 0.76rem;
+  font-weight: 700;
+
+  white-space: normal;
+
+  text-align: center;
+
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    transform var(--transition);
+}
+
+
+.history-view-all-button:hover {
+  transform:
+    translateY(-1px);
+
+  border-color:
+    rgba(22, 138, 82, 0.35);
+
+  background:
+    var(--primary-light);
+}
+
+
+.history-view-all-button[hidden] {
+  display: none;
+}
 
 /* =====================================================
    TABELA
 ===================================================== */
 
 .table-wrapper {
+  width: 100%;
+  max-width: 100%;
+
   overflow-x: auto;
+  overflow-y: auto;
 
   margin-top: 22px;
+
+  border-radius: 10px;
+
+  -webkit-overflow-scrolling: touch;
+}
+
+/* =====================================================
+   HISTÓRICO EXPANDIDO
+===================================================== */
+
+.transactions-collapsible {
+  width: 100%;
+  max-width: 100%;
+
+  min-width: 0;
+
+  overflow: hidden;
+}
+
+
+.history-content {
+  width: 100%;
+  max-width: 100%;
+
+  min-width: 0;
+}
+
+
+.table-wrapper table {
+  min-width: 850px;
+}
+
+.history-content.show-all .table-wrapper {
+  max-height: 520px;
 }
 
 
@@ -1430,6 +1589,64 @@ td {
 
   background:
     var(--expense-light);
+}
+
+/* =====================================================
+   LOADING INICIAL DO HISTÓRICO
+===================================================== */
+
+.history-loading {
+  min-height: 120px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  color: var(--text-secondary);
+
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+
+.history-loading[hidden] {
+  display: none;
+}
+
+
+.history-loading-spinner {
+  width: 18px;
+  height: 18px;
+
+  border:
+    2px solid var(--border);
+
+  border-top-color:
+    var(--primary);
+
+  border-radius: 50%;
+
+  animation:
+    history-loading-spin
+    0.7s
+    linear
+    infinite;
+}
+
+
+@keyframes history-loading-spin {
+
+  from {
+    transform:
+      rotate(0deg);
+  }
+
+  to {
+    transform:
+      rotate(360deg);
+  }
 }
 
 
@@ -2082,6 +2299,66 @@ td {
 ===================================================== */
 
 @media (max-width: 720px) {
+
+  .history-content {
+  overflow: hidden;
+}
+
+.history-content.show-all .mobile-transactions {
+  max-height: 620px;
+
+  overflow-y: auto;
+
+  overflow-x: hidden;
+
+  padding-right: 4px;
+}
+
+.mobile-transactions {
+  width: 100%;
+  min-width: 0;
+}
+
+
+.mobile-transaction-card {
+  width: 100%;
+  min-width: 0;
+
+  overflow: hidden;
+}
+
+
+.mobile-transaction-top {
+  min-width: 0;
+}
+
+
+.mobile-transaction-main {
+  flex: 1;
+
+  min-width: 0;
+}
+
+
+.mobile-transaction-main > div:last-child {
+  min-width: 0;
+}
+
+
+.mobile-transaction-main strong,
+.mobile-transaction-main small {
+  max-width: 100%;
+}
+
+
+.mobile-transaction-top > .amount {
+  flex-shrink: 0;
+}
+
+
+.history-view-all-button {
+  width: 100%;
+}
 
   .topbar-container,
   .page-container,

@@ -2,21 +2,32 @@
 // CONFIGURAÇÕES
 // =====================================================
 
-const LOGIN_KEY = "clara-financas-login";
-const TOKEN_KEY = "clara-financas-token";
-const THEME_KEY = "clara-financas-tema";
+const LOGIN_KEY =
+    "clara-financas-login";
 
-const API_URL = "https://projeto-conecta-financas.vercel.app/api";
+const TOKEN_KEY =
+    "clara-financas-token";
+
+const THEME_KEY =
+    "clara-financas-tema";
+
+
+const API_URL =
+    "https://projeto-conecta-financas.vercel.app/api";
 
 
 // =====================================================
 // FORMATADOR
 // =====================================================
 
-const currency = new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL"
-});
+const currency =
+    new Intl.NumberFormat(
+        "pt-BR",
+        {
+            style: "currency",
+            currency: "BRL"
+        }
+    );
 
 
 // =====================================================
@@ -28,7 +39,25 @@ let appData = {
     categories: []
 };
 
-let transactionToDelete = null;
+
+let transactionToDelete =
+    null;
+
+
+// =====================================================
+// CONTROLE DO HISTÓRICO
+// =====================================================
+
+let showAllTransactions =
+    false;
+
+
+const INITIAL_TRANSACTION_LIMIT =
+    4;
+
+
+let searchLoadingTimeout =
+    null;
 
 
 // =====================================================
@@ -36,7 +65,10 @@ let transactionToDelete = null;
 // =====================================================
 
 function getElement(id) {
-    return document.getElementById(id);
+
+    return document.getElementById(
+        id
+    );
 }
 
 
@@ -45,9 +77,14 @@ function getElement(id) {
 // =====================================================
 
 function getToken() {
+
     return (
-        localStorage.getItem(TOKEN_KEY) ||
-        sessionStorage.getItem(TOKEN_KEY)
+        localStorage.getItem(
+            TOKEN_KEY
+        ) ||
+        sessionStorage.getItem(
+            TOKEN_KEY
+        )
     );
 }
 
@@ -59,17 +96,27 @@ function getToken() {
 function getSession() {
 
     const savedSession =
-        localStorage.getItem(LOGIN_KEY) ||
-        sessionStorage.getItem(LOGIN_KEY);
+        localStorage.getItem(
+            LOGIN_KEY
+        ) ||
+        sessionStorage.getItem(
+            LOGIN_KEY
+        );
 
-    const token = getToken();
+
+    const token =
+        getToken();
 
 
-    if (!savedSession || !token) {
+    if (
+        !savedSession ||
+        !token
+    ) {
 
         clearSession();
 
-        window.location.href = "login.html";
+        window.location.href =
+            "login.html";
 
         return null;
     }
@@ -77,13 +124,16 @@ function getSession() {
 
     try {
 
-        return JSON.parse(savedSession);
+        return JSON.parse(
+            savedSession
+        );
 
     } catch (error) {
 
         clearSession();
 
-        window.location.href = "login.html";
+        window.location.href =
+            "login.html";
 
         return null;
     }
@@ -92,11 +142,22 @@ function getSession() {
 
 function clearSession() {
 
-    localStorage.removeItem(LOGIN_KEY);
-    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(
+        LOGIN_KEY
+    );
 
-    sessionStorage.removeItem(LOGIN_KEY);
-    sessionStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(
+        TOKEN_KEY
+    );
+
+
+    sessionStorage.removeItem(
+        LOGIN_KEY
+    );
+
+    sessionStorage.removeItem(
+        TOKEN_KEY
+    );
 }
 
 
@@ -109,14 +170,16 @@ async function apiRequest(
     options = {}
 ) {
 
-    const token = getToken();
+    const token =
+        getToken();
 
 
     if (!token) {
 
         clearSession();
 
-        window.location.href = "login.html";
+        window.location.href =
+            "login.html";
 
         throw new Error(
             "Usuário não autenticado."
@@ -131,7 +194,10 @@ async function apiRequest(
 
     if (
         options.body &&
-        !(options.body instanceof FormData)
+        !(
+            options.body
+            instanceof FormData
+        )
     ) {
 
         headers["Content-Type"] =
@@ -148,13 +214,14 @@ async function apiRequest(
 
     try {
 
-        response = await fetch(
-            `${API_URL}${endpoint}`,
-            {
-                ...options,
-                headers
-            }
-        );
+        response =
+            await fetch(
+                `${API_URL}${endpoint}`,
+                {
+                    ...options,
+                    headers
+                }
+            );
 
     } catch (error) {
 
@@ -169,7 +236,8 @@ async function apiRequest(
 
     try {
 
-        data = await response.json();
+        data =
+            await response.json();
 
     } catch (error) {
 
@@ -177,11 +245,14 @@ async function apiRequest(
     }
 
 
-    if (response.status === 401) {
+    if (
+        response.status === 401
+    ) {
 
         clearSession();
 
-        window.location.href = "login.html";
+        window.location.href =
+            "login.html";
 
         throw new Error(
             "Sua sessão expirou."
@@ -189,7 +260,9 @@ async function apiRequest(
     }
 
 
-    if (!response.ok) {
+    if (
+        !response.ok
+    ) {
 
         throw new Error(
             data?.message ||
@@ -208,16 +281,24 @@ async function apiRequest(
 
 function showToast(message) {
 
-    const toast = getElement("toast");
+    const toast =
+        getElement(
+            "toast"
+        );
+
 
     if (!toast) {
         return;
     }
 
 
-    toast.textContent = message;
+    toast.textContent =
+        message;
 
-    toast.classList.add("show");
+
+    toast.classList.add(
+        "show"
+    );
 
 
     window.clearTimeout(
@@ -226,26 +307,194 @@ function showToast(message) {
 
 
     showToast.timeout =
-        window.setTimeout(() => {
+        window.setTimeout(
+            () => {
 
-            toast.classList.remove(
-                "show"
-            );
+                toast.classList.remove(
+                    "show"
+                );
 
-        }, 2500);
+            },
+            2500
+        );
 }
 
+// =====================================================
+// LOADING DO HISTÓRICO
+// =====================================================
+
+function showHistoryLoading() {
+
+    const loading =
+        getElement("historyLoading");
+
+    const resultsText =
+        getElement("resultsText");
+
+    const search =
+        document.querySelector(
+            ".transactions-search"
+        );
+
+    const tableWrapper =
+        document.querySelector(
+            ".table-wrapper"
+        );
+
+    const mobileTransactions =
+        getElement("mobileTransactions");
+
+    const emptyState =
+        getElement("emptyState");
+
+    const historyViewAllWrapper =
+        document.querySelector(
+            ".history-view-all-wrapper"
+        );
+
+
+    // TEXTO DO CABEÇALHO
+    if (resultsText) {
+
+        resultsText.textContent =
+            "Carregando movimentações...";
+    }
+
+
+    // MOSTRA SOMENTE O LOADING
+    if (loading) {
+
+        loading.hidden =
+            false;
+    }
+
+
+    // ESCONDE PESQUISA
+    if (search) {
+
+        search.hidden =
+            true;
+    }
+
+
+    // ESCONDE TABELA DESKTOP
+    if (tableWrapper) {
+
+        tableWrapper.hidden =
+            true;
+    }
+
+
+    // ESCONDE CARDS MOBILE
+    if (mobileTransactions) {
+
+        mobileTransactions.hidden =
+            true;
+    }
+
+
+    // ESCONDE ESTADO VAZIO
+    if (emptyState) {
+
+        emptyState.hidden =
+            true;
+    }
+
+
+    // ESCONDE VER TODAS
+    if (historyViewAllWrapper) {
+
+        historyViewAllWrapper.hidden =
+            true;
+    }
+}
+
+
+// =====================================================
+// FINALIZAR LOADING DO HISTÓRICO
+// =====================================================
+
+function hideHistoryLoading() {
+
+    const loading =
+        getElement("historyLoading");
+
+    const search =
+        document.querySelector(
+            ".transactions-search"
+        );
+
+    const tableWrapper =
+        document.querySelector(
+            ".table-wrapper"
+        );
+
+    const mobileTransactions =
+        getElement("mobileTransactions");
+
+    const historyViewAllWrapper =
+        document.querySelector(
+            ".history-view-all-wrapper"
+        );
+
+
+    // ESCONDE LOADING
+    if (loading) {
+
+        loading.hidden =
+            true;
+    }
+
+
+    // MOSTRA PESQUISA
+    if (search) {
+
+        search.hidden =
+            false;
+    }
+
+
+    // MOSTRA TABELA
+    if (tableWrapper) {
+
+        tableWrapper.hidden =
+            false;
+    }
+
+
+    // MOSTRA CARDS MOBILE
+    if (mobileTransactions) {
+
+        mobileTransactions.hidden =
+            false;
+    }
+
+
+    // MOSTRA ÁREA DO VER TODAS
+    if (historyViewAllWrapper) {
+
+        historyViewAllWrapper.hidden =
+            false;
+    }
+}
 
 // =====================================================
 // UTILITÁRIOS
 // =====================================================
 
-function escapeHtml(value = "") {
+function escapeHtml(
+    value = ""
+) {
 
     const element =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
-    element.textContent = value;
+
+    element.textContent =
+        value;
+
 
     return element.innerHTML;
 }
@@ -253,8 +502,12 @@ function escapeHtml(value = "") {
 
 function normalizeText(value) {
 
-    return String(value)
-        .normalize("NFD")
+    return String(
+        value
+    )
+        .normalize(
+            "NFD"
+        )
         .replace(
             /[\u0300-\u036f]/g,
             ""
@@ -271,7 +524,9 @@ function normalizeDate(value) {
 
 
     const text =
-        String(value);
+        String(
+            value
+        );
 
 
     const match =
@@ -286,7 +541,9 @@ function normalizeDate(value) {
 
 
     const date =
-        new Date(value);
+        new Date(
+            value
+        );
 
 
     if (
@@ -302,6 +559,7 @@ function normalizeDate(value) {
     const year =
         date.getFullYear();
 
+
     const month =
         String(
             date.getMonth() + 1
@@ -309,6 +567,7 @@ function normalizeDate(value) {
             2,
             "0"
         );
+
 
     const day =
         String(
@@ -319,17 +578,24 @@ function normalizeDate(value) {
         );
 
 
-    return `${year}-${month}-${day}`;
+    return (
+        `${year}-${month}-${day}`
+    );
 }
 
 
-function formatDate(dateValue) {
+function formatDate(
+    dateValue
+) {
 
     const normalized =
-        normalizeDate(dateValue);
+        normalizeDate(
+            dateValue
+        );
 
 
     if (!normalized) {
+
         return "-";
     }
 
@@ -356,75 +622,108 @@ function parseMoney(value) {
 
 
     let text =
-        String(value)
+        String(
+            value
+        )
             .trim()
-            .replace(/\s/g, "");
+            .replace(
+                /\s/g,
+                ""
+            );
 
-
-    /*
-        Aceita:
-
-        30
-        30,00
-        30.00
-        1.500,90
-        1500.90
-    */
 
     if (
         text.includes(",") &&
         text.includes(".")
     ) {
 
-        text = text
-            .replace(/\./g, "")
-            .replace(",", ".");
+        text =
+            text
+                .replace(
+                    /\./g,
+                    ""
+                )
+                .replace(
+                    ",",
+                    "."
+                );
 
     } else {
 
         text =
-            text.replace(",", ".");
+            text.replace(
+                ",",
+                "."
+            );
     }
 
 
-    return Number(text);
+    return Number(
+        text
+    );
 }
+
+
+// =====================================================
+// INPUT DE DINHEIRO
+// =====================================================
 
 function setupMoneyInput() {
 
     const amountInput =
-        getElement("amount");
+        getElement(
+            "amount"
+        );
+
 
     if (!amountInput) {
         return;
     }
+
 
     amountInput.addEventListener(
         "input",
         event => {
 
             let value =
-                event.target.value.replace(/\D/g, "");
+                event.target.value
+                    .replace(
+                        /\D/g,
+                        ""
+                    );
+
 
             if (!value) {
-                event.target.value = "";
+
+                event.target.value =
+                    "";
+
                 return;
             }
 
+
             const amount =
-                Number(value) / 100;
+                Number(
+                    value
+                ) / 100;
+
 
             event.target.value =
                 amount.toLocaleString(
                     "pt-BR",
                     {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
+                        minimumFractionDigits:
+                            2,
+
+                        maximumFractionDigits:
+                            2
                     }
                 );
         }
     );
 }
+
+
 // =====================================================
 // USUÁRIO
 // =====================================================
@@ -445,7 +744,10 @@ async function renderUser() {
 
 
         const firstName =
-            name.split(" ")[0];
+            name
+                .split(
+                    " "
+                )[0];
 
 
         const profileName =
@@ -460,18 +762,24 @@ async function renderUser() {
             );
 
 
-        if (profileName) {
+        if (
+            profileName
+        ) {
 
             profileName.textContent =
                 firstName;
         }
 
 
-        if (profileAvatar) {
+        if (
+            profileAvatar
+        ) {
 
             profileAvatar.textContent =
                 firstName
-                    .charAt(0)
+                    .charAt(
+                        0
+                    )
                     .toUpperCase();
         }
 
@@ -501,7 +809,9 @@ async function loadCategories() {
 
 
         appData.categories =
-            Array.isArray(categories)
+            Array.isArray(
+                categories
+            )
                 ? categories
                 : [];
 
@@ -539,10 +849,13 @@ function renderCategoryOptions() {
 
 
     if (
-        appData.categories.length === 0
+        appData.categories.length ===
+        0
     ) {
 
-        if (categorySelect) {
+        if (
+            categorySelect
+        ) {
 
             categorySelect.innerHTML = `
                 <option value="">
@@ -552,7 +865,9 @@ function renderCategoryOptions() {
         }
 
 
-        if (categoryFilter) {
+        if (
+            categoryFilter
+        ) {
 
             categoryFilter.innerHTML = `
                 <option value="all">
@@ -568,26 +883,35 @@ function renderCategoryOptions() {
 
     const options =
         appData.categories
-            .map(category => {
+            .map(
+                category => {
 
-                return `
-                    <option value="${category.id}">
-                        ${escapeHtml(category.nome)}
-                    </option>
-                `;
+                    return `
+                        <option value="${category.id}">
+                            ${escapeHtml(
+                                category.nome
+                            )}
+                        </option>
+                    `;
+                }
+            )
+            .join(
+                ""
+            );
 
-            })
-            .join("");
 
-
-    if (categorySelect) {
+    if (
+        categorySelect
+    ) {
 
         categorySelect.innerHTML =
             options;
     }
 
 
-    if (categoryFilter) {
+    if (
+        categoryFilter
+    ) {
 
         categoryFilter.innerHTML = `
             <option value="all">
@@ -598,6 +922,7 @@ function renderCategoryOptions() {
         `;
     }
 }
+
 
 // =====================================================
 // MODAL NOVA CATEGORIA
@@ -621,6 +946,7 @@ function openCategoryModal() {
         !modal ||
         !form
     ) {
+
         return;
     }
 
@@ -634,7 +960,9 @@ function openCategoryModal() {
         );
 
 
-    if (colorInput) {
+    if (
+        colorInput
+    ) {
 
         colorInput.value =
             "#168a52";
@@ -661,7 +989,9 @@ function openCategoryModal() {
 // SALVAR NOVA CATEGORIA
 // =====================================================
 
-async function saveCategory(event) {
+async function saveCategory(
+    event
+) {
 
     event.preventDefault();
 
@@ -679,10 +1009,6 @@ async function saveCategory(event) {
         "#168a52";
 
 
-    // =========================
-    // VALIDAR NOME
-    // =========================
-
     if (!name) {
 
         showToast(
@@ -692,10 +1018,6 @@ async function saveCategory(event) {
         return;
     }
 
-
-    // =========================
-    // VERIFICAR DUPLICADA
-    // =========================
 
     const duplicate =
         appData.categories.some(
@@ -713,7 +1035,9 @@ async function saveCategory(event) {
         );
 
 
-    if (duplicate) {
+    if (
+        duplicate
+    ) {
 
         showToast(
             "Essa categoria já existe."
@@ -737,7 +1061,9 @@ async function saveCategory(event) {
 
     try {
 
-        if (submitButton) {
+        if (
+            submitButton
+        ) {
 
             submitButton.disabled =
                 true;
@@ -747,10 +1073,6 @@ async function saveCategory(event) {
                 "Adicionando...";
         }
 
-
-        // =========================
-        // CRIAR NA API
-        // =========================
 
         const resultado =
             await apiRequest(
@@ -771,26 +1093,13 @@ async function saveCategory(event) {
             );
 
 
-        // =========================
-        // FECHAR MODAL
-        // =========================
-
         getElement(
             "categoryModal"
-        ).close();
+        )?.close();
 
-
-        // =========================
-        // RECARREGAR CATEGORIAS
-        // =========================
 
         await loadCategories();
 
-
-        // =========================
-        // SELECIONAR A CATEGORIA
-        // RECÉM-CRIADA
-        // =========================
 
         const createdCategory =
             appData.categories.find(
@@ -808,7 +1117,9 @@ async function saveCategory(event) {
             );
 
 
-        if (createdCategory) {
+        if (
+            createdCategory
+        ) {
 
             const categorySelect =
                 getElement(
@@ -816,7 +1127,9 @@ async function saveCategory(event) {
                 );
 
 
-            if (categorySelect) {
+            if (
+                categorySelect
+            ) {
 
                 categorySelect.value =
                     String(
@@ -848,7 +1161,9 @@ async function saveCategory(event) {
 
     } finally {
 
-        if (submitButton) {
+        if (
+            submitButton
+        ) {
 
             submitButton.disabled =
                 false;
@@ -859,6 +1174,7 @@ async function saveCategory(event) {
         }
     }
 }
+
 
 // =====================================================
 // CARREGAR MOVIMENTAÇÕES
@@ -880,70 +1196,74 @@ async function loadTransactions() {
             )
         ) {
 
-            appData.transactions = [];
+            appData.transactions =
+                [];
 
             return;
         }
 
 
         appData.transactions =
-            transactions.map(item => {
+            transactions.map(
+                item => {
 
-                return {
+                    return {
 
-                    id:
-                        Number(item.id),
+                        id:
+                            Number(
+                                item.id
+                            ),
 
-                    description:
-                        item.descricao ||
-                        "",
+                        description:
+                            item.descricao ||
+                            "",
 
-                    type:
-                        item.tipo,
+                        type:
+                            item.tipo,
 
-                    amount:
-                        Number(
-                            item.valor
-                        ),
+                        amount:
+                            Number(
+                                item.valor
+                            ),
 
-                    categoryId:
-                        item.categoria_id
-                            ? Number(
-                                item.categoria_id
-                            )
-                            : null,
+                        categoryId:
+                            item.categoria_id
+                                ? Number(
+                                    item.categoria_id
+                                )
+                                : null,
 
-                    category:
-                        item.categoria ||
-                        "Sem categoria",
+                        category:
+                            item.categoria ||
+                            "Sem categoria",
 
-                    categoryColor:
-                        item.categoria_cor ||
-                        null,
+                        categoryColor:
+                            item.categoria_cor ||
+                            null,
 
-                    date:
-                        normalizeDate(
-                            item.data ||
-                            item.data_movimentacao
-                        ),
+                        date:
+                            normalizeDate(
+                                item.data ||
+                                item.data_movimentacao
+                            ),
 
-                    status:
-                        item.status,
+                        status:
+                            item.status,
 
-                    payment:
-                        item.forma_pagamento ||
-                        "Não informado",
+                        payment:
+                            item.forma_pagamento ||
+                            "Não informado",
 
-                    observation:
-                        item.observacao ||
-                        "",
+                        observation:
+                            item.observacao ||
+                            "",
 
-                    fixedId:
-                        item.fixo_id ||
-                        null
-                };
-
-            });
+                        fixedId:
+                            item.fixo_id ||
+                            null
+                    };
+                }
+            );
 
 
     } catch (error) {
@@ -955,7 +1275,8 @@ async function loadTransactions() {
 
 
         showToast(
-            error.message
+            error.message ||
+            "Erro ao carregar movimentações."
         );
     }
 }
@@ -973,7 +1294,9 @@ function renderYearOptions() {
         );
 
 
-    if (!yearFilter) {
+    if (
+        !yearFilter
+    ) {
         return;
     }
 
@@ -985,7 +1308,9 @@ function renderYearOptions() {
     appData.transactions.forEach(
         transaction => {
 
-            if (!transaction.date) {
+            if (
+                !transaction.date
+            ) {
                 return;
             }
 
@@ -1011,15 +1336,20 @@ function renderYearOptions() {
 
 
     years.add(
-        new Date().getFullYear()
+        new Date()
+            .getFullYear()
     );
 
 
     const sortedYears =
         [...years]
             .sort(
-                (a, b) =>
-                    b - a
+                (
+                    first,
+                    second
+                ) =>
+                    second -
+                    first
             );
 
 
@@ -1033,26 +1363,31 @@ function renderYearOptions() {
         </option>
 
         ${sortedYears
-            .map(year => {
+            .map(
+                year => {
 
-                return `
-                    <option value="${year}">
-                        ${year}
-                    </option>
-                `;
-
-            })
+                    return `
+                        <option value="${year}">
+                            ${year}
+                        </option>
+                    `;
+                }
+            )
             .join("")}
     `;
 
 
-    if (
+    const optionExists =
         [...yearFilter.options]
             .some(
                 option =>
                     option.value ===
                     currentValue
-            )
+            );
+
+
+    if (
+        optionExists
     ) {
 
         yearFilter.value =
@@ -1062,53 +1397,88 @@ function renderYearOptions() {
 
 
 // =====================================================
-// FILTROS
+// FILTRAR MOVIMENTAÇÕES
 // =====================================================
 
 function getFilteredTransactions() {
 
+    const searchInput =
+        getElement(
+            "searchInput"
+        );
+
+
+    const typeFilter =
+        getElement(
+            "typeFilter"
+        );
+
+
+    const statusFilter =
+        getElement(
+            "statusFilter"
+        );
+
+
+    const categoryFilter =
+        getElement(
+            "categoryFilter"
+        );
+
+
+    const monthFilter =
+        getElement(
+            "monthFilter"
+        );
+
+
+    const yearFilter =
+        getElement(
+            "yearFilter"
+        );
+
+
+    const orderFilter =
+        getElement(
+            "orderFilter"
+        );
+
+
     const search =
         normalizeText(
-            getElement(
-                "searchInput"
-            ).value.trim()
+            searchInput?.value.trim() ||
+            ""
         );
 
 
     const type =
-        getElement(
-            "typeFilter"
-        ).value;
+        typeFilter?.value ||
+        "all";
 
 
     const status =
-        getElement(
-            "statusFilter"
-        ).value;
+        statusFilter?.value ||
+        "all";
 
 
     const category =
-        getElement(
-            "categoryFilter"
-        ).value;
+        categoryFilter?.value ||
+        "all";
 
 
     const month =
-        getElement(
-            "monthFilter"
-        ).value;
+        monthFilter?.value ||
+        "all";
 
 
     const year =
-        getElement(
-            "yearFilter"
-        ).value;
+        yearFilter?.value ||
+        "all";
 
 
     const order =
-        getElement(
-            "orderFilter"
-        ).value;
+        orderFilter?.value ||
+        "newest";
 
 
     const filtered =
@@ -1155,7 +1525,9 @@ function getFilteredTransactions() {
                     String(
                         transaction.categoryId
                     ) ===
-                    String(category);
+                    String(
+                        category
+                    );
 
 
                 const matchesMonth =
@@ -1163,7 +1535,9 @@ function getFilteredTransactions() {
                     (
                         date &&
                         date.getMonth() ===
-                        Number(month)
+                        Number(
+                            month
+                        )
                     );
 
 
@@ -1172,7 +1546,9 @@ function getFilteredTransactions() {
                     (
                         date &&
                         date.getFullYear() ===
-                        Number(year)
+                        Number(
+                            year
+                        )
                     );
 
 
@@ -1269,7 +1645,9 @@ function sumTransactions(
 ) {
 
     return transactions
-        .filter(filter)
+        .filter(
+            filter
+        )
         .reduce(
             (
                 total,
@@ -1282,101 +1660,95 @@ function sumTransactions(
                         transaction.amount
                     )
                 );
-
             },
             0
         );
 }
 
 
-
-
 // =====================================================
 // RESUMO
 // =====================================================
 
-function renderSummary(transactions) {
-
-    // =====================================================
-    // ENTRADAS
-    // =====================================================
+function renderSummary(
+    transactions
+) {
 
     const income =
         sumTransactions(
             transactions,
             transaction =>
-                transaction.type === "income" &&
-                transaction.status === "paid"
+                transaction.type ===
+                    "income" &&
+                transaction.status ===
+                    "paid"
         );
 
-
-    // =====================================================
-    // DESPESAS
-    // =====================================================
 
     const expense =
         sumTransactions(
             transactions,
             transaction =>
-                transaction.type === "expense" &&
-                transaction.status === "paid"
+                transaction.type ===
+                    "expense" &&
+                transaction.status ===
+                    "paid"
         );
 
-
-    // =====================================================
-    // RESERVAS
-    // =====================================================
 
     const saved =
         sumTransactions(
             transactions,
             transaction =>
-                transaction.type === "saved" &&
-                transaction.status === "paid"
+                transaction.type ===
+                    "saved" &&
+                transaction.status ===
+                    "paid"
         );
 
-
-    // =====================================================
-    // PENDENTES
-    // =====================================================
 
     const pending =
         sumTransactions(
             transactions,
             transaction =>
                 (
-                    transaction.type === "expense" ||
-                    transaction.type === "saved"
+                    transaction.type ===
+                        "expense" ||
+                    transaction.type ===
+                        "saved"
                 ) &&
-                transaction.status === "pending"
+                transaction.status ===
+                    "pending"
         );
 
-
-    // =====================================================
-    // CONTADORES
-    // =====================================================
 
     const incomeCount =
         transactions.filter(
             transaction =>
-                transaction.type === "income" &&
-                transaction.status === "paid"
+                transaction.type ===
+                    "income" &&
+                transaction.status ===
+                    "paid"
         ).length;
 
 
     const expenseCount =
         transactions.filter(
             transaction =>
-                transaction.type === "expense" &&
-                transaction.status === "paid"
+                transaction.type ===
+                    "expense" &&
+                transaction.status ===
+                    "paid"
         ).length;
 
 
     const savedCount =
         transactions.filter(
             transaction =>
-                transaction.type === "saved" &&
-                transaction.status === "paid"
+                transaction.type ===
+                    "saved" &&
+                transaction.status ===
+                    "paid"
         ).length;
 
 
@@ -1384,10 +1756,13 @@ function renderSummary(transactions) {
         transactions.filter(
             transaction =>
                 (
-                    transaction.type === "expense" ||
-                    transaction.type === "saved"
+                    transaction.type ===
+                        "expense" ||
+                    transaction.type ===
+                        "saved"
                 ) &&
-                transaction.status === "pending"
+                transaction.status ===
+                    "pending"
         ).length;
 
 
@@ -1395,28 +1770,11 @@ function renderSummary(transactions) {
     // SALDO
     // =====================================================
 
-    /*
-        O saldo transportado do mês anterior
-        já é uma movimentação do tipo income.
+    const balance =
+        income -
+        expense -
+        saved;
 
-        Exemplo:
-
-        Saldo de Agosto/2026
-        + R$ 800,00
-
-        Portanto não precisamos somar
-        saldo anterior separadamente.
-    */
-
-const balance =
-    income -
-    expense -
-    saved;
-
-
-    // =====================================================
-    // ELEMENTOS
-    // =====================================================
 
     const summaryIncome =
         getElement(
@@ -1472,11 +1830,9 @@ const balance =
         );
 
 
-    // =====================================================
-    // VALORES
-    // =====================================================
-
-    if (summaryIncome) {
+    if (
+        summaryIncome
+    ) {
 
         summaryIncome.textContent =
             currency.format(
@@ -1485,7 +1841,9 @@ const balance =
     }
 
 
-    if (summaryExpense) {
+    if (
+        summaryExpense
+    ) {
 
         summaryExpense.textContent =
             currency.format(
@@ -1494,7 +1852,9 @@ const balance =
     }
 
 
-    if (summarySaved) {
+    if (
+        summarySaved
+    ) {
 
         summarySaved.textContent =
             currency.format(
@@ -1503,7 +1863,9 @@ const balance =
     }
 
 
-    if (summaryPending) {
+    if (
+        summaryPending
+    ) {
 
         summaryPending.textContent =
             currency.format(
@@ -1512,7 +1874,9 @@ const balance =
     }
 
 
-    if (summaryBalance) {
+    if (
+        summaryBalance
+    ) {
 
         summaryBalance.textContent =
             currency.format(
@@ -1533,11 +1897,9 @@ const balance =
     }
 
 
-    // =====================================================
-    // CONTADORES
-    // =====================================================
-
-    if (summaryIncomeCount) {
+    if (
+        summaryIncomeCount
+    ) {
 
         summaryIncomeCount.textContent =
             `${incomeCount} recebimento${
@@ -1548,7 +1910,9 @@ const balance =
     }
 
 
-    if (summaryExpenseCount) {
+    if (
+        summaryExpenseCount
+    ) {
 
         summaryExpenseCount.textContent =
             `${expenseCount} pagamento${
@@ -1559,7 +1923,9 @@ const balance =
     }
 
 
-    if (summarySavedCount) {
+    if (
+        summarySavedCount
+    ) {
 
         summarySavedCount.textContent =
             `${savedCount} valor${
@@ -1574,7 +1940,9 @@ const balance =
     }
 
 
-    if (summaryPendingCount) {
+    if (
+        summaryPendingCount
+    ) {
 
         summaryPendingCount.textContent =
             `${pendingCount} pendência${
@@ -1584,6 +1952,7 @@ const balance =
             }`;
     }
 }
+
 
 // =====================================================
 // GERAR SALDO DO MÊS ANTERIOR
@@ -1616,11 +1985,6 @@ async function ensurePreviousMonthBalance() {
         monthFilter.value;
 
 
-    const yearValue =
-        yearFilter.value;
-
-
-    // Precisa ter mês específico
     if (
         monthValue === "all"
     ) {
@@ -1629,10 +1993,9 @@ async function ensurePreviousMonthBalance() {
     }
 
 
-    // =====================================================
-    // SE O ANO ESTIVER "TODOS"
-    // USA O ANO ATUAL
-    // =====================================================
+    let yearValue =
+        yearFilter.value;
+
 
     if (
         yearValue === "all"
@@ -1649,22 +2012,29 @@ async function ensurePreviousMonthBalance() {
                     option =>
                         Number(
                             option.value
-                        ) === currentYear
+                        ) ===
+                        currentYear
                 );
 
 
-        if (optionExists) {
+        if (
+            optionExists
+        ) {
 
             yearFilter.value =
                 String(
                     currentYear
                 );
+
+
+            yearValue =
+                yearFilter.value;
         }
     }
 
 
     if (
-        yearFilter.value === "all"
+        yearValue === "all"
     ) {
 
         return;
@@ -1679,39 +2049,16 @@ async function ensurePreviousMonthBalance() {
 
     const ano =
         Number(
-            yearFilter.value
+            yearValue
         );
 
 
     try {
 
-        // =====================================================
-        // CHAMA O BACKEND
-        // =====================================================
-
-        /*
-            Essa chamada fará o backend:
-
-            1. calcular o saldo do mês anterior
-            2. criar/atualizar a movimentação
-               "Saldo de Agosto/2026"
-            3. salvar no MySQL
-        */
-
         await apiRequest(
             `/dashboard/resumo?mes=${mes}&ano=${ano}`
         );
 
-
-        // =====================================================
-        // BUSCA NOVAMENTE AS MOVIMENTAÇÕES
-        // =====================================================
-
-        /*
-            Isso é necessário porque a chamada acima
-            pode ter acabado de criar uma nova
-            movimentação no banco.
-        */
 
         await loadTransactions();
 
@@ -1719,12 +2066,10 @@ async function ensurePreviousMonthBalance() {
         renderYearOptions();
 
 
-        // Mantém o mês selecionado
         monthFilter.value =
             monthValue;
 
 
-        // Mantém o ano selecionado
         yearFilter.value =
             String(
                 ano
@@ -1750,73 +2095,134 @@ async function ensurePreviousMonthBalance() {
 }
 
 
-function getTransactionTypeInfo(type) {
+// =====================================================
+// TIPO DA MOVIMENTAÇÃO
+// =====================================================
 
-    if (type === "income") {
+function getTransactionTypeInfo(
+    type
+) {
+
+    if (
+        type === "income"
+    ) {
+
         return {
-            className: "income",
-            icon: "↗",
-            signal: "+",
-            label: "Entrada"
+            className:
+                "income",
+
+            icon:
+                "↗",
+
+            signal:
+                "+",
+
+            label:
+                "Entrada"
         };
     }
 
-    if (type === "saved") {
+
+    if (
+        type === "saved"
+    ) {
+
         return {
-            className: "saved",
-            icon: "◆",
-            signal: "",
-            label: "Guardado"
+            className:
+                "saved",
+
+            icon:
+                "◆",
+
+            signal:
+                "",
+
+            label:
+                "Guardado"
         };
     }
+
 
     return {
-        className: "expense",
-        icon: "↘",
-        signal: "−",
-        label: "Despesa"
+        className:
+            "expense",
+
+        icon:
+            "↘",
+
+        signal:
+            "−",
+
+        label:
+            "Despesa"
     };
 }
 
 
-function getTransactionStatusLabel(transaction) {
+// =====================================================
+// STATUS
+// =====================================================
 
-    if (transaction.status === "pending") {
+function getTransactionStatusLabel(
+    transaction
+) {
+
+    if (
+        transaction.status ===
+        "pending"
+    ) {
+
         return "Pendente";
     }
 
-    if (transaction.type === "income") {
+
+    if (
+        transaction.type ===
+        "income"
+    ) {
+
         return "Recebido";
     }
 
-    if (transaction.type === "saved") {
+
+    if (
+        transaction.type ===
+        "saved"
+    ) {
+
         return "Guardado";
     }
+
 
     return "Pago";
 }
 
 
 // =====================================================
-// TABELA
+// LINHA DA TABELA
 // =====================================================
 
-function createTableRow(transaction) {
+function createTableRow(
+    transaction
+) {
 
     const typeInfo =
         getTransactionTypeInfo(
             transaction.type
         );
 
+
     const statusLabel =
         getTransactionStatusLabel(
             transaction
         );
 
+
     return `
         <tr>
 
             <td>
+
                 <div class="transaction-name">
 
                     <div
@@ -1826,62 +2232,76 @@ function createTableRow(transaction) {
                     </div>
 
                     <div>
+
                         <strong>
                             ${escapeHtml(
-        transaction.description
-    )}
+                                transaction.description
+                            )}
                         </strong>
 
                         <small>
                             ${escapeHtml(
-        transaction.payment
-    )}
+                                transaction.payment
+                            )}
                         </small>
+
                     </div>
 
                 </div>
+
             </td>
 
 
             <td>
+
                 <span class="category-badge">
+
                     ${escapeHtml(
-        transaction.category
-    )}
+                        transaction.category
+                    )}
+
                 </span>
+
             </td>
 
 
             <td>
                 ${formatDate(
-        transaction.date
-    )}
+                    transaction.date
+                )}
             </td>
 
 
             <td>
+
                 <span
                     class="status-badge ${transaction.status}"
                 >
                     ${statusLabel}
                 </span>
+
             </td>
 
 
             <td>
+
                 <span
                     class="amount ${typeInfo.className}"
                 >
+
                     ${typeInfo.signal}
 
                     ${currency.format(
-        transaction.amount
-    )}
+                        transaction.amount
+                    )}
+
                 </span>
+
             </td>
 
 
             <td>
+
                 <div class="actions">
 
                     <button
@@ -1893,6 +2313,7 @@ function createTableRow(transaction) {
                         ✎
                     </button>
 
+
                     <button
                         type="button"
                         class="action-button delete delete-button"
@@ -1903,6 +2324,7 @@ function createTableRow(transaction) {
                     </button>
 
                 </div>
+
             </td>
 
         </tr>
@@ -1914,17 +2336,21 @@ function createTableRow(transaction) {
 // CARD MOBILE
 // =====================================================
 
-function createMobileCard(transaction) {
+function createMobileCard(
+    transaction
+) {
 
     const typeInfo =
         getTransactionTypeInfo(
             transaction.type
         );
 
+
     const statusLabel =
         getTransactionStatusLabel(
             transaction
         );
+
 
     return `
         <article class="mobile-transaction-card">
@@ -1939,24 +2365,28 @@ function createMobileCard(transaction) {
                         ${typeInfo.icon}
                     </div>
 
+
                     <div>
 
                         <strong>
                             ${escapeHtml(
-        transaction.description
-    )}
+                                transaction.description
+                            )}
                         </strong>
 
+
                         <small>
+
                             ${escapeHtml(
-        transaction.category
-    )}
+                                transaction.category
+                            )}
 
                             ·
 
                             ${formatDate(
-        transaction.date
-    )}
+                                transaction.date
+                            )}
+
                         </small>
 
                     </div>
@@ -1967,11 +2397,13 @@ function createMobileCard(transaction) {
                 <span
                     class="amount ${typeInfo.className}"
                 >
+
                     ${typeInfo.signal}
 
                     ${currency.format(
-        transaction.amount
-    )}
+                        transaction.amount
+                    )}
+
                 </span>
 
             </div>
@@ -1992,14 +2424,17 @@ function createMobileCard(transaction) {
                         type="button"
                         class="action-button edit-button"
                         data-id="${transaction.id}"
+                        aria-label="Editar movimentação"
                     >
                         ✎
                     </button>
+
 
                     <button
                         type="button"
                         class="action-button delete delete-button"
                         data-id="${transaction.id}"
+                        aria-label="Excluir movimentação"
                     >
                         ×
                     </button>
@@ -2014,7 +2449,7 @@ function createMobileCard(transaction) {
 
 
 // =====================================================
-// RENDERIZAR
+// RENDERIZAR MOVIMENTAÇÕES
 // =====================================================
 
 function renderTransactions() {
@@ -2023,51 +2458,176 @@ function renderTransactions() {
         getFilteredTransactions();
 
 
+    // =====================================================
+    // RESUMO USA TODOS OS RESULTADOS FILTRADOS
+    // =====================================================
+
     renderSummary(
         transactions
     );
 
 
+    // =====================================================
+    // TOTAL REAL
+    // =====================================================
+
     const total =
         transactions.length;
 
 
-    getElement(
-        "resultsText"
-    ).textContent =
-        `${total} movimentação${total === 1
-            ? ""
-            : "ões"
-        } encontrada${total === 1
-            ? ""
-            : "s"
-        }`;
+    const resultsText =
+        getElement(
+            "resultsText"
+        );
 
 
-    getElement(
-        "emptyState"
-    ).hidden =
-        total > 0;
+    if (
+        resultsText
+    ) {
+
+if (resultsText) {
+
+    resultsText.textContent =
+        total === 1
+            ? "1 movimentação encontrada"
+            : `${total} movimentações encontradas`;
+}
+    }
 
 
-    getElement(
-        "transactionsBody"
-    ).innerHTML =
-        transactions
-            .map(
-                createTableRow
-            )
-            .join("");
+    // =====================================================
+    // MOSTRAR 4 OU TODAS
+    // =====================================================
+
+    const visibleTransactions =
+        showAllTransactions
+            ? transactions
+            : transactions.slice(
+                0,
+                INITIAL_TRANSACTION_LIMIT
+            );
 
 
-    getElement(
-        "mobileTransactions"
-    ).innerHTML =
-        transactions
-            .map(
-                createMobileCard
-            )
-            .join("");
+    // =====================================================
+    // CLASSE DO HISTÓRICO EXPANDIDO
+    // =====================================================
+
+    const historyContent =
+        getElement(
+            "historyContent"
+        );
+
+
+    if (
+        historyContent
+    ) {
+
+        historyContent.classList.toggle(
+            "show-all",
+            showAllTransactions
+        );
+    }
+
+
+    // =====================================================
+    // EMPTY STATE
+    // =====================================================
+
+    const emptyState =
+        getElement(
+            "emptyState"
+        );
+
+
+    if (
+        emptyState
+    ) {
+
+        emptyState.hidden =
+            total > 0;
+    }
+
+
+    // =====================================================
+    // TABELA DESKTOP
+    // =====================================================
+
+    const transactionsBody =
+        getElement(
+            "transactionsBody"
+        );
+
+
+    if (
+        transactionsBody
+    ) {
+
+        transactionsBody.innerHTML =
+            visibleTransactions
+                .map(
+                    createTableRow
+                )
+                .join(
+                    ""
+                );
+    }
+
+
+    // =====================================================
+    // MOBILE
+    // =====================================================
+
+    const mobileTransactions =
+        getElement(
+            "mobileTransactions"
+        );
+
+
+    if (
+        mobileTransactions
+    ) {
+
+        mobileTransactions.innerHTML =
+            visibleTransactions
+                .map(
+                    createMobileCard
+                )
+                .join(
+                    ""
+                );
+    }
+
+
+    // =====================================================
+    // BOTÃO VER TODAS
+    // =====================================================
+
+    const historyViewAll =
+        getElement(
+            "historyViewAll"
+        );
+
+
+    if (
+        historyViewAll
+    ) {
+
+        historyViewAll.hidden =
+            total <=
+            INITIAL_TRANSACTION_LIMIT;
+
+
+        if (
+            total >
+            INITIAL_TRANSACTION_LIMIT
+        ) {
+
+            historyViewAll.textContent =
+                showAllTransactions
+                    ? "Mostrar apenas as 4 mais recentes"
+                    : `Ver todas as ${total} movimentações`;
+        }
+    }
 
 
     setupRowActions();
@@ -2080,16 +2640,36 @@ function renderTransactions() {
 
 async function refreshTransactions() {
 
-    await loadTransactions();
+    showHistoryLoading();
 
-    renderYearOptions();
 
-    renderTransactions();
+    try {
+
+        await loadTransactions();
+
+
+        renderYearOptions();
+
+
+        renderTransactions();
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao atualizar movimentações:",
+            error
+        );
+
+
+    } finally {
+
+        hideHistoryLoading();
+    }
 }
 
-
 // =====================================================
-// AÇÕES DE LINHA
+// AÇÕES DAS LINHAS
 // =====================================================
 
 function setupRowActions() {
@@ -2147,12 +2727,18 @@ function openNewModal() {
         );
 
 
+    if (!form) {
+        return;
+    }
+
+
     form.reset();
 
 
     getElement(
         "transactionId"
-    ).value = "";
+    ).value =
+        "";
 
 
     getElement(
@@ -2193,7 +2779,8 @@ function openNewModal() {
 
     if (
         category &&
-        category.options.length > 0
+        category.options.length >
+        0
     ) {
 
         category.selectedIndex =
@@ -2201,20 +2788,29 @@ function openNewModal() {
     }
 
 
-    getElement(
-        "date"
-    ).value =
-        new Date()
-            .toISOString()
-            .slice(
-                0,
-                10
-            );
+    const dateInput =
+        getElement(
+            "date"
+        );
+
+
+    if (
+        dateInput
+    ) {
+
+        dateInput.value =
+            new Date()
+                .toISOString()
+                .slice(
+                    0,
+                    10
+                );
+    }
 
 
     getElement(
         "transactionModal"
-    ).showModal();
+    )?.showModal();
 
 
     setTimeout(
@@ -2222,7 +2818,7 @@ function openNewModal() {
 
             getElement(
                 "description"
-            ).focus();
+            )?.focus();
 
         },
         100
@@ -2237,18 +2833,24 @@ function openNewModal() {
 function openEditModal(id) {
 
     const numericId =
-        Number(id);
+        Number(
+            id
+        );
 
 
     const transaction =
         appData.transactions.find(
             item =>
-                Number(item.id) ===
+                Number(
+                    item.id
+                ) ===
                 numericId
         );
 
 
-    if (!transaction) {
+    if (
+        !transaction
+    ) {
 
         showToast(
             "Movimentação não encontrada."
@@ -2284,8 +2886,11 @@ function openEditModal(id) {
         ).toLocaleString(
             "pt-BR",
             {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                minimumFractionDigits:
+                    2,
+
+                maximumFractionDigits:
+                    2
             }
         );
 
@@ -2329,7 +2934,7 @@ function openEditModal(id) {
 
     getElement(
         "transactionModal"
-    ).showModal();
+    )?.showModal();
 }
 
 
@@ -2394,11 +2999,9 @@ async function saveTransaction(
         ).value;
 
 
-    // =========================
-    // Validações
-    // =========================
-
-    if (!description) {
+    if (
+        !description
+    ) {
 
         showToast(
             "Informe a descrição."
@@ -2423,7 +3026,9 @@ async function saveTransaction(
     }
 
 
-    if (!categoryId) {
+    if (
+        !categoryId
+    ) {
 
         showToast(
             "Selecione uma categoria."
@@ -2433,7 +3038,9 @@ async function saveTransaction(
     }
 
 
-    if (!data) {
+    if (
+        !data
+    ) {
 
         showToast(
             "Informe a data."
@@ -2492,22 +3099,19 @@ async function saveTransaction(
         };
 
 
-        console.log(
-            "Enviando movimentação:",
-            body
-        );
-
-
         let resultado;
 
 
-        if (id) {
+        if (
+            id
+        ) {
 
             resultado =
                 await apiRequest(
                     `/movimentacoes/${id}`,
                     {
-                        method: "PUT",
+                        method:
+                            "PUT",
 
                         body:
                             JSON.stringify(
@@ -2522,7 +3126,8 @@ async function saveTransaction(
                 await apiRequest(
                     "/movimentacoes",
                     {
-                        method: "POST",
+                        method:
+                            "POST",
 
                         body:
                             JSON.stringify(
@@ -2535,20 +3140,24 @@ async function saveTransaction(
 
         getElement(
             "transactionModal"
-        ).close();
+        )?.close();
 
 
         form.reset();
 
 
         showToast(
-            resultado.message ||
+            resultado?.message ||
             (
                 id
                     ? "Movimentação atualizada."
                     : "Movimentação adicionada."
             )
         );
+
+
+        showAllTransactions =
+            false;
 
 
         await refreshTransactions();
@@ -2587,12 +3196,14 @@ async function saveTransaction(
 function openDeleteModal(id) {
 
     transactionToDelete =
-        Number(id);
+        Number(
+            id
+        );
 
 
     getElement(
         "deleteModal"
-    ).showModal();
+    )?.showModal();
 }
 
 
@@ -2605,6 +3216,7 @@ async function deleteTransaction() {
     if (
         !transactionToDelete
     ) {
+
         return;
     }
 
@@ -2641,13 +3253,17 @@ async function deleteTransaction() {
 
         getElement(
             "deleteModal"
-        ).close();
+        )?.close();
 
 
         showToast(
-            resultado.message ||
+            resultado?.message ||
             "Movimentação excluída."
         );
+
+
+        showAllTransactions =
+            false;
 
 
         await refreshTransactions();
@@ -2685,9 +3301,43 @@ async function deleteTransaction() {
 
 function clearFilters() {
 
-    getElement(
-        "searchInput"
-    ).value = "";
+    showAllTransactions =
+        false;
+
+
+    clearTimeout(
+        searchLoadingTimeout
+    );
+
+
+    const loading =
+        getElement(
+            "searchLoading"
+        );
+
+
+    if (
+        loading
+    ) {
+
+        loading.hidden =
+            true;
+    }
+
+
+    const searchInput =
+        getElement(
+            "searchInput"
+        );
+
+
+    if (
+        searchInput
+    ) {
+
+        searchInput.value =
+            "";
+    }
 
 
     getElement(
@@ -2741,7 +3391,8 @@ function exportCsv() {
 
 
     if (
-        transactions.length === 0
+        transactions.length ===
+        0
     ) {
 
         showToast(
@@ -2771,9 +3422,11 @@ function exportCsv() {
 
                     transaction.description,
 
-                    transaction.type === "income"
+                    transaction.type ===
+                        "income"
                         ? "Entrada"
-                        : transaction.type === "saved"
+                        : transaction.type ===
+                            "saved"
                             ? "Guardado"
                             : "Despesa",
 
@@ -2791,7 +3444,9 @@ function exportCsv() {
                     Number(
                         transaction.amount
                     )
-                        .toFixed(2)
+                        .toFixed(
+                            2
+                        )
                         .replace(
                             ".",
                             ","
@@ -2826,10 +3481,14 @@ function exportCsv() {
                                 return `"${escaped}"`;
                             }
                         )
-                        .join(";");
+                        .join(
+                            ";"
+                        );
                 }
             )
-            .join("\n");
+            .join(
+                "\n"
+            );
 
 
     const blob =
@@ -2857,11 +3516,12 @@ function exportCsv() {
         );
 
 
-    link.href = url;
+    link.href =
+        url;
 
 
     link.download =
-        "movimentacoes-clara-financas.csv";
+        "movimentacoes-conecta-financas.csv";
 
 
     document.body.appendChild(
@@ -2886,7 +3546,7 @@ function exportCsv() {
 }
 
 
-/// =====================================================
+// =====================================================
 // FILTROS
 // =====================================================
 
@@ -2909,8 +3569,9 @@ function setupFilters() {
                 );
 
 
-            if (!element) {
-
+            if (
+                !element
+            ) {
                 return;
             }
 
@@ -2924,20 +3585,113 @@ function setupFilters() {
                 async () => {
 
                     // =================================================
-                    // MUDOU O MÊS
+                    // PESQUISA COM LOADING
+                    // =================================================
+
+                    if (
+                        id === "searchInput"
+                    ) {
+
+                        const loading =
+                            getElement(
+                                "searchLoading"
+                            );
+
+
+                        showAllTransactions =
+                            false;
+
+
+                        // CANCELA TIMER ANTERIOR
+                        clearTimeout(
+                            searchLoadingTimeout
+                        );
+
+
+                        // MOSTRA LOADING
+                        if (
+                            loading
+                        ) {
+
+                            loading.hidden =
+                                false;
+                        }
+
+
+                        // ESPERA USUÁRIO PARAR DE DIGITAR
+                        searchLoadingTimeout =
+                            setTimeout(
+                                () => {
+
+                                    try {
+
+                                        renderTransactions();
+
+                                    } catch (error) {
+
+                                        console.error(
+                                            "Erro ao pesquisar movimentações:",
+                                            error
+                                        );
+
+                                    } finally {
+
+                                        // SEMPRE ESCONDE O LOADING
+                                        if (
+                                            loading
+                                        ) {
+
+                                            loading.hidden =
+                                                true;
+                                        }
+                                    }
+
+                                },
+                                300
+                            );
+
+
+                        return;
+                    }
+
+
+                    // =================================================
+                    // OUTROS FILTROS
+                    // =================================================
+
+                    showAllTransactions =
+                        false;
+
+
+                    // =================================================
+                    // MÊS
                     // =================================================
 
                     if (
                         id === "monthFilter"
                     ) {
 
-                        if (
-                            element.value !== "all"
-                        ) {
+                        try {
 
-                            await ensurePreviousMonthBalance();
+                            if (
+                                element.value !==
+                                "all"
+                            ) {
 
-                        } else {
+                                await ensurePreviousMonthBalance();
+
+                            } else {
+
+                                renderTransactions();
+                            }
+
+                        } catch (error) {
+
+                            console.error(
+                                "Erro ao filtrar por mês:",
+                                error
+                            );
+
 
                             renderTransactions();
                         }
@@ -2948,7 +3702,7 @@ function setupFilters() {
 
 
                     // =================================================
-                    // MUDOU O ANO
+                    // ANO
                     // =================================================
 
                     if (
@@ -2961,14 +3715,29 @@ function setupFilters() {
                             );
 
 
-                        if (
-                            element.value !== "all" &&
-                            monthFilter?.value !== "all"
-                        ) {
+                        try {
 
-                            await ensurePreviousMonthBalance();
+                            if (
+                                element.value !==
+                                    "all" &&
+                                monthFilter?.value !==
+                                    "all"
+                            ) {
 
-                        } else {
+                                await ensurePreviousMonthBalance();
+
+                            } else {
+
+                                renderTransactions();
+                            }
+
+                        } catch (error) {
+
+                            console.error(
+                                "Erro ao filtrar por ano:",
+                                error
+                            );
+
 
                             renderTransactions();
                         }
@@ -2979,7 +3748,7 @@ function setupFilters() {
 
 
                     // =================================================
-                    // DEMAIS FILTROS
+                    // TIPO, STATUS, CATEGORIA E ORDENAÇÃO
                     // =================================================
 
                     renderTransactions();
@@ -2987,6 +3756,26 @@ function setupFilters() {
             );
         }
     );
+}
+
+function hideSearchLoading() {
+
+    clearTimeout(
+        searchLoadingTimeout
+    );
+
+
+    const loading =
+        getElement(
+            "searchLoading"
+        );
+
+
+    if (loading) {
+
+        loading.hidden =
+            true;
+    }
 }
 
 
@@ -3012,6 +3801,7 @@ function setupProfileMenu() {
         !button ||
         !dropdown
     ) {
+
         return;
     }
 
@@ -3067,13 +3857,17 @@ function setupTheme() {
         );
 
 
-    if (!button) {
+    if (
+        !button
+    ) {
+
         return;
     }
 
 
     if (
-        savedTheme === "dark"
+        savedTheme ===
+        "dark"
     ) {
 
         document.body.classList.add(
@@ -3102,9 +3896,7 @@ function setupTheme() {
 
 
             localStorage.setItem(
-
                 THEME_KEY,
-
                 darkMode
                     ? "dark"
                     : "light"
@@ -3118,6 +3910,7 @@ function setupTheme() {
         }
     );
 }
+
 
 // =====================================================
 // ABRIR / FECHAR FILTROS
@@ -3137,16 +3930,11 @@ function toggleFiltersSection() {
         );
 
 
-    const text =
-        getElement(
-            "toggleFiltersText"
-        );
-
-
     if (
         !button ||
         !content
     ) {
+
         return;
     }
 
@@ -3155,54 +3943,24 @@ function toggleFiltersSection() {
         !content.hidden;
 
 
-    if (isOpen) {
-
-        content.hidden =
-            true;
+    content.hidden =
+        isOpen;
 
 
-        button.classList.remove(
-            "active"
-        );
+    button.classList.toggle(
+        "active",
+        !isOpen
+    );
 
 
-        button.setAttribute(
-            "aria-expanded",
-            "false"
-        );
-
-
-        if (text) {
-
-            text.textContent =
-                "Abrir filtros";
-        }
-
-
-    } else {
-
-        content.hidden =
-            false;
-
-
-        button.classList.add(
-            "active"
-        );
-
-
-        button.setAttribute(
-            "aria-expanded",
-            "true"
-        );
-
-
-        if (text) {
-
-            text.textContent =
-                "Fechar filtros";
-        }
-    }
+    button.setAttribute(
+        "aria-expanded",
+        String(
+            !isOpen
+        )
+    );
 }
+
 
 // =====================================================
 // ABRIR / FECHAR HISTÓRICO
@@ -3226,6 +3984,7 @@ function toggleHistorySection() {
         !header ||
         !content
     ) {
+
         return;
     }
 
@@ -3246,7 +4005,9 @@ function toggleHistorySection() {
 
     header.setAttribute(
         "aria-expanded",
-        String(!isOpen)
+        String(
+            !isOpen
+        )
     );
 }
 
@@ -3273,6 +4034,7 @@ function setupMobileMenu() {
         !button ||
         !navigation
     ) {
+
         return;
     }
 
@@ -3359,10 +4121,6 @@ function setupEvents() {
     setupMoneyInput();
 
 
-    // =========================
-    // MOVIMENTAÇÃO
-    // =========================
-
     const openTransaction =
         getElement(
             "openTransaction"
@@ -3387,10 +4145,6 @@ function setupEvents() {
         );
 
 
-    // =========================
-    // CATEGORIA
-    // =========================
-
     const openCategoryButton =
         getElement(
             "openCategoryModal"
@@ -3403,53 +4157,41 @@ function setupEvents() {
         );
 
 
-    // =========================
-    // EXCLUSÃO
-    // =========================
-
     const confirmDelete =
         getElement(
             "confirmDelete"
         );
 
 
-    // =========================
-    // FILTROS
-    // =========================
-
     const clearFiltersButton =
         getElement(
             "clearFilters"
         );
 
-        const toggleFilters =
-    getElement(
-        "toggleFilters"
-    );
 
-    // =========================
-    // HISTORICO
-    // =========================
+    const toggleFilters =
+        getElement(
+            "toggleFilters"
+        );
+
 
     const toggleHistory =
-    getElement(
-        "toggleHistory"
-    );
+        getElement(
+            "toggleHistory"
+        );
 
 
-    // =========================
-    // EXPORTAÇÃO
-    // =========================
+    const historyViewAll =
+        getElement(
+            "historyViewAll"
+        );
+
 
     const exportButton =
         getElement(
             "exportButton"
         );
 
-
-    // =========================
-    // LOGOUT
-    // =========================
 
     const logoutButton =
         getElement(
@@ -3458,10 +4200,12 @@ function setupEvents() {
 
 
     // =====================================================
-    // ABRIR NOVA MOVIMENTAÇÃO
+    // MOVIMENTAÇÃO
     // =====================================================
 
-    if (openTransaction) {
+    if (
+        openTransaction
+    ) {
 
         openTransaction.addEventListener(
             "click",
@@ -3470,7 +4214,9 @@ function setupEvents() {
     }
 
 
-    if (headerAddButton) {
+    if (
+        headerAddButton
+    ) {
 
         headerAddButton.addEventListener(
             "click",
@@ -3479,7 +4225,9 @@ function setupEvents() {
     }
 
 
-    if (emptyAddButton) {
+    if (
+        emptyAddButton
+    ) {
 
         emptyAddButton.addEventListener(
             "click",
@@ -3488,11 +4236,9 @@ function setupEvents() {
     }
 
 
-    // =====================================================
-    // SALVAR MOVIMENTAÇÃO
-    // =====================================================
-
-    if (transactionForm) {
+    if (
+        transactionForm
+    ) {
 
         transactionForm.addEventListener(
             "submit",
@@ -3502,10 +4248,12 @@ function setupEvents() {
 
 
     // =====================================================
-    // NOVA CATEGORIA
+    // CATEGORIA
     // =====================================================
 
-    if (openCategoryButton) {
+    if (
+        openCategoryButton
+    ) {
 
         openCategoryButton.addEventListener(
             "click",
@@ -3514,7 +4262,9 @@ function setupEvents() {
     }
 
 
-    if (categoryForm) {
+    if (
+        categoryForm
+    ) {
 
         categoryForm.addEventListener(
             "submit",
@@ -3527,7 +4277,9 @@ function setupEvents() {
     // EXCLUIR
     // =====================================================
 
-    if (confirmDelete) {
+    if (
+        confirmDelete
+    ) {
 
         confirmDelete.addEventListener(
             "click",
@@ -3540,7 +4292,9 @@ function setupEvents() {
     // LIMPAR FILTROS
     // =====================================================
 
-    if (clearFiltersButton) {
+    if (
+        clearFiltersButton
+    ) {
 
         clearFiltersButton.addEventListener(
             "click",
@@ -3549,93 +4303,153 @@ function setupEvents() {
     }
 
 
- if (toggleFilters) {
+    // =====================================================
+    // ACCORDION FILTROS
+    // =====================================================
 
-    toggleFilters.addEventListener(
-        "click",
-        event => {
+    if (
+        toggleFilters
+    ) {
 
-            /*
-                Se clicar em Limpar filtros,
-                não abre nem fecha o accordion.
-            */
+        toggleFilters.addEventListener(
+            "click",
+            event => {
 
-            if (
-                event.target.closest(
-                    "#clearFilters"
-                )
-            ) {
-                return;
-            }
+                if (
+                    event.target.closest(
+                        "#clearFilters"
+                    )
+                ) {
 
+                    return;
+                }
 
-            toggleFiltersSection();
-        }
-    );
-
-
-    toggleFilters.addEventListener(
-        "keydown",
-        event => {
-
-            if (
-                event.key === "Enter" ||
-                event.key === " "
-            ) {
-
-                event.preventDefault();
 
                 toggleFiltersSection();
             }
-        }
-    );
-}
+        );
 
-// =====================================================
-// ACCORDION HISTÓRICO
-// =====================================================
 
-if (toggleHistory) {
+        toggleFilters.addEventListener(
+            "keydown",
+            event => {
 
-    toggleHistory.addEventListener(
-        "click",
-        event => {
+                if (
+                    event.key ===
+                        "Enter" ||
+                    event.key ===
+                        " "
+                ) {
 
-            if (
-                event.target.closest(
-                    "#exportButton"
-                )
-            ) {
-                return;
+                    event.preventDefault();
+
+
+                    toggleFiltersSection();
+                }
             }
+        );
+    }
 
 
-            toggleHistorySection();
-        }
-    );
+    // =====================================================
+    // ACCORDION HISTÓRICO
+    // =====================================================
 
+    if (
+        toggleHistory
+    ) {
 
-    toggleHistory.addEventListener(
-        "keydown",
-        event => {
+        toggleHistory.addEventListener(
+            "click",
+            event => {
 
-            if (
-                event.key === "Enter" ||
-                event.key === " "
-            ) {
+                if (
+                    event.target.closest(
+                        "#exportButton"
+                    )
+                ) {
 
-                event.preventDefault();
+                    return;
+                }
+
 
                 toggleHistorySection();
             }
-        }
-    );
-}
+        );
+
+
+        toggleHistory.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key ===
+                        "Enter" ||
+                    event.key ===
+                        " "
+                ) {
+
+                    event.preventDefault();
+
+
+                    toggleHistorySection();
+                }
+            }
+        );
+    }
+
+
+    // =====================================================
+    // VER TODAS
+    // =====================================================
+
+    if (
+        historyViewAll
+    ) {
+
+        historyViewAll.addEventListener(
+            "click",
+            () => {
+
+                showAllTransactions =
+                    !showAllTransactions;
+
+
+                renderTransactions();
+
+
+                /*
+                    Quando volta para apenas 4,
+                    leva o usuário para o topo
+                    do histórico.
+                */
+
+                if (
+                    !showAllTransactions
+                ) {
+
+                    getElement(
+                        "toggleHistory"
+                    )?.scrollIntoView({
+                        behavior:
+                            "smooth",
+
+                        block:
+                            "start"
+                    });
+                }
+            }
+        );
+    }
+
+
     // =====================================================
     // EXPORTAR
     // =====================================================
 
-    if (exportButton) {
+    if (
+        exportButton
+    ) {
 
         exportButton.addEventListener(
             "click",
@@ -3648,7 +4462,9 @@ if (toggleHistory) {
     // LOGOUT
     // =====================================================
 
-    if (logoutButton) {
+    if (
+        logoutButton
+    ) {
 
         logoutButton.addEventListener(
             "click",
@@ -3664,9 +4480,17 @@ if (toggleHistory) {
 
 async function initializePage() {
 
-    if (!getSession()) {
+    if (
+        !getSession()
+    ) {
+
         return;
     }
+
+
+    hideSearchLoading();
+
+    showHistoryLoading();
 
 
     setupFilters();
@@ -3705,6 +4529,11 @@ async function initializePage() {
             error.message ||
             "Erro ao carregar movimentações."
         );
+
+
+    } finally {
+
+        hideHistoryLoading();
     }
 }
 
