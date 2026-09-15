@@ -45,7 +45,7 @@ let transactionToDelete =
 
 
 // =====================================================
-// CONTROLE DO HISTÓRICO
+// HISTÓRICO
 // =====================================================
 
 let showAllTransactions =
@@ -319,6 +319,7 @@ function showToast(message) {
         );
 }
 
+
 // =====================================================
 // LOADING DO HISTÓRICO
 // =====================================================
@@ -326,26 +327,40 @@ function showToast(message) {
 function showHistoryLoading() {
 
     const loading =
-        getElement("historyLoading");
+        getElement(
+            "historyLoading"
+        );
+
 
     const resultsText =
-        getElement("resultsText");
+        getElement(
+            "resultsText"
+        );
+
 
     const search =
         document.querySelector(
             ".transactions-search"
         );
 
+
     const tableWrapper =
         document.querySelector(
             ".table-wrapper"
         );
 
+
     const mobileTransactions =
-        getElement("mobileTransactions");
+        getElement(
+            "mobileTransactions"
+        );
+
 
     const emptyState =
-        getElement("emptyState");
+        getElement(
+            "emptyState"
+        );
+
 
     const historyViewAllWrapper =
         document.querySelector(
@@ -353,7 +368,6 @@ function showHistoryLoading() {
         );
 
 
-    // TEXTO DO CABEÇALHO
     if (resultsText) {
 
         resultsText.textContent =
@@ -361,7 +375,6 @@ function showHistoryLoading() {
     }
 
 
-    // MOSTRA SOMENTE O LOADING
     if (loading) {
 
         loading.hidden =
@@ -369,7 +382,6 @@ function showHistoryLoading() {
     }
 
 
-    // ESCONDE PESQUISA
     if (search) {
 
         search.hidden =
@@ -377,7 +389,6 @@ function showHistoryLoading() {
     }
 
 
-    // ESCONDE TABELA DESKTOP
     if (tableWrapper) {
 
         tableWrapper.hidden =
@@ -385,7 +396,6 @@ function showHistoryLoading() {
     }
 
 
-    // ESCONDE CARDS MOBILE
     if (mobileTransactions) {
 
         mobileTransactions.hidden =
@@ -393,7 +403,6 @@ function showHistoryLoading() {
     }
 
 
-    // ESCONDE ESTADO VAZIO
     if (emptyState) {
 
         emptyState.hidden =
@@ -401,7 +410,6 @@ function showHistoryLoading() {
     }
 
 
-    // ESCONDE VER TODAS
     if (historyViewAllWrapper) {
 
         historyViewAllWrapper.hidden =
@@ -410,27 +418,31 @@ function showHistoryLoading() {
 }
 
 
-// =====================================================
-// FINALIZAR LOADING DO HISTÓRICO
-// =====================================================
-
 function hideHistoryLoading() {
 
     const loading =
-        getElement("historyLoading");
+        getElement(
+            "historyLoading"
+        );
+
 
     const search =
         document.querySelector(
             ".transactions-search"
         );
 
+
     const tableWrapper =
         document.querySelector(
             ".table-wrapper"
         );
 
+
     const mobileTransactions =
-        getElement("mobileTransactions");
+        getElement(
+            "mobileTransactions"
+        );
+
 
     const historyViewAllWrapper =
         document.querySelector(
@@ -438,7 +450,6 @@ function hideHistoryLoading() {
         );
 
 
-    // ESCONDE LOADING
     if (loading) {
 
         loading.hidden =
@@ -446,7 +457,6 @@ function hideHistoryLoading() {
     }
 
 
-    // MOSTRA PESQUISA
     if (search) {
 
         search.hidden =
@@ -454,7 +464,6 @@ function hideHistoryLoading() {
     }
 
 
-    // MOSTRA TABELA
     if (tableWrapper) {
 
         tableWrapper.hidden =
@@ -462,7 +471,6 @@ function hideHistoryLoading() {
     }
 
 
-    // MOSTRA CARDS MOBILE
     if (mobileTransactions) {
 
         mobileTransactions.hidden =
@@ -470,13 +478,38 @@ function hideHistoryLoading() {
     }
 
 
-    // MOSTRA ÁREA DO VER TODAS
     if (historyViewAllWrapper) {
 
         historyViewAllWrapper.hidden =
             false;
     }
 }
+
+
+// =====================================================
+// LOADING DA PESQUISA
+// =====================================================
+
+function hideSearchLoading() {
+
+    clearTimeout(
+        searchLoadingTimeout
+    );
+
+
+    const loading =
+        getElement(
+            "searchLoading"
+        );
+
+
+    if (loading) {
+
+        loading.hidden =
+            true;
+    }
+}
+
 
 // =====================================================
 // UTILITÁRIOS
@@ -536,6 +569,7 @@ function normalizeDate(value) {
 
 
     if (match) {
+
         return match[0];
     }
 
@@ -762,18 +796,14 @@ async function renderUser() {
             );
 
 
-        if (
-            profileName
-        ) {
+        if (profileName) {
 
             profileName.textContent =
                 firstName;
         }
 
 
-        if (
-            profileAvatar
-        ) {
+        if (profileAvatar) {
 
             profileAvatar.textContent =
                 firstName
@@ -853,9 +883,7 @@ function renderCategoryOptions() {
         0
     ) {
 
-        if (
-            categorySelect
-        ) {
+        if (categorySelect) {
 
             categorySelect.innerHTML = `
                 <option value="">
@@ -865,9 +893,7 @@ function renderCategoryOptions() {
         }
 
 
-        if (
-            categoryFilter
-        ) {
+        if (categoryFilter) {
 
             categoryFilter.innerHTML = `
                 <option value="all">
@@ -900,18 +926,18 @@ function renderCategoryOptions() {
             );
 
 
-    if (
-        categorySelect
-    ) {
+    if (categorySelect) {
 
         categorySelect.innerHTML =
             options;
     }
 
 
-    if (
-        categoryFilter
-    ) {
+    if (categoryFilter) {
+
+        const currentValue =
+            categoryFilter.value;
+
 
         categoryFilter.innerHTML = `
             <option value="all">
@@ -920,6 +946,22 @@ function renderCategoryOptions() {
 
             ${options}
         `;
+
+
+        const exists =
+            [...categoryFilter.options]
+                .some(
+                    option =>
+                        option.value ===
+                        currentValue
+                );
+
+
+        if (exists) {
+
+            categoryFilter.value =
+                currentValue;
+        }
     }
 }
 
@@ -960,9 +1002,7 @@ function openCategoryModal() {
         );
 
 
-    if (
-        colorInput
-    ) {
+    if (colorInput) {
 
         colorInput.value =
             "#168a52";
@@ -986,7 +1026,7 @@ function openCategoryModal() {
 
 
 // =====================================================
-// SALVAR NOVA CATEGORIA
+// SALVAR CATEGORIA
 // =====================================================
 
 async function saveCategory(
@@ -1021,23 +1061,18 @@ async function saveCategory(
 
     const duplicate =
         appData.categories.some(
-            category => {
+            category =>
 
-                return (
-                    String(
-                        category.nome
-                    )
-                        .trim()
-                        .toLowerCase() ===
-                    name.toLowerCase()
-                );
-            }
+                String(
+                    category.nome
+                )
+                    .trim()
+                    .toLowerCase() ===
+                name.toLowerCase()
         );
 
 
-    if (
-        duplicate
-    ) {
+    if (duplicate) {
 
         showToast(
             "Essa categoria já existe."
@@ -1061,13 +1096,10 @@ async function saveCategory(
 
     try {
 
-        if (
-            submitButton
-        ) {
+        if (submitButton) {
 
             submitButton.disabled =
                 true;
-
 
             submitButton.textContent =
                 "Adicionando...";
@@ -1103,23 +1135,18 @@ async function saveCategory(
 
         const createdCategory =
             appData.categories.find(
-                category => {
+                category =>
 
-                    return (
-                        String(
-                            category.nome
-                        )
-                            .trim()
-                            .toLowerCase() ===
-                        name.toLowerCase()
-                    );
-                }
+                    String(
+                        category.nome
+                    )
+                        .trim()
+                        .toLowerCase() ===
+                    name.toLowerCase()
             );
 
 
-        if (
-            createdCategory
-        ) {
+        if (createdCategory) {
 
             const categorySelect =
                 getElement(
@@ -1127,9 +1154,7 @@ async function saveCategory(
                 );
 
 
-            if (
-                categorySelect
-            ) {
+            if (categorySelect) {
 
                 categorySelect.value =
                     String(
@@ -1161,13 +1186,10 @@ async function saveCategory(
 
     } finally {
 
-        if (
-            submitButton
-        ) {
+        if (submitButton) {
 
             submitButton.disabled =
                 false;
-
 
             submitButton.textContent =
                 "Adicionar categoria";
@@ -1177,108 +1199,100 @@ async function saveCategory(
 
 
 // =====================================================
-// CARREGAR MOVIMENTAÇÕES
+// MOVIMENTAÇÕES
 // =====================================================
 
 async function loadTransactions() {
 
-    try {
-
-        const transactions =
-            await apiRequest(
-                "/movimentacoes"
-            );
+    const transactions =
+        await apiRequest(
+            "/movimentacoes"
+        );
 
 
-        if (
-            !Array.isArray(
-                transactions
-            )
-        ) {
-
-            appData.transactions =
-                [];
-
-            return;
-        }
-
+    if (
+        !Array.isArray(
+            transactions
+        )
+    ) {
 
         appData.transactions =
-            transactions.map(
-                item => {
+            [];
 
-                    return {
-
-                        id:
-                            Number(
-                                item.id
-                            ),
-
-                        description:
-                            item.descricao ||
-                            "",
-
-                        type:
-                            item.tipo,
-
-                        amount:
-                            Number(
-                                item.valor
-                            ),
-
-                        categoryId:
-                            item.categoria_id
-                                ? Number(
-                                    item.categoria_id
-                                )
-                                : null,
-
-                        category:
-                            item.categoria ||
-                            "Sem categoria",
-
-                        categoryColor:
-                            item.categoria_cor ||
-                            null,
-
-                        date:
-                            normalizeDate(
-                                item.data ||
-                                item.data_movimentacao
-                            ),
-
-                        status:
-                            item.status,
-
-                        payment:
-                            item.forma_pagamento ||
-                            "Não informado",
-
-                        observation:
-                            item.observacao ||
-                            "",
-
-                        fixedId:
-                            item.fixo_id ||
-                            null
-                    };
-                }
-            );
-
-
-    } catch (error) {
-
-        console.error(
-            "Erro ao carregar movimentações:",
-            error
-        );
-
-
-        showToast(
-            error.message ||
-            "Erro ao carregar movimentações."
-        );
+        return;
     }
+
+
+    appData.transactions =
+        transactions.map(
+            item => {
+
+                return {
+
+                    id:
+                        Number(
+                            item.id
+                        ),
+
+                    description:
+                        item.descricao ||
+                        "",
+
+                    type:
+                        item.tipo,
+
+                    amount:
+                        Number(
+                            item.valor
+                        ),
+
+                    categoryId:
+                        item.categoria_id
+                            ? Number(
+                                item.categoria_id
+                            )
+                            : null,
+
+                    category:
+                        item.categoria ||
+                        (
+                            String(
+                                item.observacao ||
+                                ""
+                            ).startsWith(
+                                "SALDO_TRANSPORTADO:"
+                            )
+                                ? "Saldo anterior"
+                                : "Sem categoria"
+                        ),
+
+                    categoryColor:
+                        item.categoria_cor ||
+                        null,
+
+                    date:
+                        normalizeDate(
+                            item.data ||
+                            item.data_movimentacao
+                        ),
+
+                    status:
+                        item.status,
+
+                    payment:
+                        item.forma_pagamento ||
+                        "Não informado",
+
+                    observation:
+                        item.observacao ||
+                        "",
+
+                    fixedId:
+                        item.fixo_id ||
+                        null
+                };
+            }
+        );
 }
 
 
@@ -1294,9 +1308,7 @@ function renderYearOptions() {
         );
 
 
-    if (
-        !yearFilter
-    ) {
+    if (!yearFilter) {
         return;
     }
 
@@ -1308,9 +1320,7 @@ function renderYearOptions() {
     appData.transactions.forEach(
         transaction => {
 
-            if (
-                !transaction.date
-            ) {
+            if (!transaction.date) {
                 return;
             }
 
@@ -1364,14 +1374,11 @@ function renderYearOptions() {
 
         ${sortedYears
             .map(
-                year => {
-
-                    return `
-                        <option value="${year}">
-                            ${year}
-                        </option>
-                    `;
-                }
+                year => `
+                    <option value="${year}">
+                        ${year}
+                    </option>
+                `
             )
             .join("")}
     `;
@@ -1386,9 +1393,7 @@ function renderYearOptions() {
             );
 
 
-    if (
-        optionExists
-    ) {
+    if (optionExists) {
 
         yearFilter.value =
             currentValue;
@@ -1397,87 +1402,59 @@ function renderYearOptions() {
 
 
 // =====================================================
-// FILTRAR MOVIMENTAÇÕES
+// FILTRAR
 // =====================================================
 
 function getFilteredTransactions() {
 
-    const searchInput =
-        getElement(
-            "searchInput"
-        );
-
-
-    const typeFilter =
-        getElement(
-            "typeFilter"
-        );
-
-
-    const statusFilter =
-        getElement(
-            "statusFilter"
-        );
-
-
-    const categoryFilter =
-        getElement(
-            "categoryFilter"
-        );
-
-
-    const monthFilter =
-        getElement(
-            "monthFilter"
-        );
-
-
-    const yearFilter =
-        getElement(
-            "yearFilter"
-        );
-
-
-    const orderFilter =
-        getElement(
-            "orderFilter"
-        );
-
-
     const search =
         normalizeText(
-            searchInput?.value.trim() ||
+            getElement(
+                "searchInput"
+            )?.value.trim() ||
             ""
         );
 
 
     const type =
-        typeFilter?.value ||
+        getElement(
+            "typeFilter"
+        )?.value ||
         "all";
 
 
     const status =
-        statusFilter?.value ||
+        getElement(
+            "statusFilter"
+        )?.value ||
         "all";
 
 
     const category =
-        categoryFilter?.value ||
+        getElement(
+            "categoryFilter"
+        )?.value ||
         "all";
 
 
     const month =
-        monthFilter?.value ||
+        getElement(
+            "monthFilter"
+        )?.value ||
         "all";
 
 
     const year =
-        yearFilter?.value ||
+        getElement(
+            "yearFilter"
+        )?.value ||
         "all";
 
 
     const order =
-        orderFilter?.value ||
+        getElement(
+            "orderFilter"
+        )?.value ||
         "newest";
 
 
@@ -1652,15 +1629,12 @@ function sumTransactions(
             (
                 total,
                 transaction
-            ) => {
+            ) =>
 
-                return (
-                    total +
-                    Number(
-                        transaction.amount
-                    )
-                );
-            },
+                total +
+                Number(
+                    transaction.amount
+                ),
             0
         );
 }
@@ -1766,10 +1740,6 @@ function renderSummary(
         ).length;
 
 
-    // =====================================================
-    // SALDO
-    // =====================================================
-
     const balance =
         income -
         expense -
@@ -1806,33 +1776,7 @@ function renderSummary(
         );
 
 
-    const summaryIncomeCount =
-        getElement(
-            "summaryIncomeCount"
-        );
-
-
-    const summaryExpenseCount =
-        getElement(
-            "summaryExpenseCount"
-        );
-
-
-    const summarySavedCount =
-        getElement(
-            "summarySavedCount"
-        );
-
-
-    const summaryPendingCount =
-        getElement(
-            "summaryPendingCount"
-        );
-
-
-    if (
-        summaryIncome
-    ) {
+    if (summaryIncome) {
 
         summaryIncome.textContent =
             currency.format(
@@ -1841,9 +1785,7 @@ function renderSummary(
     }
 
 
-    if (
-        summaryExpense
-    ) {
+    if (summaryExpense) {
 
         summaryExpense.textContent =
             currency.format(
@@ -1852,9 +1794,7 @@ function renderSummary(
     }
 
 
-    if (
-        summarySaved
-    ) {
+    if (summarySaved) {
 
         summarySaved.textContent =
             currency.format(
@@ -1863,9 +1803,7 @@ function renderSummary(
     }
 
 
-    if (
-        summaryPending
-    ) {
+    if (summaryPending) {
 
         summaryPending.textContent =
             currency.format(
@@ -1874,9 +1812,7 @@ function renderSummary(
     }
 
 
-    if (
-        summaryBalance
-    ) {
+    if (summaryBalance) {
 
         summaryBalance.textContent =
             currency.format(
@@ -1897,11 +1833,33 @@ function renderSummary(
     }
 
 
-    if (
-        summaryIncomeCount
-    ) {
+    const incomeCountElement =
+        getElement(
+            "summaryIncomeCount"
+        );
 
-        summaryIncomeCount.textContent =
+
+    const expenseCountElement =
+        getElement(
+            "summaryExpenseCount"
+        );
+
+
+    const savedCountElement =
+        getElement(
+            "summarySavedCount"
+        );
+
+
+    const pendingCountElement =
+        getElement(
+            "summaryPendingCount"
+        );
+
+
+    if (incomeCountElement) {
+
+        incomeCountElement.textContent =
             `${incomeCount} recebimento${
                 incomeCount === 1
                     ? ""
@@ -1910,11 +1868,9 @@ function renderSummary(
     }
 
 
-    if (
-        summaryExpenseCount
-    ) {
+    if (expenseCountElement) {
 
-        summaryExpenseCount.textContent =
+        expenseCountElement.textContent =
             `${expenseCount} pagamento${
                 expenseCount === 1
                     ? ""
@@ -1923,28 +1879,18 @@ function renderSummary(
     }
 
 
-    if (
-        summarySavedCount
-    ) {
+    if (savedCountElement) {
 
-        summarySavedCount.textContent =
-            `${savedCount} valor${
-                savedCount === 1
-                    ? ""
-                    : "es"
-            } guardado${
-                savedCount === 1
-                    ? ""
-                    : "s"
-            }`;
+        savedCountElement.textContent =
+            savedCount === 1
+                ? "1 valor guardado"
+                : `${savedCount} valores guardados`;
     }
 
 
-    if (
-        summaryPendingCount
-    ) {
+    if (pendingCountElement) {
 
-        summaryPendingCount.textContent =
+        pendingCountElement.textContent =
             `${pendingCount} pendência${
                 pendingCount === 1
                     ? ""
@@ -1955,7 +1901,7 @@ function renderSummary(
 
 
 // =====================================================
-// GERAR SALDO DO MÊS ANTERIOR
+// SALDO ANTERIOR
 // =====================================================
 
 async function ensurePreviousMonthBalance() {
@@ -1974,7 +1920,9 @@ async function ensurePreviousMonthBalance() {
 
     if (
         !monthFilter ||
-        !yearFilter
+        !yearFilter ||
+        monthFilter.value === "all" ||
+        yearFilter.value === "all"
     ) {
 
         return;
@@ -1985,60 +1933,8 @@ async function ensurePreviousMonthBalance() {
         monthFilter.value;
 
 
-    if (
-        monthValue === "all"
-    ) {
-
-        return;
-    }
-
-
-    let yearValue =
+    const yearValue =
         yearFilter.value;
-
-
-    if (
-        yearValue === "all"
-    ) {
-
-        const currentYear =
-            new Date()
-                .getFullYear();
-
-
-        const optionExists =
-            [...yearFilter.options]
-                .some(
-                    option =>
-                        Number(
-                            option.value
-                        ) ===
-                        currentYear
-                );
-
-
-        if (
-            optionExists
-        ) {
-
-            yearFilter.value =
-                String(
-                    currentYear
-                );
-
-
-            yearValue =
-                yearFilter.value;
-        }
-    }
-
-
-    if (
-        yearValue === "all"
-    ) {
-
-        return;
-    }
 
 
     const mes =
@@ -2053,50 +1949,28 @@ async function ensurePreviousMonthBalance() {
         );
 
 
-    try {
-
-        await apiRequest(
-            `/dashboard/resumo?mes=${mes}&ano=${ano}`
-        );
+    await apiRequest(
+        `/dashboard/resumo?mes=${mes}&ano=${ano}`
+    );
 
 
-        await loadTransactions();
+    await loadTransactions();
 
 
-        renderYearOptions();
+    renderYearOptions();
 
 
-        monthFilter.value =
-            monthValue;
+    monthFilter.value =
+        monthValue;
 
 
-        yearFilter.value =
-            String(
-                ano
-            );
-
-
-        renderTransactions();
-
-
-    } catch (error) {
-
-        console.error(
-            "Erro ao gerar saldo do mês anterior:",
-            error
-        );
-
-
-        showToast(
-            error.message ||
-            "Erro ao atualizar saldo anterior."
-        );
-    }
+    yearFilter.value =
+        yearValue;
 }
 
 
 // =====================================================
-// TIPO DA MOVIMENTAÇÃO
+// TIPO
 // =====================================================
 
 function getTransactionTypeInfo(
@@ -2199,7 +2073,7 @@ function getTransactionStatusLabel(
 
 
 // =====================================================
-// LINHA DA TABELA
+// TABELA
 // =====================================================
 
 function createTableRow(
@@ -2255,11 +2129,9 @@ function createTableRow(
             <td>
 
                 <span class="category-badge">
-
                     ${escapeHtml(
                         transaction.category
                     )}
-
                 </span>
 
             </td>
@@ -2333,7 +2205,7 @@ function createTableRow(
 
 
 // =====================================================
-// CARD MOBILE
+// MOBILE
 // =====================================================
 
 function createMobileCard(
@@ -2449,7 +2321,7 @@ function createMobileCard(
 
 
 // =====================================================
-// RENDERIZAR MOVIMENTAÇÕES
+// RENDERIZAR
 // =====================================================
 
 function renderTransactions() {
@@ -2458,18 +2330,10 @@ function renderTransactions() {
         getFilteredTransactions();
 
 
-    // =====================================================
-    // RESUMO USA TODOS OS RESULTADOS FILTRADOS
-    // =====================================================
-
     renderSummary(
         transactions
     );
 
-
-    // =====================================================
-    // TOTAL REAL
-    // =====================================================
 
     const total =
         transactions.length;
@@ -2481,23 +2345,14 @@ function renderTransactions() {
         );
 
 
-    if (
-        resultsText
-    ) {
+    if (resultsText) {
 
-if (resultsText) {
-
-    resultsText.textContent =
-        total === 1
-            ? "1 movimentação encontrada"
-            : `${total} movimentações encontradas`;
-}
+        resultsText.textContent =
+            total === 1
+                ? "1 movimentação encontrada"
+                : `${total} movimentações encontradas`;
     }
 
-
-    // =====================================================
-    // MOSTRAR 4 OU TODAS
-    // =====================================================
 
     const visibleTransactions =
         showAllTransactions
@@ -2508,19 +2363,13 @@ if (resultsText) {
             );
 
 
-    // =====================================================
-    // CLASSE DO HISTÓRICO EXPANDIDO
-    // =====================================================
-
     const historyContent =
         getElement(
             "historyContent"
         );
 
 
-    if (
-        historyContent
-    ) {
+    if (historyContent) {
 
         historyContent.classList.toggle(
             "show-all",
@@ -2529,28 +2378,18 @@ if (resultsText) {
     }
 
 
-    // =====================================================
-    // EMPTY STATE
-    // =====================================================
-
     const emptyState =
         getElement(
             "emptyState"
         );
 
 
-    if (
-        emptyState
-    ) {
+    if (emptyState) {
 
         emptyState.hidden =
             total > 0;
     }
 
-
-    // =====================================================
-    // TABELA DESKTOP
-    // =====================================================
 
     const transactionsBody =
         getElement(
@@ -2558,9 +2397,7 @@ if (resultsText) {
         );
 
 
-    if (
-        transactionsBody
-    ) {
+    if (transactionsBody) {
 
         transactionsBody.innerHTML =
             visibleTransactions
@@ -2573,19 +2410,13 @@ if (resultsText) {
     }
 
 
-    // =====================================================
-    // MOBILE
-    // =====================================================
-
     const mobileTransactions =
         getElement(
             "mobileTransactions"
         );
 
 
-    if (
-        mobileTransactions
-    ) {
+    if (mobileTransactions) {
 
         mobileTransactions.innerHTML =
             visibleTransactions
@@ -2598,19 +2429,13 @@ if (resultsText) {
     }
 
 
-    // =====================================================
-    // BOTÃO VER TODAS
-    // =====================================================
-
     const historyViewAll =
         getElement(
             "historyViewAll"
         );
 
 
-    if (
-        historyViewAll
-    ) {
+    if (historyViewAll) {
 
         historyViewAll.hidden =
             total <=
@@ -2635,7 +2460,7 @@ if (resultsText) {
 
 
 // =====================================================
-// CARREGAR PÁGINA
+// ATUALIZAR
 // =====================================================
 
 async function refreshTransactions() {
@@ -2654,6 +2479,9 @@ async function refreshTransactions() {
         renderTransactions();
 
 
+        updateFilterIndicator();
+
+
     } catch (error) {
 
         console.error(
@@ -2662,11 +2490,18 @@ async function refreshTransactions() {
         );
 
 
+        showToast(
+            error.message ||
+            "Erro ao carregar movimentações."
+        );
+
+
     } finally {
 
         hideHistoryLoading();
     }
 }
+
 
 // =====================================================
 // AÇÕES DAS LINHAS
@@ -2794,9 +2629,7 @@ function openNewModal() {
         );
 
 
-    if (
-        dateInput
-    ) {
+    if (dateInput) {
 
         dateInput.value =
             new Date()
@@ -2827,16 +2660,10 @@ function openNewModal() {
 
 
 // =====================================================
-// EDITAR MOVIMENTAÇÃO
+// EDITAR
 // =====================================================
 
 function openEditModal(id) {
-
-    const numericId =
-        Number(
-            id
-        );
-
 
     const transaction =
         appData.transactions.find(
@@ -2844,13 +2671,13 @@ function openEditModal(id) {
                 Number(
                     item.id
                 ) ===
-                numericId
+                Number(
+                    id
+                )
         );
 
 
-    if (
-        !transaction
-    ) {
+    if (!transaction) {
 
         showToast(
             "Movimentação não encontrada."
@@ -2939,7 +2766,7 @@ function openEditModal(id) {
 
 
 // =====================================================
-// SALVAR MOVIMENTAÇÃO
+// SALVAR
 // =====================================================
 
 async function saveTransaction(
@@ -2999,9 +2826,7 @@ async function saveTransaction(
         ).value;
 
 
-    if (
-        !description
-    ) {
+    if (!description) {
 
         showToast(
             "Informe a descrição."
@@ -3026,9 +2851,7 @@ async function saveTransaction(
     }
 
 
-    if (
-        !categoryId
-    ) {
+    if (!categoryId) {
 
         showToast(
             "Selecione uma categoria."
@@ -3038,9 +2861,7 @@ async function saveTransaction(
     }
 
 
-    if (
-        !data
-    ) {
+    if (!data) {
 
         showToast(
             "Informe a data."
@@ -3102,9 +2923,7 @@ async function saveTransaction(
         let resultado;
 
 
-        if (
-            id
-        ) {
+        if (id) {
 
             resultado =
                 await apiRequest(
@@ -3146,6 +2965,10 @@ async function saveTransaction(
         form.reset();
 
 
+        showAllTransactions =
+            false;
+
+
         showToast(
             resultado?.message ||
             (
@@ -3154,10 +2977,6 @@ async function saveTransaction(
                     : "Movimentação adicionada."
             )
         );
-
-
-        showAllTransactions =
-            false;
 
 
         await refreshTransactions();
@@ -3190,7 +3009,7 @@ async function saveTransaction(
 
 
 // =====================================================
-// MODAL EXCLUIR
+// EXCLUSÃO
 // =====================================================
 
 function openDeleteModal(id) {
@@ -3207,16 +3026,9 @@ function openDeleteModal(id) {
 }
 
 
-// =====================================================
-// EXCLUIR MOVIMENTAÇÃO
-// =====================================================
-
 async function deleteTransaction() {
 
-    if (
-        !transactionToDelete
-    ) {
-
+    if (!transactionToDelete) {
         return;
     }
 
@@ -3256,14 +3068,14 @@ async function deleteTransaction() {
         )?.close();
 
 
+        showAllTransactions =
+            false;
+
+
         showToast(
             resultado?.message ||
             "Movimentação excluída."
         );
-
-
-        showAllTransactions =
-            false;
 
 
         await refreshTransactions();
@@ -3296,6 +3108,210 @@ async function deleteTransaction() {
 
 
 // =====================================================
+// FILTROS ATIVOS
+// =====================================================
+
+function hasActiveFilters() {
+
+    const type =
+        getElement(
+            "typeFilter"
+        )?.value ||
+        "all";
+
+
+    const status =
+        getElement(
+            "statusFilter"
+        )?.value ||
+        "all";
+
+
+    const category =
+        getElement(
+            "categoryFilter"
+        )?.value ||
+        "all";
+
+
+    const month =
+        getElement(
+            "monthFilter"
+        )?.value ||
+        "all";
+
+
+    const year =
+        getElement(
+            "yearFilter"
+        )?.value ||
+        "all";
+
+
+    const order =
+        getElement(
+            "orderFilter"
+        )?.value ||
+        "newest";
+
+
+    return (
+        type !== "all" ||
+        status !== "all" ||
+        category !== "all" ||
+        month !== "all" ||
+        year !== "all" ||
+        order !== "newest"
+    );
+}
+
+
+// =====================================================
+// BOLINHA DO FILTRO
+// =====================================================
+
+function updateFilterIndicator() {
+
+    const dot =
+        getElement(
+            "filterActiveDot"
+        );
+
+
+    if (!dot) {
+        return;
+    }
+
+
+    dot.hidden =
+        !hasActiveFilters();
+}
+
+
+// =====================================================
+// MODAL FILTROS
+// =====================================================
+
+function openFiltersModal() {
+
+    const modal =
+        getElement(
+            "filtersModal"
+        );
+
+
+    if (!modal) {
+        return;
+    }
+
+
+    modal.showModal();
+}
+
+
+// =====================================================
+// APLICAR FILTROS
+// =====================================================
+
+async function applyFilters() {
+
+    const modal =
+        getElement(
+            "filtersModal"
+        );
+
+
+    const button =
+        getElement(
+            "applyFilters"
+        );
+
+
+    const monthFilter =
+        getElement(
+            "monthFilter"
+        );
+
+
+    const yearFilter =
+        getElement(
+            "yearFilter"
+        );
+
+
+    showAllTransactions =
+        false;
+
+
+    try {
+
+        if (button) {
+
+            button.disabled =
+                true;
+
+
+            button.textContent =
+                "Aplicando...";
+        }
+
+
+        // Apenas chama o saldo transportado
+        // se mês E ano forem específicos.
+
+        if (
+            monthFilter?.value !== "all" &&
+            yearFilter?.value !== "all"
+        ) {
+
+            await ensurePreviousMonthBalance();
+        }
+
+
+        renderTransactions();
+
+
+        updateFilterIndicator();
+
+
+        if (
+            modal?.open
+        ) {
+
+            modal.close();
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao aplicar filtros:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Erro ao aplicar filtros."
+        );
+
+
+    } finally {
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+
+            button.textContent =
+                "Aplicar filtros";
+        }
+    }
+}
+
+
+// =====================================================
 // LIMPAR FILTROS
 // =====================================================
 
@@ -3305,24 +3321,7 @@ function clearFilters() {
         false;
 
 
-    clearTimeout(
-        searchLoadingTimeout
-    );
-
-
-    const loading =
-        getElement(
-            "searchLoading"
-        );
-
-
-    if (
-        loading
-    ) {
-
-        loading.hidden =
-            true;
-    }
+    hideSearchLoading();
 
 
     const searchInput =
@@ -3331,52 +3330,189 @@ function clearFilters() {
         );
 
 
-    if (
-        searchInput
-    ) {
+    const typeFilter =
+        getElement(
+            "typeFilter"
+        );
+
+
+    const statusFilter =
+        getElement(
+            "statusFilter"
+        );
+
+
+    const categoryFilter =
+        getElement(
+            "categoryFilter"
+        );
+
+
+    const monthFilter =
+        getElement(
+            "monthFilter"
+        );
+
+
+    const yearFilter =
+        getElement(
+            "yearFilter"
+        );
+
+
+    const orderFilter =
+        getElement(
+            "orderFilter"
+        );
+
+
+    if (searchInput) {
 
         searchInput.value =
             "";
     }
 
 
-    getElement(
-        "typeFilter"
-    ).value =
-        "all";
+    if (typeFilter) {
+
+        typeFilter.value =
+            "all";
+    }
 
 
-    getElement(
-        "statusFilter"
-    ).value =
-        "all";
+    if (statusFilter) {
+
+        statusFilter.value =
+            "all";
+    }
 
 
-    getElement(
-        "categoryFilter"
-    ).value =
-        "all";
+    if (categoryFilter) {
+
+        categoryFilter.value =
+            "all";
+    }
 
 
-    getElement(
-        "monthFilter"
-    ).value =
-        "all";
+    if (monthFilter) {
+
+        monthFilter.value =
+            "all";
+    }
 
 
-    getElement(
-        "yearFilter"
-    ).value =
-        "all";
+    if (yearFilter) {
+
+        yearFilter.value =
+            "all";
+    }
 
 
-    getElement(
-        "orderFilter"
-    ).value =
-        "newest";
+    if (orderFilter) {
+
+        orderFilter.value =
+            "newest";
+    }
 
 
     renderTransactions();
+
+
+    updateFilterIndicator();
+
+
+    const modal =
+        getElement(
+            "filtersModal"
+        );
+
+
+    if (
+        modal?.open
+    ) {
+
+        modal.close();
+    }
+
+
+    showToast(
+        "Filtros removidos."
+    );
+}
+
+
+// =====================================================
+// PESQUISA
+// =====================================================
+
+function setupFilters() {
+
+    const searchInput =
+        getElement(
+            "searchInput"
+        );
+
+
+    if (!searchInput) {
+        return;
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        () => {
+
+            const loading =
+                getElement(
+                    "searchLoading"
+                );
+
+
+            showAllTransactions =
+                false;
+
+
+            clearTimeout(
+                searchLoadingTimeout
+            );
+
+
+            if (loading) {
+
+                loading.hidden =
+                    false;
+            }
+
+
+            searchLoadingTimeout =
+                setTimeout(
+                    () => {
+
+                        try {
+
+                            renderTransactions();
+
+                        } catch (error) {
+
+                            console.error(
+                                "Erro ao pesquisar movimentações:",
+                                error
+                            );
+
+                        } finally {
+
+                            if (loading) {
+
+                                loading.hidden =
+                                    true;
+                            }
+                        }
+
+                    },
+                    300
+                );
+        }
+    );
 }
 
 
@@ -3416,43 +3552,40 @@ function exportCsv() {
 
     const rows =
         transactions.map(
-            transaction => {
+            transaction => [
 
-                return [
+                transaction.description,
 
-                    transaction.description,
+                transaction.type ===
+                    "income"
+                    ? "Entrada"
+                    : transaction.type ===
+                        "saved"
+                        ? "Guardado"
+                        : "Despesa",
 
-                    transaction.type ===
-                        "income"
-                        ? "Entrada"
-                        : transaction.type ===
-                            "saved"
-                            ? "Guardado"
-                            : "Despesa",
+                transaction.category,
 
-                    transaction.category,
+                transaction.date,
 
-                    transaction.date,
+                transaction.status ===
+                    "paid"
+                    ? "Pago ou recebido"
+                    : "Pendente",
 
-                    transaction.status ===
-                        "paid"
-                        ? "Pago ou recebido"
-                        : "Pendente",
+                transaction.payment,
 
-                    transaction.payment,
-
-                    Number(
-                        transaction.amount
+                Number(
+                    transaction.amount
+                )
+                    .toFixed(
+                        2
                     )
-                        .toFixed(
-                            2
-                        )
-                        .replace(
-                            ".",
-                            ","
-                        )
-                ];
-            }
+                    .replace(
+                        ".",
+                        ","
+                    )
+            ]
         );
 
 
@@ -3462,9 +3595,9 @@ function exportCsv() {
             ...rows
         ]
             .map(
-                row => {
+                row =>
 
-                    return row
+                    row
                         .map(
                             value => {
 
@@ -3483,8 +3616,7 @@ function exportCsv() {
                         )
                         .join(
                             ";"
-                        );
-                }
+                        )
             )
             .join(
                 "\n"
@@ -3547,240 +3679,7 @@ function exportCsv() {
 
 
 // =====================================================
-// FILTROS
-// =====================================================
-
-function setupFilters() {
-
-    [
-        "searchInput",
-        "typeFilter",
-        "statusFilter",
-        "categoryFilter",
-        "monthFilter",
-        "yearFilter",
-        "orderFilter"
-    ].forEach(
-        id => {
-
-            const element =
-                getElement(
-                    id
-                );
-
-
-            if (
-                !element
-            ) {
-                return;
-            }
-
-
-            element.addEventListener(
-
-                id === "searchInput"
-                    ? "input"
-                    : "change",
-
-                async () => {
-
-                    // =================================================
-                    // PESQUISA COM LOADING
-                    // =================================================
-
-                    if (
-                        id === "searchInput"
-                    ) {
-
-                        const loading =
-                            getElement(
-                                "searchLoading"
-                            );
-
-
-                        showAllTransactions =
-                            false;
-
-
-                        // CANCELA TIMER ANTERIOR
-                        clearTimeout(
-                            searchLoadingTimeout
-                        );
-
-
-                        // MOSTRA LOADING
-                        if (
-                            loading
-                        ) {
-
-                            loading.hidden =
-                                false;
-                        }
-
-
-                        // ESPERA USUÁRIO PARAR DE DIGITAR
-                        searchLoadingTimeout =
-                            setTimeout(
-                                () => {
-
-                                    try {
-
-                                        renderTransactions();
-
-                                    } catch (error) {
-
-                                        console.error(
-                                            "Erro ao pesquisar movimentações:",
-                                            error
-                                        );
-
-                                    } finally {
-
-                                        // SEMPRE ESCONDE O LOADING
-                                        if (
-                                            loading
-                                        ) {
-
-                                            loading.hidden =
-                                                true;
-                                        }
-                                    }
-
-                                },
-                                300
-                            );
-
-
-                        return;
-                    }
-
-
-                    // =================================================
-                    // OUTROS FILTROS
-                    // =================================================
-
-                    showAllTransactions =
-                        false;
-
-
-                    // =================================================
-                    // MÊS
-                    // =================================================
-
-                    if (
-                        id === "monthFilter"
-                    ) {
-
-                        try {
-
-                            if (
-                                element.value !==
-                                "all"
-                            ) {
-
-                                await ensurePreviousMonthBalance();
-
-                            } else {
-
-                                renderTransactions();
-                            }
-
-                        } catch (error) {
-
-                            console.error(
-                                "Erro ao filtrar por mês:",
-                                error
-                            );
-
-
-                            renderTransactions();
-                        }
-
-
-                        return;
-                    }
-
-
-                    // =================================================
-                    // ANO
-                    // =================================================
-
-                    if (
-                        id === "yearFilter"
-                    ) {
-
-                        const monthFilter =
-                            getElement(
-                                "monthFilter"
-                            );
-
-
-                        try {
-
-                            if (
-                                element.value !==
-                                    "all" &&
-                                monthFilter?.value !==
-                                    "all"
-                            ) {
-
-                                await ensurePreviousMonthBalance();
-
-                            } else {
-
-                                renderTransactions();
-                            }
-
-                        } catch (error) {
-
-                            console.error(
-                                "Erro ao filtrar por ano:",
-                                error
-                            );
-
-
-                            renderTransactions();
-                        }
-
-
-                        return;
-                    }
-
-
-                    // =================================================
-                    // TIPO, STATUS, CATEGORIA E ORDENAÇÃO
-                    // =================================================
-
-                    renderTransactions();
-                }
-            );
-        }
-    );
-}
-
-function hideSearchLoading() {
-
-    clearTimeout(
-        searchLoadingTimeout
-    );
-
-
-    const loading =
-        getElement(
-            "searchLoading"
-        );
-
-
-    if (loading) {
-
-        loading.hidden =
-            true;
-    }
-}
-
-
-// =====================================================
-// MENU PERFIL
+// PERFIL
 // =====================================================
 
 function setupProfileMenu() {
@@ -3857,10 +3756,7 @@ function setupTheme() {
         );
 
 
-    if (
-        !button
-    ) {
-
+    if (!button) {
         return;
     }
 
@@ -3913,57 +3809,7 @@ function setupTheme() {
 
 
 // =====================================================
-// ABRIR / FECHAR FILTROS
-// =====================================================
-
-function toggleFiltersSection() {
-
-    const button =
-        getElement(
-            "toggleFilters"
-        );
-
-
-    const content =
-        getElement(
-            "filtersContent"
-        );
-
-
-    if (
-        !button ||
-        !content
-    ) {
-
-        return;
-    }
-
-
-    const isOpen =
-        !content.hidden;
-
-
-    content.hidden =
-        isOpen;
-
-
-    button.classList.toggle(
-        "active",
-        !isOpen
-    );
-
-
-    button.setAttribute(
-        "aria-expanded",
-        String(
-            !isOpen
-        )
-    );
-}
-
-
-// =====================================================
-// ABRIR / FECHAR HISTÓRICO
+// HISTÓRICO ACCORDION
 // =====================================================
 
 function toggleHistorySection() {
@@ -4013,7 +3859,7 @@ function toggleHistorySection() {
 
 
 // =====================================================
-// MENU MOBILE
+// MOBILE
 // =====================================================
 
 function setupMobileMenu() {
@@ -4163,15 +4009,21 @@ function setupEvents() {
         );
 
 
-    const clearFiltersButton =
+    const openFiltersButton =
         getElement(
-            "clearFilters"
+            "openFiltersModal"
         );
 
 
-    const toggleFilters =
+    const applyFiltersButton =
         getElement(
-            "toggleFilters"
+            "applyFilters"
+        );
+
+
+    const clearFiltersButton =
+        getElement(
+            "clearFilters"
         );
 
 
@@ -4199,13 +4051,9 @@ function setupEvents() {
         );
 
 
-    // =====================================================
-    // MOVIMENTAÇÃO
-    // =====================================================
+    // NOVA MOVIMENTAÇÃO
 
-    if (
-        openTransaction
-    ) {
+    if (openTransaction) {
 
         openTransaction.addEventListener(
             "click",
@@ -4214,9 +4062,7 @@ function setupEvents() {
     }
 
 
-    if (
-        headerAddButton
-    ) {
+    if (headerAddButton) {
 
         headerAddButton.addEventListener(
             "click",
@@ -4225,9 +4071,7 @@ function setupEvents() {
     }
 
 
-    if (
-        emptyAddButton
-    ) {
+    if (emptyAddButton) {
 
         emptyAddButton.addEventListener(
             "click",
@@ -4236,9 +4080,7 @@ function setupEvents() {
     }
 
 
-    if (
-        transactionForm
-    ) {
+    if (transactionForm) {
 
         transactionForm.addEventListener(
             "submit",
@@ -4247,13 +4089,9 @@ function setupEvents() {
     }
 
 
-    // =====================================================
     // CATEGORIA
-    // =====================================================
 
-    if (
-        openCategoryButton
-    ) {
+    if (openCategoryButton) {
 
         openCategoryButton.addEventListener(
             "click",
@@ -4262,9 +4100,7 @@ function setupEvents() {
     }
 
 
-    if (
-        categoryForm
-    ) {
+    if (categoryForm) {
 
         categoryForm.addEventListener(
             "submit",
@@ -4273,13 +4109,9 @@ function setupEvents() {
     }
 
 
-    // =====================================================
     // EXCLUIR
-    // =====================================================
 
-    if (
-        confirmDelete
-    ) {
+    if (confirmDelete) {
 
         confirmDelete.addEventListener(
             "click",
@@ -4288,13 +4120,37 @@ function setupEvents() {
     }
 
 
-    // =====================================================
-    // LIMPAR FILTROS
-    // =====================================================
+    // ABRIR FILTROS
 
-    if (
-        clearFiltersButton
-    ) {
+    if (openFiltersButton) {
+
+        openFiltersButton.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+
+                openFiltersModal();
+            }
+        );
+    }
+
+
+    // APLICAR FILTROS
+
+    if (applyFiltersButton) {
+
+        applyFiltersButton.addEventListener(
+            "click",
+            applyFilters
+        );
+    }
+
+
+    // LIMPAR FILTROS
+
+    if (clearFiltersButton) {
 
         clearFiltersButton.addEventListener(
             "click",
@@ -4303,61 +4159,9 @@ function setupEvents() {
     }
 
 
-    // =====================================================
-    // ACCORDION FILTROS
-    // =====================================================
+    // HISTÓRICO ACCORDION
 
-    if (
-        toggleFilters
-    ) {
-
-        toggleFilters.addEventListener(
-            "click",
-            event => {
-
-                if (
-                    event.target.closest(
-                        "#clearFilters"
-                    )
-                ) {
-
-                    return;
-                }
-
-
-                toggleFiltersSection();
-            }
-        );
-
-
-        toggleFilters.addEventListener(
-            "keydown",
-            event => {
-
-                if (
-                    event.key ===
-                        "Enter" ||
-                    event.key ===
-                        " "
-                ) {
-
-                    event.preventDefault();
-
-
-                    toggleFiltersSection();
-                }
-            }
-        );
-    }
-
-
-    // =====================================================
-    // ACCORDION HISTÓRICO
-    // =====================================================
-
-    if (
-        toggleHistory
-    ) {
+    if (toggleHistory) {
 
         toggleHistory.addEventListener(
             "click",
@@ -4366,6 +4170,9 @@ function setupEvents() {
                 if (
                     event.target.closest(
                         "#exportButton"
+                    ) ||
+                    event.target.closest(
+                        "#openFiltersModal"
                     )
                 ) {
 
@@ -4399,13 +4206,9 @@ function setupEvents() {
     }
 
 
-    // =====================================================
     // VER TODAS
-    // =====================================================
 
-    if (
-        historyViewAll
-    ) {
+    if (historyViewAll) {
 
         historyViewAll.addEventListener(
             "click",
@@ -4417,12 +4220,6 @@ function setupEvents() {
 
                 renderTransactions();
 
-
-                /*
-                    Quando volta para apenas 4,
-                    leva o usuário para o topo
-                    do histórico.
-                */
 
                 if (
                     !showAllTransactions
@@ -4443,28 +4240,26 @@ function setupEvents() {
     }
 
 
-    // =====================================================
     // EXPORTAR
-    // =====================================================
 
-    if (
-        exportButton
-    ) {
+    if (exportButton) {
 
         exportButton.addEventListener(
             "click",
-            exportCsv
+            event => {
+
+                event.stopPropagation();
+
+
+                exportCsv();
+            }
         );
     }
 
 
-    // =====================================================
     // LOGOUT
-    // =====================================================
 
-    if (
-        logoutButton
-    ) {
+    if (logoutButton) {
 
         logoutButton.addEventListener(
             "click",
@@ -4515,6 +4310,9 @@ async function initializePage() {
 
 
         await refreshTransactions();
+
+
+        updateFilterIndicator();
 
 
     } catch (error) {

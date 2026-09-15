@@ -141,6 +141,13 @@ a {
 }
 
 
+/* GARANTE FUNCIONAMENTO DO HIDDEN */
+
+[hidden] {
+  display: none !important;
+}
+
+
 /* =====================================================
    TOPO
 ===================================================== */
@@ -320,13 +327,10 @@ body.dark .topbar {
   border: none;
 
   color: #ffffff;
-
-  background:
-    var(--primary);
+  background: var(--primary);
 
   box-shadow:
-    0 8px 18px
-    rgba(22, 138, 82, 0.18);
+    0 8px 18px rgba(22, 138, 82, 0.18);
 }
 
 
@@ -364,15 +368,12 @@ body.dark .topbar {
   border: none;
 
   color: #ffffff;
-
-  background:
-    var(--expense);
+  background: var(--expense);
 }
 
 
 .danger-button:hover {
-  background:
-    #c93636;
+  background: #c93636;
 }
 
 
@@ -461,9 +462,7 @@ body.dark .topbar {
   border-radius: 10px;
 
   color: #ffffff;
-
-  background:
-    var(--primary);
+  background: var(--primary);
 
   font-size: 0.8rem;
   font-weight: 800;
@@ -499,8 +498,7 @@ body.dark .topbar {
 .profile-info small {
   margin-top: 2px;
 
-  color:
-    var(--text-secondary);
+  color: var(--text-secondary);
 
   font-size: 0.65rem;
 }
@@ -659,13 +657,19 @@ body.dark .topbar {
 
 
 /* =====================================================
-   CARDS BASE
+   CARD HISTÓRICO
 ===================================================== */
 
-.filters-card,
 .transactions-card {
+  width: 100%;
+  max-width: 100%;
+
+  min-width: 0;
+
   margin-top: 18px;
   margin-bottom: 18px;
+
+  overflow: hidden;
 
   border:
     1px solid var(--border);
@@ -681,287 +685,21 @@ body.dark .topbar {
 }
 
 
-/* =====================================================
-   FILTROS ACCORDION
-===================================================== */
-
-.filters-collapsible {
-  margin-top: 0;
-
-  padding: 0;
-
-  overflow: hidden;
-}
-
-
-.filters-toggle-area {
-  width: 100%;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 20px;
-
-  padding:
-    22px 24px;
-
-  cursor: pointer;
-
-  user-select: none;
-
-  border-radius:
-    var(--radius-large);
-
-  transition:
-    background var(--transition);
-}
-
-
-.filters-toggle-area:hover {
-  background:
-    var(--surface-soft);
-}
-
-
-.filters-toggle-area:focus-visible {
-  outline:
-    2px solid var(--primary);
-
-  outline-offset:
-    -2px;
-}
-
-
-.filters-toggle-area h2 {
-  margin-top: 7px;
-
-  font-size: 1.1rem;
-
-  letter-spacing:
-    -0.02em;
-}
-
-
-.filters-header-actions {
-  display: flex;
-  align-items: center;
-
-  gap: 12px;
-
-  flex-shrink: 0;
-}
-
-
-.clear-button {
-  min-height: 36px;
-
-  padding:
-    0 8px;
-
-  border: none;
-
-  color:
-    var(--primary);
-
-  background:
-    transparent;
-
-  font-size: 0.75rem;
-  font-weight: 700;
-
-  white-space: nowrap;
-
-  transition:
-    opacity var(--transition);
-}
-
-
-.clear-button:hover {
-  opacity: 0.72;
-}
-
-
-/* =====================================================
-   SETA FILTROS
-===================================================== */
-
-.filter-toggle-icon {
-  width: 36px;
-  height: 36px;
-
-  display: grid;
-  place-items: center;
-
-  flex-shrink: 0;
-
-  position: relative;
-
-  border:
-    1px solid var(--border);
-
-  border-radius: 10px;
-
-  background:
-    var(--surface-soft);
-
-  transition:
-    border-color var(--transition),
-    background var(--transition);
-}
-
-
-.filter-toggle-icon::before {
-  content: "";
-
-  width: 7px;
-  height: 7px;
-
-  border-right:
-    2px solid var(--text-secondary);
-
-  border-bottom:
-    2px solid var(--text-secondary);
-
-  transform:
-    translateY(-2px)
-    rotate(45deg);
-
-  transition:
-    transform var(--transition),
-    border-color var(--transition);
-}
-
-
-.filters-toggle-area.active
-.filter-toggle-icon {
-  border-color:
-    rgba(22, 138, 82, 0.22);
-
-  background:
-    var(--primary-light);
-}
-
-
-.filters-toggle-area.active
-.filter-toggle-icon::before {
-  border-color:
-    var(--primary);
-
-  transform:
-    translateY(2px)
-    rotate(225deg);
-}
-
-
-.filters-content {
-  padding:
-    0 24px 24px;
-
-  overflow: hidden;
-
-  border-top:
-    1px solid var(--border);
-}
-
-
-.filters-content[hidden] {
-  display: none;
-}
-
-
-.filters-grid {
-  display: grid;
-
-  grid-template-columns:
-    repeat(6, minmax(120px, 1fr));
-
-  gap: 12px;
-
-  margin-top: 22px;
-}
-
-
-.filter-field {
-  min-width: 0;
-}
-
-
-.filter-field label,
-.form-group label {
-  display: block;
-
-  margin-bottom: 8px;
-
-  color:
-    var(--text-secondary);
-
-  font-size: 0.7rem;
-  font-weight: 700;
-}
-
-
-/* =====================================================
-   INPUTS
-===================================================== */
-
-input,
-select {
-  width: 100%;
-
-  min-height: 44px;
-
-  padding:
-    0 12px;
-
-  outline: none;
-
-  border:
-    1px solid var(--border);
-
-  border-radius: 10px;
-
-  color:
-    var(--text);
-
-  background:
-    var(--surface);
-
-  font-size: 0.76rem;
-
-  transition:
-    border-color var(--transition),
-    box-shadow var(--transition);
-}
-
-
-input:focus,
-select:focus {
-  border-color:
-    var(--primary);
-
-  box-shadow:
-    0 0 0 4px
-    rgba(22, 138, 82, 0.10);
-}
-
-
-input::placeholder {
-  color:
-    var(--text-light);
-}
-
-
-/* =====================================================
-   HISTÓRICO ACCORDION
-===================================================== */
-
 .transactions-collapsible {
+  width: 100%;
+  max-width: 100%;
+
+  min-width: 0;
+
   padding: 0;
 
   overflow: hidden;
 }
 
+
+/* =====================================================
+   CABEÇALHO HISTÓRICO
+===================================================== */
 
 .transactions-toggle-area {
   width: 100%;
@@ -1026,9 +764,99 @@ input::placeholder {
   display: flex;
   align-items: center;
 
-  gap: 12px;
+  gap: 10px;
 
   flex-shrink: 0;
+}
+
+
+/* =====================================================
+   BOTÃO DE FILTRO
+===================================================== */
+
+.filter-icon-button {
+  position: relative;
+
+  width: 43px;
+  height: 43px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  padding: 0;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 11px;
+
+  color:
+    var(--text-secondary);
+
+  background:
+    var(--surface);
+
+  transition:
+    color var(--transition),
+    border-color var(--transition),
+    background var(--transition),
+    transform var(--transition);
+}
+
+
+.filter-icon-button:hover {
+  transform:
+    translateY(-1px);
+
+  color:
+    var(--primary);
+
+  border-color:
+    rgba(22, 138, 82, 0.38);
+
+  background:
+    var(--primary-light);
+}
+
+
+.filter-icon-button:focus-visible {
+  outline:
+    2px solid var(--primary);
+
+  outline-offset:
+    2px;
+}
+
+
+.filter-gear {
+  display: block;
+
+  font-size: 1.05rem;
+
+  line-height: 1;
+}
+
+
+/* BOLINHA DE FILTRO ATIVO */
+
+.filter-active-dot {
+  position: absolute;
+
+  top: 5px;
+  right: 5px;
+
+  width: 8px;
+  height: 8px;
+
+  border:
+    2px solid var(--surface);
+
+  border-radius: 50%;
+
+  background:
+    var(--primary);
 }
 
 
@@ -1037,6 +865,8 @@ input::placeholder {
 ===================================================== */
 
 .history-toggle-icon {
+  position: relative;
+
   width: 36px;
   height: 36px;
 
@@ -1044,8 +874,6 @@ input::placeholder {
   place-items: center;
 
   flex-shrink: 0;
-
-  position: relative;
 
   border:
     1px solid var(--border);
@@ -1109,6 +937,9 @@ input::placeholder {
 ===================================================== */
 
 .history-content {
+  width: 100%;
+  max-width: 100%;
+
   min-width: 0;
 
   padding:
@@ -1121,13 +952,8 @@ input::placeholder {
 }
 
 
-.history-content[hidden] {
-  display: none;
-}
-
-
 /* =====================================================
-   PESQUISA DO HISTÓRICO
+   PESQUISA
 ===================================================== */
 
 .transactions-search {
@@ -1167,6 +993,57 @@ input::placeholder {
 
 
 /* =====================================================
+   INPUTS
+===================================================== */
+
+input,
+select {
+  width: 100%;
+
+  min-height: 44px;
+
+  padding:
+    0 12px;
+
+  outline: none;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 10px;
+
+  color:
+    var(--text);
+
+  background:
+    var(--surface);
+
+  font-size: 0.76rem;
+
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+
+input:focus,
+select:focus {
+  border-color:
+    var(--primary);
+
+  box-shadow:
+    0 0 0 4px
+    rgba(22, 138, 82, 0.10);
+}
+
+
+input::placeholder {
+  color:
+    var(--text-light);
+}
+
+
+/* =====================================================
    LOADING DA PESQUISA
 ===================================================== */
 
@@ -1197,11 +1074,6 @@ input::placeholder {
 }
 
 
-.search-loading[hidden] {
-  display: none;
-}
-
-
 @keyframes search-spin {
 
   from {
@@ -1216,8 +1088,62 @@ input::placeholder {
       rotate(360deg);
   }
 }
+
+
 /* =====================================================
-   VER TODAS AS MOVIMENTAÇÕES
+   LOADING INICIAL
+===================================================== */
+
+.history-loading {
+  min-height: 120px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  color:
+    var(--text-secondary);
+
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+
+.history-loading-spinner {
+  width: 18px;
+  height: 18px;
+
+  border:
+    2px solid var(--border);
+
+  border-top-color:
+    var(--primary);
+
+  border-radius: 50%;
+
+  animation:
+    history-loading-spin 0.7s linear infinite;
+}
+
+
+@keyframes history-loading-spin {
+
+  from {
+    transform:
+      rotate(0deg);
+  }
+
+  to {
+    transform:
+      rotate(360deg);
+  }
+}
+
+
+/* =====================================================
+   VER TODAS
 ===================================================== */
 
 .history-view-all-wrapper {
@@ -1276,10 +1202,6 @@ input::placeholder {
 }
 
 
-.history-view-all-button[hidden] {
-  display: none;
-}
-
 /* =====================================================
    TABELA
 ===================================================== */
@@ -1298,33 +1220,14 @@ input::placeholder {
   -webkit-overflow-scrolling: touch;
 }
 
-/* =====================================================
-   HISTÓRICO EXPANDIDO
-===================================================== */
-
-.transactions-collapsible {
-  width: 100%;
-  max-width: 100%;
-
-  min-width: 0;
-
-  overflow: hidden;
-}
-
-
-.history-content {
-  width: 100%;
-  max-width: 100%;
-
-  min-width: 0;
-}
-
 
 .table-wrapper table {
   min-width: 850px;
 }
 
-.history-content.show-all .table-wrapper {
+
+.history-content.show-all
+.table-wrapper {
   max-height: 520px;
 }
 
@@ -1536,7 +1439,7 @@ td {
 
 
 /* =====================================================
-   AÇÕES TABELA
+   AÇÕES DA TABELA
 ===================================================== */
 
 .actions {
@@ -1589,64 +1492,6 @@ td {
 
   background:
     var(--expense-light);
-}
-
-/* =====================================================
-   LOADING INICIAL DO HISTÓRICO
-===================================================== */
-
-.history-loading {
-  min-height: 120px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 10px;
-
-  color: var(--text-secondary);
-
-  font-size: 0.78rem;
-  font-weight: 600;
-}
-
-
-.history-loading[hidden] {
-  display: none;
-}
-
-
-.history-loading-spinner {
-  width: 18px;
-  height: 18px;
-
-  border:
-    2px solid var(--border);
-
-  border-top-color:
-    var(--primary);
-
-  border-radius: 50%;
-
-  animation:
-    history-loading-spin
-    0.7s
-    linear
-    infinite;
-}
-
-
-@keyframes history-loading-spin {
-
-  from {
-    transform:
-      rotate(0deg);
-  }
-
-  to {
-    transform:
-      rotate(360deg);
-  }
 }
 
 
@@ -1717,7 +1562,7 @@ td {
   display: grid;
 
   grid-template-columns:
-    repeat(4, minmax(0, 1fr));
+    repeat(5, minmax(0, 1fr));
 
   gap: 16px;
 }
@@ -1783,13 +1628,13 @@ td {
 
   margin-top: 18px;
 
+  overflow-wrap:
+    anywhere;
+
   font-size: 1.4rem;
 
   letter-spacing:
     -0.04em;
-
-  overflow-wrap:
-    anywhere;
 }
 
 
@@ -1808,7 +1653,7 @@ td {
 
 
 /* =====================================================
-   CORES RESUMO
+   CORES
 ===================================================== */
 
 .income-text {
@@ -1873,6 +1718,8 @@ td {
 
 
 .modal-card {
+  width: 100%;
+
   max-height:
     calc(100vh - 30px);
 
@@ -1957,7 +1804,77 @@ td {
 
 
 /* =====================================================
-   FORM MODAL
+   MODAL DE FILTROS
+===================================================== */
+
+.filters-modal-card {
+  width: 100%;
+
+  max-width: 650px;
+
+  margin: auto;
+}
+
+
+.filters-modal-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+
+.filters-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-top: 26px;
+
+  padding-top: 20px;
+
+  border-top:
+    1px solid var(--border);
+}
+
+
+.clear-filter-modal-button {
+  min-height: 42px;
+
+  padding:
+    0 14px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  color:
+    var(--expense);
+
+  background:
+    transparent;
+
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  transition:
+    color var(--transition),
+    background var(--transition);
+}
+
+
+.clear-filter-modal-button:hover {
+  background:
+    var(--expense-light);
+}
+
+
+/* =====================================================
+   FORMULÁRIOS
 ===================================================== */
 
 .form-grid {
@@ -2264,13 +2181,7 @@ td {
 
   .summary-grid {
     grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
-
-
-  .filters-grid {
-    grid-template-columns:
-      repeat(3, 1fr);
+      repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -2285,12 +2196,6 @@ td {
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
   }
-
-
-  .filters-grid {
-    grid-template-columns:
-      repeat(2, 1fr);
-  }
 }
 
 
@@ -2299,66 +2204,6 @@ td {
 ===================================================== */
 
 @media (max-width: 720px) {
-
-  .history-content {
-  overflow: hidden;
-}
-
-.history-content.show-all .mobile-transactions {
-  max-height: 620px;
-
-  overflow-y: auto;
-
-  overflow-x: hidden;
-
-  padding-right: 4px;
-}
-
-.mobile-transactions {
-  width: 100%;
-  min-width: 0;
-}
-
-
-.mobile-transaction-card {
-  width: 100%;
-  min-width: 0;
-
-  overflow: hidden;
-}
-
-
-.mobile-transaction-top {
-  min-width: 0;
-}
-
-
-.mobile-transaction-main {
-  flex: 1;
-
-  min-width: 0;
-}
-
-
-.mobile-transaction-main > div:last-child {
-  min-width: 0;
-}
-
-
-.mobile-transaction-main strong,
-.mobile-transaction-main small {
-  max-width: 100%;
-}
-
-
-.mobile-transaction-top > .amount {
-  flex-shrink: 0;
-}
-
-
-.history-view-all-button {
-  width: 100%;
-}
 
   .topbar-container,
   .page-container,
@@ -2394,9 +2239,20 @@ td {
   }
 
 
-  .filters-toggle-area,
   .transactions-toggle-area {
     align-items: flex-start;
+  }
+
+
+  /* HISTÓRICO */
+
+  .history-content {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    overflow: hidden;
   }
 
 
@@ -2406,6 +2262,11 @@ td {
 
 
   .mobile-transactions {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
     display: grid;
 
     gap: 12px;
@@ -2415,6 +2276,13 @@ td {
 
 
   .mobile-transaction-card {
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    overflow: hidden;
+
     padding: 17px;
 
     border:
@@ -2429,6 +2297,10 @@ td {
 
   .mobile-transaction-top,
   .mobile-transaction-bottom {
+    width: 100%;
+
+    min-width: 0;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -2438,10 +2310,19 @@ td {
 
 
   .mobile-transaction-main {
+    flex: 1;
+
+    min-width: 0;
+
     display: flex;
     align-items: center;
 
     gap: 11px;
+  }
+
+
+  .mobile-transaction-main > div:last-child {
+    flex: 1;
 
     min-width: 0;
   }
@@ -2449,6 +2330,8 @@ td {
 
   .mobile-transaction-main strong {
     display: block;
+
+    max-width: 100%;
 
     overflow: hidden;
 
@@ -2463,12 +2346,25 @@ td {
   .mobile-transaction-main small {
     display: block;
 
+    max-width: 100%;
+
     margin-top: 4px;
+
+    overflow: hidden;
 
     color:
       var(--text-secondary);
 
     font-size: 0.66rem;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+  }
+
+
+  .mobile-transaction-top > .amount {
+    flex-shrink: 0;
   }
 
 
@@ -2486,6 +2382,28 @@ td {
     display: flex;
 
     gap: 7px;
+  }
+
+
+  .history-view-all-button {
+    width: 100%;
+  }
+
+
+  .history-content.show-all
+  .mobile-transactions {
+    max-height: 620px;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    padding-right: 4px;
+  }
+
+
+  .summary-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -2550,11 +2468,8 @@ td {
   }
 
 
-  /* =========================
-     ACCORDIONS MOBILE
-  ========================= */
+  /* HISTÓRICO */
 
-  .filters-toggle-area,
   .transactions-toggle-area {
     align-items: center;
 
@@ -2563,22 +2478,17 @@ td {
   }
 
 
-  .filters-toggle-area h2,
   .transactions-toggle-area h2 {
     font-size: 1rem;
   }
 
 
-  .filters-header-actions,
   .transactions-header-actions {
     gap: 5px;
   }
 
 
-  .clear-button {
-    display: none;
-  }
-
+  /* ESCONDE EXPORTAR NO MOBILE */
 
   .transactions-header-actions
   .secondary-button {
@@ -2586,29 +2496,38 @@ td {
   }
 
 
-  .filter-toggle-icon,
+  .filter-icon-button {
+    width: 34px;
+    height: 34px;
+
+    border-radius: 9px;
+  }
+
+
+  .filter-gear {
+    font-size: 0.9rem;
+  }
+
+
+  .filter-active-dot {
+    top: 3px;
+    right: 3px;
+  }
+
+
   .history-toggle-icon {
     width: 34px;
     height: 34px;
   }
 
 
-  .filters-content,
   .history-content {
     padding:
       0 19px 19px;
   }
 
 
-  .filters-grid {
-    grid-template-columns:
-      1fr;
-  }
-
-
-  /* =========================
-     RESUMO MOBILE
-  ========================= */
+  /* RESUMO */
 
   .summary-grid {
     grid-template-columns:
@@ -2621,9 +2540,28 @@ td {
   }
 
 
-  /* =========================
-     MODAL
-  ========================= */
+  /* MODAL FILTROS */
+
+  .filters-modal-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .filters-modal-actions {
+    align-items: stretch;
+
+    flex-direction:
+      column-reverse;
+  }
+
+
+  .filters-modal-actions button {
+    width: 100%;
+  }
+
+
+  /* MODAL MOVIMENTAÇÃO */
 
   .form-grid {
     grid-template-columns:
@@ -2648,9 +2586,7 @@ td {
   }
 
 
-  /* =========================
-     TOAST
-  ========================= */
+  /* TOAST */
 
   .toast {
     right: 15px;

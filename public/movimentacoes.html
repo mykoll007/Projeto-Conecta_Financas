@@ -338,7 +338,7 @@
 
 
           <p id="resultsText">
-            0 movimentações encontradas
+            Carregando movimentações...
           </p>
 
         </div>
@@ -346,6 +346,8 @@
 
         <div class="transactions-header-actions">
 
+
+          <!-- EXPORTAR -->
 
           <button
             type="button"
@@ -355,6 +357,36 @@
             Exportar CSV
           </button>
 
+
+          <!-- FILTROS -->
+
+          <button
+            type="button"
+            class="filter-icon-button"
+            id="openFiltersModal"
+            aria-label="Filtrar movimentações"
+            title="Filtrar movimentações"
+          >
+
+            <span
+              class="filter-gear"
+              aria-hidden="true"
+            >
+              ⚙
+            </span>
+
+
+            <span
+              class="filter-active-dot"
+              id="filterActiveDot"
+              hidden
+              aria-hidden="true"
+            ></span>
+
+          </button>
+
+
+          <!-- ACCORDION -->
 
           <span
             class="history-toggle-icon"
@@ -377,23 +409,31 @@
         id="historyContent"
       >
 
-      <!-- LOADING INICIAL -->
 
-<div
-  class="history-loading"
-  id="historyLoading"
->
-  <span class="history-loading-spinner"></span>
+        <!-- =================================================
+             LOADING INICIAL
+        ================================================== -->
 
-  <span>
-    Carregando movimentações...
-  </span>
-</div>
+        <div
+          class="history-loading"
+          id="historyLoading"
+        >
+
+          <span
+            class="history-loading-spinner"
+            aria-hidden="true"
+          ></span>
+
+          <span>
+            Carregando movimentações...
+          </span>
+
+        </div>
 
 
-        <!-- =============================================
+        <!-- =================================================
              PESQUISA
-        ============================================== -->
+        ================================================== -->
 
         <div class="transactions-search">
 
@@ -416,14 +456,12 @@
             >
 
 
-            <!-- BOLINHA DE CARREGAMENTO -->
-
-<span
-  class="search-loading"
-  id="searchLoading"
-  hidden
-  aria-hidden="true"
-></span>
+            <span
+              class="search-loading"
+              id="searchLoading"
+              hidden
+              aria-hidden="true"
+            ></span>
 
 
           </div>
@@ -431,9 +469,9 @@
         </div>
 
 
-        <!-- =============================================
+        <!-- =================================================
              TABELA DESKTOP
-        ============================================== -->
+        ================================================== -->
 
         <div class="table-wrapper">
 
@@ -481,9 +519,9 @@
         </div>
 
 
-        <!-- =============================================
+        <!-- =================================================
              MOBILE
-        ============================================== -->
+        ================================================== -->
 
         <div
           class="mobile-transactions"
@@ -491,9 +529,9 @@
         ></div>
 
 
-        <!-- =============================================
+        <!-- =================================================
              ESTADO VAZIO
-        ============================================== -->
+        ================================================== -->
 
         <div
           class="empty-state"
@@ -527,9 +565,9 @@
         </div>
 
 
-        <!-- =============================================
+        <!-- =================================================
              VER TODAS
-        ============================================== -->
+        ================================================== -->
 
         <div class="history-view-all-wrapper">
 
@@ -544,292 +582,6 @@
 
         </div>
 
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         FILTROS
-    ====================================================== -->
-
-    <section
-      class="filters-card filters-collapsible"
-    >
-
-
-      <!-- =================================================
-           CABEÇALHO FILTRO
-      ================================================== -->
-
-      <div
-        class="filters-header filters-toggle-area"
-        id="toggleFilters"
-        role="button"
-        tabindex="0"
-        aria-expanded="false"
-        aria-controls="filtersContent"
-      >
-
-
-        <div>
-
-          <span class="card-label">
-            Filtros
-          </span>
-
-
-          <h2>
-            Encontre uma movimentação
-          </h2>
-
-        </div>
-
-
-        <div class="filters-header-actions">
-
-
-          <button
-            type="button"
-            class="clear-button"
-            id="clearFilters"
-          >
-            Limpar filtros
-          </button>
-
-
-          <span
-            class="filter-toggle-icon"
-            id="filterToggleIcon"
-            aria-hidden="true"
-          ></span>
-
-
-        </div>
-
-      </div>
-
-
-      <!-- =================================================
-           CONTEÚDO FILTROS
-      ================================================== -->
-
-      <div
-        class="filters-content"
-        id="filtersContent"
-        hidden
-      >
-
-
-        <div class="filters-grid">
-
-
-          <!-- TIPO -->
-
-          <div class="filter-field">
-
-            <label for="typeFilter">
-              Tipo
-            </label>
-
-
-            <select id="typeFilter">
-
-              <option value="all">
-                Todos
-              </option>
-
-              <option value="income">
-                Entradas
-              </option>
-
-              <option value="expense">
-                Despesas
-              </option>
-
-              <option value="saved">
-                Reservas
-              </option>
-
-            </select>
-
-          </div>
-
-
-          <!-- STATUS -->
-
-          <div class="filter-field">
-
-            <label for="statusFilter">
-              Status
-            </label>
-
-
-            <select id="statusFilter">
-
-              <option value="all">
-                Todos
-              </option>
-
-              <option value="paid">
-                Concluído
-              </option>
-
-              <option value="pending">
-                Pendente
-              </option>
-
-            </select>
-
-          </div>
-
-
-          <!-- CATEGORIA -->
-
-          <div class="filter-field">
-
-            <label for="categoryFilter">
-              Categoria
-            </label>
-
-
-            <select id="categoryFilter">
-
-              <option value="all">
-                Todas
-              </option>
-
-            </select>
-
-          </div>
-
-
-          <!-- MÊS -->
-
-          <div class="filter-field">
-
-            <label for="monthFilter">
-              Mês
-            </label>
-
-
-            <select id="monthFilter">
-
-              <option value="all">
-                Todos
-              </option>
-
-              <option value="0">
-                Janeiro
-              </option>
-
-              <option value="1">
-                Fevereiro
-              </option>
-
-              <option value="2">
-                Março
-              </option>
-
-              <option value="3">
-                Abril
-              </option>
-
-              <option value="4">
-                Maio
-              </option>
-
-              <option value="5">
-                Junho
-              </option>
-
-              <option value="6">
-                Julho
-              </option>
-
-              <option value="7">
-                Agosto
-              </option>
-
-              <option value="8">
-                Setembro
-              </option>
-
-              <option value="9">
-                Outubro
-              </option>
-
-              <option value="10">
-                Novembro
-              </option>
-
-              <option value="11">
-                Dezembro
-              </option>
-
-            </select>
-
-          </div>
-
-
-          <!-- ANO -->
-
-          <div class="filter-field">
-
-            <label for="yearFilter">
-              Ano
-            </label>
-
-
-            <select id="yearFilter">
-
-              <option value="all">
-                Todos
-              </option>
-
-            </select>
-
-          </div>
-
-
-          <!-- ORDENAR -->
-
-          <div class="filter-field">
-
-            <label for="orderFilter">
-              Ordenar por
-            </label>
-
-
-            <select id="orderFilter">
-
-              <option value="newest">
-                Mais recentes
-              </option>
-
-              <option value="oldest">
-                Mais antigas
-              </option>
-
-              <option value="highest">
-                Maior valor
-              </option>
-
-              <option value="lowest">
-                Menor valor
-              </option>
-
-              <option value="description">
-                Descrição
-              </option>
-
-            </select>
-
-          </div>
-
-
-        </div>
 
       </div>
 
@@ -964,6 +716,298 @@
 
 
   </main>
+
+
+  <!-- =====================================================
+       MODAL DE FILTROS
+  ====================================================== -->
+
+  <dialog
+    class="modal"
+    id="filtersModal"
+  >
+
+
+    <div class="modal-card filters-modal-card">
+
+
+      <!-- CABEÇALHO -->
+
+      <div class="modal-header">
+
+
+        <div>
+
+          <span class="card-label">
+            Filtros
+          </span>
+
+
+          <h2>
+            Filtrar movimentações
+          </h2>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="modal-close"
+          data-close-modal="filtersModal"
+          aria-label="Fechar"
+        >
+          ×
+        </button>
+
+
+      </div>
+
+
+      <!-- =================================================
+           CAMPOS
+      ================================================== -->
+
+      <div class="filters-modal-grid">
+
+
+        <!-- TIPO -->
+
+        <div class="form-group">
+
+          <label for="typeFilter">
+            Tipo
+          </label>
+
+
+          <select id="typeFilter">
+
+            <option value="all">
+              Todos
+            </option>
+
+            <option value="income">
+              Entradas
+            </option>
+
+            <option value="expense">
+              Despesas
+            </option>
+
+            <option value="saved">
+              Reservas
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="form-group">
+
+          <label for="statusFilter">
+            Status
+          </label>
+
+
+          <select id="statusFilter">
+
+            <option value="all">
+              Todos
+            </option>
+
+            <option value="paid">
+              Concluído
+            </option>
+
+            <option value="pending">
+              Pendente
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- CATEGORIA -->
+
+        <div class="form-group">
+
+          <label for="categoryFilter">
+            Categoria
+          </label>
+
+
+          <select id="categoryFilter">
+
+            <option value="all">
+              Todas
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- MÊS -->
+
+        <div class="form-group">
+
+          <label for="monthFilter">
+            Mês
+          </label>
+
+
+          <select id="monthFilter">
+
+            <option value="all">
+              Todos
+            </option>
+
+            <option value="0">
+              Janeiro
+            </option>
+
+            <option value="1">
+              Fevereiro
+            </option>
+
+            <option value="2">
+              Março
+            </option>
+
+            <option value="3">
+              Abril
+            </option>
+
+            <option value="4">
+              Maio
+            </option>
+
+            <option value="5">
+              Junho
+            </option>
+
+            <option value="6">
+              Julho
+            </option>
+
+            <option value="7">
+              Agosto
+            </option>
+
+            <option value="8">
+              Setembro
+            </option>
+
+            <option value="9">
+              Outubro
+            </option>
+
+            <option value="10">
+              Novembro
+            </option>
+
+            <option value="11">
+              Dezembro
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- ANO -->
+
+        <div class="form-group">
+
+          <label for="yearFilter">
+            Ano
+          </label>
+
+
+          <select id="yearFilter">
+
+            <option value="all">
+              Todos
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- ORDENAR -->
+
+        <div class="form-group">
+
+          <label for="orderFilter">
+            Ordenar por
+          </label>
+
+
+          <select id="orderFilter">
+
+            <option value="newest">
+              Mais recentes
+            </option>
+
+            <option value="oldest">
+              Mais antigas
+            </option>
+
+            <option value="highest">
+              Maior valor
+            </option>
+
+            <option value="lowest">
+              Menor valor
+            </option>
+
+            <option value="description">
+              Descrição
+            </option>
+
+          </select>
+
+        </div>
+
+
+      </div>
+
+
+      <!-- =================================================
+           AÇÕES
+      ================================================== -->
+
+      <div class="filters-modal-actions">
+
+
+        <button
+          type="button"
+          class="clear-filter-modal-button"
+          id="clearFilters"
+        >
+          Limpar filtros
+        </button>
+
+
+        <button
+          type="button"
+          class="primary-button"
+          id="applyFilters"
+        >
+          Aplicar filtros
+        </button>
+
+
+      </div>
+
+
+    </div>
+
+  </dialog>
 
 
   <!-- =====================================================
