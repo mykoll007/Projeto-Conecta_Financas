@@ -2,21 +2,32 @@
 // CONFIGURAÇÕES
 // =====================================================
 
-const LOGIN_KEY = "clara-financas-login";
-const TOKEN_KEY = "clara-financas-token";
-const THEME_KEY = "clara-financas-tema";
+const LOGIN_KEY =
+    "clara-financas-login";
 
-const API_URL = "https://projeto-conecta-financas.vercel.app/api";
+const TOKEN_KEY =
+    "clara-financas-token";
+
+const THEME_KEY =
+    "clara-financas-tema";
+
+
+const API_URL =
+    "https://projeto-conecta-financas.vercel.app/api";
 
 
 // =====================================================
 // FORMATADORES
 // =====================================================
 
-const currency = new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL"
-});
+const currency =
+    new Intl.NumberFormat(
+        "pt-BR",
+        {
+            style: "currency",
+            currency: "BRL"
+        }
+    );
 
 
 const monthNames = [
@@ -44,7 +55,13 @@ let appData = {
     categories: []
 };
 
-let fixedToDelete = null;
+
+let fixedToDelete =
+    null;
+
+
+let searchLoadingTimeout =
+    null;
 
 
 // =====================================================
@@ -52,7 +69,10 @@ let fixedToDelete = null;
 // =====================================================
 
 function getElement(id) {
-    return document.getElementById(id);
+
+    return document.getElementById(
+        id
+    );
 }
 
 
@@ -61,9 +81,14 @@ function getElement(id) {
 // =====================================================
 
 function getToken() {
+
     return (
-        localStorage.getItem(TOKEN_KEY) ||
-        sessionStorage.getItem(TOKEN_KEY)
+        localStorage.getItem(
+            TOKEN_KEY
+        ) ||
+        sessionStorage.getItem(
+            TOKEN_KEY
+        )
     );
 }
 
@@ -75,17 +100,29 @@ function getToken() {
 function getSession() {
 
     const savedSession =
-        localStorage.getItem(LOGIN_KEY) ||
-        sessionStorage.getItem(LOGIN_KEY);
+        localStorage.getItem(
+            LOGIN_KEY
+        ) ||
+        sessionStorage.getItem(
+            LOGIN_KEY
+        );
 
-    const token = getToken();
+
+    const token =
+        getToken();
 
 
-    if (!savedSession || !token) {
+    if (
+        !savedSession ||
+        !token
+    ) {
 
         clearSession();
 
-        window.location.href = "login.html";
+
+        window.location.href =
+            "login.html";
+
 
         return null;
     }
@@ -93,13 +130,18 @@ function getSession() {
 
     try {
 
-        return JSON.parse(savedSession);
+        return JSON.parse(
+            savedSession
+        );
 
     } catch (error) {
 
         clearSession();
 
-        window.location.href = "login.html";
+
+        window.location.href =
+            "login.html";
+
 
         return null;
     }
@@ -108,11 +150,24 @@ function getSession() {
 
 function clearSession() {
 
-    localStorage.removeItem(LOGIN_KEY);
-    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(
+        LOGIN_KEY
+    );
 
-    sessionStorage.removeItem(LOGIN_KEY);
-    sessionStorage.removeItem(TOKEN_KEY);
+
+    localStorage.removeItem(
+        TOKEN_KEY
+    );
+
+
+    sessionStorage.removeItem(
+        LOGIN_KEY
+    );
+
+
+    sessionStorage.removeItem(
+        TOKEN_KEY
+    );
 }
 
 
@@ -125,14 +180,18 @@ async function apiRequest(
     options = {}
 ) {
 
-    const token = getToken();
+    const token =
+        getToken();
 
 
     if (!token) {
 
         clearSession();
 
-        window.location.href = "login.html";
+
+        window.location.href =
+            "login.html";
+
 
         throw new Error(
             "Usuário não autenticado."
@@ -147,8 +206,12 @@ async function apiRequest(
 
     if (
         options.body &&
-        !(options.body instanceof FormData)
+        !(
+            options.body
+            instanceof FormData
+        )
     ) {
+
         headers["Content-Type"] =
             "application/json";
     }
@@ -163,13 +226,14 @@ async function apiRequest(
 
     try {
 
-        response = await fetch(
-            `${API_URL}${endpoint}`,
-            {
-                ...options,
-                headers
-            }
-        );
+        response =
+            await fetch(
+                `${API_URL}${endpoint}`,
+                {
+                    ...options,
+                    headers
+                }
+            );
 
     } catch (error) {
 
@@ -179,24 +243,32 @@ async function apiRequest(
     }
 
 
-    let data = null;
+    let data =
+        null;
 
 
     try {
 
-        data = await response.json();
+        data =
+            await response.json();
 
     } catch (error) {
 
-        data = null;
+        data =
+            null;
     }
 
 
-    if (response.status === 401) {
+    if (
+        response.status === 401
+    ) {
 
         clearSession();
 
-        window.location.href = "login.html";
+
+        window.location.href =
+            "login.html";
+
 
         throw new Error(
             "Sua sessão expirou."
@@ -204,7 +276,9 @@ async function apiRequest(
     }
 
 
-    if (!response.ok) {
+    if (
+        !response.ok
+    ) {
 
         throw new Error(
             data?.message ||
@@ -223,16 +297,24 @@ async function apiRequest(
 
 function showToast(message) {
 
-    const toast = getElement("toast");
+    const toast =
+        getElement(
+            "toast"
+        );
+
 
     if (!toast) {
         return;
     }
 
 
-    toast.textContent = message;
+    toast.textContent =
+        message;
 
-    toast.classList.add("show");
+
+    toast.classList.add(
+        "show"
+    );
 
 
     window.clearTimeout(
@@ -241,13 +323,155 @@ function showToast(message) {
 
 
     showToast.timeout =
-        window.setTimeout(() => {
+        window.setTimeout(
+            () => {
 
-            toast.classList.remove(
-                "show"
-            );
+                toast.classList.remove(
+                    "show"
+                );
 
-        }, 2500);
+            },
+            2500
+        );
+}
+
+
+// =====================================================
+// LOADING DA LISTA
+// =====================================================
+
+function showFixedLoading() {
+
+    const loading =
+        getElement(
+            "fixedLoading"
+        );
+
+
+    const fixedList =
+        getElement(
+            "fixedList"
+        );
+
+
+    const emptyState =
+        getElement(
+            "emptyState"
+        );
+
+
+    const search =
+        document.querySelector(
+            ".fixed-search"
+        );
+
+
+    const resultsText =
+        getElement(
+            "resultsText"
+        );
+
+
+    if (loading) {
+
+        loading.hidden =
+            false;
+    }
+
+
+    if (fixedList) {
+
+        fixedList.hidden =
+            true;
+    }
+
+
+    if (emptyState) {
+
+        emptyState.hidden =
+            true;
+    }
+
+
+    if (search) {
+
+        search.hidden =
+            true;
+    }
+
+
+    if (resultsText) {
+
+        resultsText.textContent =
+            "Carregando lançamentos...";
+    }
+}
+
+
+function hideFixedLoading() {
+
+    const loading =
+        getElement(
+            "fixedLoading"
+        );
+
+
+    const fixedList =
+        getElement(
+            "fixedList"
+        );
+
+
+    const search =
+        document.querySelector(
+            ".fixed-search"
+        );
+
+
+    if (loading) {
+
+        loading.hidden =
+            true;
+    }
+
+
+    if (fixedList) {
+
+        fixedList.hidden =
+            false;
+    }
+
+
+    if (search) {
+
+        search.hidden =
+            false;
+    }
+}
+
+
+// =====================================================
+// LOADING PESQUISA
+// =====================================================
+
+function hideSearchLoading() {
+
+    clearTimeout(
+        searchLoadingTimeout
+    );
+
+
+    const loading =
+        getElement(
+            "searchLoading"
+        );
+
+
+    if (loading) {
+
+        loading.hidden =
+            true;
+    }
 }
 
 
@@ -255,12 +479,19 @@ function showToast(message) {
 // UTILITÁRIOS
 // =====================================================
 
-function escapeHtml(value = "") {
+function escapeHtml(
+    value = ""
+) {
 
     const element =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
-    element.textContent = value;
+
+    element.textContent =
+        value;
+
 
     return element.innerHTML;
 }
@@ -268,8 +499,12 @@ function escapeHtml(value = "") {
 
 function normalizeText(value) {
 
-    return String(value)
-        .normalize("NFD")
+    return String(
+        value
+    )
+        .normalize(
+            "NFD"
+        )
         .replace(
             /[\u0300-\u036f]/g,
             ""
@@ -284,14 +519,20 @@ function parseMoney(value) {
         value === null ||
         value === undefined
     ) {
+
         return NaN;
     }
 
 
     let text =
-        String(value)
+        String(
+            value
+        )
             .trim()
-            .replace(/\s/g, "");
+            .replace(
+                /\s/g,
+                ""
+            );
 
 
     if (
@@ -301,8 +542,14 @@ function parseMoney(value) {
 
         text =
             text
-                .replace(/\./g, "")
-                .replace(",", ".");
+                .replace(
+                    /\./g,
+                    ""
+                )
+                .replace(
+                    ",",
+                    "."
+                );
 
     } else {
 
@@ -314,46 +561,71 @@ function parseMoney(value) {
     }
 
 
-    return Number(text);
+    return Number(
+        text
+    );
 }
+
+
+// =====================================================
+// INPUT DE DINHEIRO
+// =====================================================
 
 function setupMoneyInput() {
 
     const amountInput =
-        getElement("amount");
+        getElement(
+            "amount"
+        );
+
 
     if (!amountInput) {
         return;
     }
+
 
     amountInput.addEventListener(
         "input",
         event => {
 
             let value =
-                event.target.value.replace(/\D/g, "");
+                event.target.value
+                    .replace(
+                        /\D/g,
+                        ""
+                    );
+
 
             if (!value) {
 
-                event.target.value = "";
+                event.target.value =
+                    "";
 
                 return;
             }
 
+
             const amount =
-                Number(value) / 100;
+                Number(
+                    value
+                ) / 100;
+
 
             event.target.value =
                 amount.toLocaleString(
                     "pt-BR",
                     {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
+                        minimumFractionDigits:
+                            2,
+
+                        maximumFractionDigits:
+                            2
                     }
                 );
         }
     );
 }
+
 
 // =====================================================
 // USUÁRIO
@@ -375,7 +647,10 @@ async function renderUser() {
 
 
         const firstName =
-            name.split(" ")[0];
+            name
+                .split(
+                    " "
+                )[0];
 
 
         const profileName =
@@ -391,15 +666,19 @@ async function renderUser() {
 
 
         if (profileName) {
+
             profileName.textContent =
                 firstName;
         }
 
 
         if (profileAvatar) {
+
             profileAvatar.textContent =
                 firstName
-                    .charAt(0)
+                    .charAt(
+                        0
+                    )
                     .toUpperCase();
         }
 
@@ -429,7 +708,9 @@ async function loadCategories() {
 
 
         appData.categories =
-            Array.isArray(categories)
+            Array.isArray(
+                categories
+            )
                 ? categories
                 : [];
 
@@ -468,16 +749,21 @@ function renderCategoryOptions() {
 
     const options =
         appData.categories
-            .map(category => {
+            .map(
+                category => {
 
-                return `
-                    <option value="${category.id}">
-                        ${escapeHtml(category.nome)}
-                    </option>
-                `;
-
-            })
-            .join("");
+                    return `
+                        <option value="${category.id}">
+                            ${escapeHtml(
+                                category.nome
+                            )}
+                        </option>
+                    `;
+                }
+            )
+            .join(
+                ""
+            );
 
 
     if (categorySelect) {
@@ -494,6 +780,10 @@ function renderCategoryOptions() {
 
     if (categoryFilter) {
 
+        const previousValue =
+            categoryFilter.value;
+
+
         categoryFilter.innerHTML = `
             <option value="all">
                 Todas
@@ -501,6 +791,22 @@ function renderCategoryOptions() {
 
             ${options}
         `;
+
+
+        const optionExists =
+            [...categoryFilter.options]
+                .some(
+                    option =>
+                        option.value ===
+                        previousValue
+                );
+
+
+        if (optionExists) {
+
+            categoryFilter.value =
+                previousValue;
+        }
     }
 }
 
@@ -511,38 +817,47 @@ function renderCategoryOptions() {
 
 async function loadFixed() {
 
-    try {
-
-        const fixed =
-            await apiRequest(
-                "/fixos"
-            );
+    const fixed =
+        await apiRequest(
+            "/fixos"
+        );
 
 
-        if (!Array.isArray(fixed)) {
-
-            appData.fixed = [];
-
-            return;
-        }
-
+    if (
+        !Array.isArray(
+            fixed
+        )
+    ) {
 
         appData.fixed =
-            fixed.map(item => {
+            [];
+
+        return;
+    }
+
+
+    appData.fixed =
+        fixed.map(
+            item => {
 
                 return {
 
                     id:
-                        Number(item.id),
+                        Number(
+                            item.id
+                        ),
 
                     description:
-                        item.descricao || "",
+                        item.descricao ||
+                        "",
 
                     type:
                         item.tipo,
 
                     amount:
-                        Number(item.valor),
+                        Number(
+                            item.valor
+                        ),
 
                     categoryId:
                         item.categoria_id
@@ -573,24 +888,13 @@ async function loadFixed() {
 
                     active:
                         Boolean(
-                            Number(item.ativo)
+                            Number(
+                                item.ativo
+                            )
                         )
                 };
-            });
-
-
-    } catch (error) {
-
-        console.error(
-            "Erro ao carregar fixos:",
-            error
+            }
         );
-
-
-        showToast(
-            error.message
-        );
-    }
 }
 
 
@@ -621,6 +925,7 @@ function setupPeriodOptions() {
 
 
     if (launchMonth) {
+
         launchMonth.value =
             currentDate.getMonth();
     }
@@ -635,28 +940,32 @@ function setupPeriodOptions() {
                 currentYear + 1,
                 currentYear + 2
             ]
-                .map(year => {
+                .map(
+                    year => {
 
-                    return `
-                        <option
-                            value="${year}"
-                            ${year === currentYear
-                            ? "selected"
-                            : ""
-                        }
-                        >
-                            ${year}
-                        </option>
-                    `;
-
-                })
-                .join("");
+                        return `
+                            <option
+                                value="${year}"
+                                ${
+                                    year === currentYear
+                                        ? "selected"
+                                        : ""
+                                }
+                            >
+                                ${year}
+                            </option>
+                        `;
+                    }
+                )
+                .join(
+                    ""
+                );
     }
 }
 
 
 // =====================================================
-// FILTROS
+// FILTRAR FIXOS
 // =====================================================
 
 function getFilteredFixed() {
@@ -665,32 +974,37 @@ function getFilteredFixed() {
         normalizeText(
             getElement(
                 "searchInput"
-            ).value.trim()
+            )?.value.trim() ||
+            ""
         );
 
 
     const type =
         getElement(
             "typeFilter"
-        ).value;
+        )?.value ||
+        "all";
 
 
     const status =
         getElement(
             "statusFilter"
-        ).value;
+        )?.value ||
+        "all";
 
 
     const category =
         getElement(
             "categoryFilter"
-        ).value;
+        )?.value ||
+        "all";
 
 
     const order =
         getElement(
             "orderFilter"
-        ).value;
+        )?.value ||
+        "day";
 
 
     const filtered =
@@ -712,7 +1026,8 @@ function getFilteredFixed() {
 
                 const matchesType =
                     type === "all" ||
-                    item.type === type;
+                    item.type ===
+                    type;
 
 
                 const matchesStatus =
@@ -732,7 +1047,9 @@ function getFilteredFixed() {
                     String(
                         item.categoryId
                     ) ===
-                    String(category);
+                    String(
+                        category
+                    );
 
 
                 return (
@@ -794,8 +1111,12 @@ function getFilteredFixed() {
 
 
             return (
-                Number(first.day) -
-                Number(second.day)
+                Number(
+                    first.day
+                ) -
+                Number(
+                    second.day
+                )
             );
         }
     );
@@ -815,7 +1136,9 @@ function sumItems(
 ) {
 
     return items
-        .filter(filter)
+        .filter(
+            filter
+        )
         .reduce(
             (
                 total,
@@ -828,7 +1151,6 @@ function sumItems(
                         item.amount
                     )
                 );
-
             },
             0
         );
@@ -843,7 +1165,8 @@ function renderSummary() {
 
     const activeItems =
         appData.fixed.filter(
-            item => item.active
+            item =>
+                item.active
         );
 
 
@@ -851,7 +1174,8 @@ function renderSummary() {
         sumItems(
             activeItems,
             item =>
-                item.type === "income"
+                item.type ===
+                "income"
         );
 
 
@@ -859,7 +1183,8 @@ function renderSummary() {
         sumItems(
             activeItems,
             item =>
-                item.type === "expense"
+                item.type ===
+                "expense"
         );
 
 
@@ -867,28 +1192,32 @@ function renderSummary() {
         sumItems(
             activeItems,
             item =>
-                item.type === "saved"
+                item.type ===
+                "saved"
         );
 
 
     const incomeCount =
         activeItems.filter(
             item =>
-                item.type === "income"
+                item.type ===
+                "income"
         ).length;
 
 
     const expenseCount =
         activeItems.filter(
             item =>
-                item.type === "expense"
+                item.type ===
+                "expense"
         ).length;
 
 
     const savedCount =
         activeItems.filter(
             item =>
-                item.type === "saved"
+                item.type ===
+                "saved"
         ).length;
 
 
@@ -897,6 +1226,12 @@ function renderSummary() {
             item =>
                 !item.active
         ).length;
+
+
+    const balance =
+        income -
+        expenses -
+        saved;
 
 
     const fixedIncomeValue =
@@ -980,19 +1315,29 @@ function renderSummary() {
     }
 
 
-    /*
-        Guardado NÃO altera o saldo previsto.
-
-        Saldo previsto =
-        receitas - despesas
-    */
+    // =================================================
+    // SALDO PREVISTO
+    // RECEITA - DESPESA - RESERVA
+    // =================================================
 
     if (fixedBalanceValue) {
 
         fixedBalanceValue.textContent =
             currency.format(
-                income - expenses
+                balance
             );
+
+
+        fixedBalanceValue.classList.toggle(
+            "expense-text",
+            balance < 0
+        );
+
+
+        fixedBalanceValue.classList.toggle(
+            "income-text",
+            balance >= 0
+        );
     }
 
 
@@ -1063,37 +1408,71 @@ function renderSummary() {
     }
 }
 
+
+// =====================================================
+// TIPO DO FIXO
+// =====================================================
+
 function getFixedTypeInfo(type) {
 
-    if (type === "income") {
+    if (
+        type === "income"
+    ) {
 
         return {
-            className: "income",
-            icon: "↗",
-            signal: "+",
-            paidLabel: "Recebido"
+
+            className:
+                "income",
+
+            icon:
+                "↗",
+
+            signal:
+                "+",
+
+            paidLabel:
+                "Recebido"
         };
     }
 
 
-    if (type === "saved") {
+    if (
+        type === "saved"
+    ) {
 
         return {
-            className: "saved",
-            icon: "◆",
-            signal: "",
-            paidLabel: "Guardado"
+
+            className:
+                "saved",
+
+            icon:
+                "◆",
+
+            signal:
+                "",
+
+            paidLabel:
+                "Guardado"
         };
     }
 
 
     return {
-        className: "expense",
-        icon: "↘",
-        signal: "−",
-        paidLabel: "Pago"
+
+        className:
+            "expense",
+
+        icon:
+            "↘",
+
+        signal:
+            "−",
+
+        paidLabel:
+            "Pago"
     };
 }
+
 
 // =====================================================
 // ITEM FIXO
@@ -1108,7 +1487,8 @@ function createFixedItem(item) {
 
 
     const statusText =
-        item.defaultStatus === "paid"
+        item.defaultStatus ===
+        "paid"
             ? typeInfo.paidLabel
             : "Pendente";
 
@@ -1136,6 +1516,7 @@ function createFixedItem(item) {
                         item.description
                     )}
                 </strong>
+
 
                 <span>
 
@@ -1257,32 +1638,52 @@ function renderFixedList() {
         getFilteredFixed();
 
 
-    getElement(
-        "resultsText"
-    ).textContent =
-        `${items.length} lançamento${items.length === 1
-            ? ""
-            : "s"
-        } encontrado${items.length === 1
-            ? ""
-            : "s"
-        }`;
+    const resultsText =
+        getElement(
+            "resultsText"
+        );
 
 
-    getElement(
-        "emptyState"
-    ).hidden =
-        items.length > 0;
+    const emptyState =
+        getElement(
+            "emptyState"
+        );
 
 
-    getElement(
-        "fixedList"
-    ).innerHTML =
-        items
-            .map(
-                createFixedItem
-            )
-            .join("");
+    const fixedList =
+        getElement(
+            "fixedList"
+        );
+
+
+    if (resultsText) {
+
+        resultsText.textContent =
+            items.length === 1
+                ? "1 lançamento encontrado"
+                : `${items.length} lançamentos encontrados`;
+    }
+
+
+    if (emptyState) {
+
+        emptyState.hidden =
+            items.length >
+            0;
+    }
+
+
+    if (fixedList) {
+
+        fixedList.innerHTML =
+            items
+                .map(
+                    createFixedItem
+                )
+                .join(
+                    ""
+                );
+    }
 
 
     setupItemActions();
@@ -1290,14 +1691,18 @@ function renderFixedList() {
 
 
 // =====================================================
-// RENDERIZAR
+// RENDERIZAR PÁGINA
 // =====================================================
 
 function renderPage() {
 
     renderSummary();
 
+
     renderFixedList();
+
+
+    updateFilterIndicator();
 }
 
 
@@ -1307,14 +1712,40 @@ function renderPage() {
 
 async function refreshFixed() {
 
-    await loadFixed();
+    showFixedLoading();
 
-    renderPage();
+
+    try {
+
+        await loadFixed();
+
+
+        renderPage();
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao carregar fixos:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Erro ao carregar lançamentos fixos."
+        );
+
+
+    } finally {
+
+        hideFixedLoading();
+    }
 }
 
 
 // =====================================================
-// AÇÕES
+// AÇÕES DOS ITENS
 // =====================================================
 
 function setupItemActions() {
@@ -1393,12 +1824,18 @@ function openNewModal() {
         );
 
 
+    if (!form) {
+        return;
+    }
+
+
     form.reset();
 
 
     getElement(
         "fixedId"
-    ).value = "";
+    ).value =
+        "";
 
 
     getElement(
@@ -1451,15 +1888,18 @@ function openNewModal() {
 
     if (
         category &&
-        category.options.length > 0
+        category.options.length >
+        0
     ) {
-        category.selectedIndex = 0;
+
+        category.selectedIndex =
+            0;
     }
 
 
     getElement(
         "fixedModal"
-    ).showModal();
+    )?.showModal();
 
 
     window.setTimeout(
@@ -1467,7 +1907,7 @@ function openNewModal() {
 
             getElement(
                 "description"
-            ).focus();
+            )?.focus();
 
         },
         100
@@ -1482,13 +1922,17 @@ function openNewModal() {
 function openEditModal(id) {
 
     const numericId =
-        Number(id);
+        Number(
+            id
+        );
 
 
     const item =
         appData.fixed.find(
             fixed =>
-                Number(fixed.id) ===
+                Number(
+                    fixed.id
+                ) ===
                 numericId
         );
 
@@ -1529,8 +1973,11 @@ function openEditModal(id) {
         ).toLocaleString(
             "pt-BR",
             {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                minimumFractionDigits:
+                    2,
+
+                maximumFractionDigits:
+                    2
             }
         );
 
@@ -1580,7 +2027,7 @@ function openEditModal(id) {
 
     getElement(
         "fixedModal"
-    ).showModal();
+    )?.showModal();
 }
 
 
@@ -1662,7 +2109,9 @@ async function saveFixed(event) {
 
 
     if (
-        Number.isNaN(amount) ||
+        Number.isNaN(
+            amount
+        ) ||
         amount <= 0
     ) {
 
@@ -1705,7 +2154,7 @@ async function saveFixed(event) {
 
 
     const saveButton =
-        form.querySelector(
+        form?.querySelector(
             'button[type="submit"]'
         );
 
@@ -1755,12 +2204,6 @@ async function saveFixed(event) {
         };
 
 
-        console.log(
-            "Enviando fixo:",
-            body
-        );
-
-
         let resultado;
 
 
@@ -1770,7 +2213,8 @@ async function saveFixed(event) {
                 await apiRequest(
                     `/fixos/${id}`,
                     {
-                        method: "PUT",
+                        method:
+                            "PUT",
 
                         body:
                             JSON.stringify(
@@ -1785,7 +2229,8 @@ async function saveFixed(event) {
                 await apiRequest(
                     "/fixos",
                     {
-                        method: "POST",
+                        method:
+                            "POST",
 
                         body:
                             JSON.stringify(
@@ -1798,14 +2243,14 @@ async function saveFixed(event) {
 
         getElement(
             "fixedModal"
-        ).close();
+        )?.close();
 
 
         form.reset();
 
 
         showToast(
-            resultado.message ||
+            resultado?.message ||
             (
                 id
                     ? "Lançamento atualizado."
@@ -1861,18 +2306,20 @@ async function toggleFixedStatus(
             await apiRequest(
                 `/fixos/${id}/status`,
                 {
-                    method: "PUT",
+                    method:
+                        "PUT",
 
                     body:
                         JSON.stringify({
-                            ativo: active
+                            ativo:
+                                active
                         })
                 }
             );
 
 
         showToast(
-            resultado.message ||
+            resultado?.message ||
             (
                 active
                     ? "Lançamento ativado."
@@ -1910,12 +2357,14 @@ async function toggleFixedStatus(
 function openDeleteModal(id) {
 
     fixedToDelete =
-        Number(id);
+        Number(
+            id
+        );
 
 
     getElement(
         "deleteModal"
-    ).showModal();
+    )?.showModal();
 }
 
 
@@ -1934,12 +2383,15 @@ async function deleteFixed() {
 
     try {
 
-        button.disabled =
-            true;
+        if (button) {
+
+            button.disabled =
+                true;
 
 
-        button.textContent =
-            "Excluindo...";
+            button.textContent =
+                "Excluindo...";
+        }
 
 
         const resultado =
@@ -1958,11 +2410,11 @@ async function deleteFixed() {
 
         getElement(
             "deleteModal"
-        ).close();
+        )?.close();
 
 
         showToast(
-            resultado.message ||
+            resultado?.message ||
             "Lançamento excluído."
         );
 
@@ -1986,12 +2438,15 @@ async function deleteFixed() {
 
     } finally {
 
-        button.disabled =
-            false;
+        if (button) {
+
+            button.disabled =
+                false;
 
 
-        button.textContent =
-            "Excluir";
+            button.textContent =
+                "Excluir";
+        }
     }
 }
 
@@ -2045,7 +2500,9 @@ function buildDate(
             2,
             "0"
         )
-    ].join("-");
+    ].join(
+        "-"
+    );
 }
 
 
@@ -2079,7 +2536,8 @@ function openLaunchModal() {
 
 
     if (
-        activeCount === 0
+        activeCount ===
+        0
     ) {
 
         showToast(
@@ -2090,28 +2548,38 @@ function openLaunchModal() {
     }
 
 
-    getElement(
-        "launchConfirmationText"
-    ).textContent =
-        `${activeCount} lançamento${activeCount === 1
-            ? ""
-            : "s"
-        } ativo${activeCount === 1
-            ? ""
-            : "s"
-        } será${activeCount === 1
-            ? ""
-            : "ão"
-        } adicionado${activeCount === 1
-            ? ""
-            : "s"
-        } em ${monthNames[month]
-        } de ${year}.`;
+    const text =
+        getElement(
+            "launchConfirmationText"
+        );
+
+
+    if (text) {
+
+        text.textContent =
+            `${activeCount} lançamento${
+                activeCount === 1
+                    ? ""
+                    : "s"
+            } ativo${
+                activeCount === 1
+                    ? ""
+                    : "s"
+            } será${
+                activeCount === 1
+                    ? ""
+                    : "ão"
+            } adicionado${
+                activeCount === 1
+                    ? ""
+                    : "s"
+            } em ${monthNames[month]} de ${year}.`;
+    }
 
 
     getElement(
         "launchModal"
-    ).showModal();
+    )?.showModal();
 }
 
 
@@ -2145,7 +2613,8 @@ async function launchFixedTransactions() {
 
 
     if (
-        activeItems.length === 0
+        activeItems.length ===
+        0
     ) {
 
         showToast(
@@ -2169,6 +2638,7 @@ async function launchFixedTransactions() {
             button.disabled =
                 true;
 
+
             button.textContent =
                 "Lançando...";
         }
@@ -2176,13 +2646,16 @@ async function launchFixedTransactions() {
 
         const existingTransactions =
             await apiRequest(
-                `/movimentacoes?mes=${month + 1
-                }&ano=${year}`
+                `/movimentacoes?mes=${month + 1}&ano=${year}`
             );
 
 
-        let added = 0;
-        let ignored = 0;
+        let added =
+            0;
+
+
+        let ignored =
+            0;
 
 
         for (
@@ -2277,10 +2750,13 @@ async function launchFixedTransactions() {
 
         getElement(
             "launchModal"
-        ).close();
+        )?.close();
 
 
-        if (added === 0) {
+        if (
+            added ===
+            0
+        ) {
 
             showToast(
                 "Os fixos desse período já foram lançados."
@@ -2291,21 +2767,27 @@ async function launchFixedTransactions() {
 
 
         let message =
-            `${added} lançamento${added === 1
-                ? ""
-                : "s"
-            } adicionado${added === 1
-                ? ""
-                : "s"
+            `${added} lançamento${
+                added === 1
+                    ? ""
+                    : "s"
+            } adicionado${
+                added === 1
+                    ? ""
+                    : "s"
             } às movimentações.`;
 
 
-        if (ignored > 0) {
+        if (
+            ignored >
+            0
+        ) {
 
             message +=
-                ` ${ignored} já existia${ignored === 1
-                    ? ""
-                    : "m"
+                ` ${ignored} já existia${
+                    ignored === 1
+                        ? ""
+                        : "m"
                 }.`;
         }
 
@@ -2336,9 +2818,123 @@ async function launchFixedTransactions() {
             button.disabled =
                 false;
 
+
             button.textContent =
                 "Confirmar lançamento";
         }
+    }
+}
+
+
+// =====================================================
+// FILTROS ATIVOS
+// =====================================================
+
+function hasActiveFilters() {
+
+    const type =
+        getElement(
+            "typeFilter"
+        )?.value ||
+        "all";
+
+
+    const status =
+        getElement(
+            "statusFilter"
+        )?.value ||
+        "all";
+
+
+    const category =
+        getElement(
+            "categoryFilter"
+        )?.value ||
+        "all";
+
+
+    const order =
+        getElement(
+            "orderFilter"
+        )?.value ||
+        "day";
+
+
+    return (
+        type !== "all" ||
+        status !== "all" ||
+        category !== "all" ||
+        order !== "day"
+    );
+}
+
+
+// =====================================================
+// INDICADOR DE FILTRO
+// =====================================================
+
+function updateFilterIndicator() {
+
+    const dot =
+        getElement(
+            "filterActiveDot"
+        );
+
+
+    if (!dot) {
+        return;
+    }
+
+
+    dot.hidden =
+        !hasActiveFilters();
+}
+
+
+// =====================================================
+// MODAL FILTROS
+// =====================================================
+
+function openFiltersModal() {
+
+    const modal =
+        getElement(
+            "filtersModal"
+        );
+
+
+    if (!modal) {
+        return;
+    }
+
+
+    modal.showModal();
+}
+
+
+// =====================================================
+// APLICAR FILTROS
+// =====================================================
+
+function applyFilters() {
+
+    renderFixedList();
+
+
+    updateFilterIndicator();
+
+
+    const modal =
+        getElement(
+            "filtersModal"
+        );
+
+
+    if (
+        modal?.open
+    ) {
+
+        modal.close();
     }
 }
 
@@ -2349,71 +2945,166 @@ async function launchFixedTransactions() {
 
 function clearFilters() {
 
-    getElement(
-        "searchInput"
-    ).value = "";
+    hideSearchLoading();
 
 
-    getElement(
-        "typeFilter"
-    ).value =
-        "all";
+    const searchInput =
+        getElement(
+            "searchInput"
+        );
 
 
-    getElement(
-        "statusFilter"
-    ).value =
-        "all";
+    const typeFilter =
+        getElement(
+            "typeFilter"
+        );
 
 
-    getElement(
-        "categoryFilter"
-    ).value =
-        "all";
+    const statusFilter =
+        getElement(
+            "statusFilter"
+        );
 
 
-    getElement(
-        "orderFilter"
-    ).value =
-        "day";
+    const categoryFilter =
+        getElement(
+            "categoryFilter"
+        );
+
+
+    const orderFilter =
+        getElement(
+            "orderFilter"
+        );
+
+
+    if (searchInput) {
+
+        searchInput.value =
+            "";
+    }
+
+
+    if (typeFilter) {
+
+        typeFilter.value =
+            "all";
+    }
+
+
+    if (statusFilter) {
+
+        statusFilter.value =
+            "all";
+    }
+
+
+    if (categoryFilter) {
+
+        categoryFilter.value =
+            "all";
+    }
+
+
+    if (orderFilter) {
+
+        orderFilter.value =
+            "day";
+    }
 
 
     renderFixedList();
+
+
+    updateFilterIndicator();
+
+
+    const modal =
+        getElement(
+            "filtersModal"
+        );
+
+
+    if (
+        modal?.open
+    ) {
+
+        modal.close();
+    }
+
+
+    showToast(
+        "Filtros removidos."
+    );
 }
 
 
 // =====================================================
-// FILTROS
+// PESQUISA
 // =====================================================
 
 function setupFilters() {
 
-    [
-        "searchInput",
-        "typeFilter",
-        "statusFilter",
-        "categoryFilter",
-        "orderFilter"
-    ].forEach(
-        id => {
-
-            const element =
-                getElement(id);
+    const searchInput =
+        getElement(
+            "searchInput"
+        );
 
 
-            if (!element) {
-                return;
+    if (!searchInput) {
+        return;
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        () => {
+
+            const loading =
+                getElement(
+                    "searchLoading"
+                );
+
+
+            clearTimeout(
+                searchLoadingTimeout
+            );
+
+
+            if (loading) {
+
+                loading.hidden =
+                    false;
             }
 
 
-            element.addEventListener(
+            searchLoadingTimeout =
+                setTimeout(
+                    () => {
 
-                id === "searchInput"
-                    ? "input"
-                    : "change",
+                        try {
 
-                renderFixedList
-            );
+                            renderFixedList();
+
+                        } catch (error) {
+
+                            console.error(
+                                "Erro ao pesquisar lançamentos:",
+                                error
+                            );
+
+                        } finally {
+
+                            if (loading) {
+
+                                loading.hidden =
+                                    true;
+                            }
+                        }
+
+                    },
+                    300
+                );
         }
     );
 }
@@ -2441,6 +3132,7 @@ function setupProfileMenu() {
         !button ||
         !dropdown
     ) {
+
         return;
     }
 
@@ -2498,7 +3190,8 @@ function setupTheme() {
     if (
         localStorage.getItem(
             THEME_KEY
-        ) === "dark"
+        ) ===
+        "dark"
     ) {
 
         document.body.classList.add(
@@ -2527,9 +3220,7 @@ function setupTheme() {
 
 
             localStorage.setItem(
-
                 THEME_KEY,
-
                 darkMode
                     ? "dark"
                     : "light"
@@ -2567,6 +3258,7 @@ function setupMobileMenu() {
         !button ||
         !navigation
     ) {
+
         return;
     }
 
@@ -2639,6 +3331,7 @@ function logout() {
 
     clearSession();
 
+
     window.location.href =
         "login.html";
 }
@@ -2652,6 +3345,11 @@ function setupEvents() {
 
     setupMoneyInput();
 
+
+    // =================================================
+    // BOTÕES NOVO FIXO
+    // =================================================
+
     [
         "topAddButton",
         "headerAddButton",
@@ -2661,7 +3359,9 @@ function setupEvents() {
         id => {
 
             const button =
-                getElement(id);
+                getElement(
+                    id
+                );
 
 
             if (button) {
@@ -2674,6 +3374,10 @@ function setupEvents() {
         }
     );
 
+
+    // =================================================
+    // FORM FIXO
+    // =================================================
 
     const fixedForm =
         getElement(
@@ -2690,6 +3394,10 @@ function setupEvents() {
     }
 
 
+    // =================================================
+    // EXCLUSÃO
+    // =================================================
+
     const confirmDelete =
         getElement(
             "confirmDelete"
@@ -2705,6 +3413,48 @@ function setupEvents() {
     }
 
 
+    // =================================================
+    // ABRIR FILTROS
+    // =================================================
+
+    const openFiltersButton =
+        getElement(
+            "openFiltersModal"
+        );
+
+
+    if (openFiltersButton) {
+
+        openFiltersButton.addEventListener(
+            "click",
+            openFiltersModal
+        );
+    }
+
+
+    // =================================================
+    // APLICAR FILTROS
+    // =================================================
+
+    const applyFiltersButton =
+        getElement(
+            "applyFilters"
+        );
+
+
+    if (applyFiltersButton) {
+
+        applyFiltersButton.addEventListener(
+            "click",
+            applyFilters
+        );
+    }
+
+
+    // =================================================
+    // LIMPAR FILTROS
+    // =================================================
+
     const clearFiltersButton =
         getElement(
             "clearFilters"
@@ -2719,6 +3469,10 @@ function setupEvents() {
         );
     }
 
+
+    // =================================================
+    // LANÇAR FIXOS
+    // =================================================
 
     const launchFixedButton =
         getElement(
@@ -2765,6 +3519,10 @@ function setupEvents() {
     }
 
 
+    // =================================================
+    // LOGOUT
+    // =================================================
+
     const logoutButton =
         getElement(
             "logoutButton"
@@ -2787,23 +3545,37 @@ function setupEvents() {
 
 async function initializePage() {
 
+    if (
+        !getSession()
+    ) {
 
-    if (!getSession()) {
         return;
     }
 
 
+    hideSearchLoading();
+
+
+    showFixedLoading();
+
+
     setupPeriodOptions();
+
 
     setupFilters();
 
+
     setupProfileMenu();
+
 
     setupTheme();
 
+
     setupMobileMenu();
 
+
     setupModalClosing();
+
 
     setupEvents();
 
@@ -2819,6 +3591,9 @@ async function initializePage() {
         await refreshFixed();
 
 
+        updateFilterIndicator();
+
+
     } catch (error) {
 
         console.error(
@@ -2831,6 +3606,11 @@ async function initializePage() {
             error.message ||
             "Erro ao carregar fixos."
         );
+
+
+    } finally {
+
+        hideFixedLoading();
     }
 }
 
