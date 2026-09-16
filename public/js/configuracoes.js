@@ -182,6 +182,125 @@ function updateSavedSession(
     }
 }
 
+// =====================================================
+// EXCLUIR CONTA
+// =====================================================
+
+async function deleteAccount(event) {
+
+    event.preventDefault();
+
+
+    const form =
+        event.currentTarget;
+
+
+    const senha =
+        getElement(
+            "deleteAccountPassword"
+        )?.value || "";
+
+
+    if (!senha) {
+
+        showToast(
+            "Informe sua senha."
+        );
+
+        return;
+    }
+
+
+    const submitButton =
+        form?.querySelector(
+            'button[type="submit"]'
+        );
+
+
+    try {
+
+        if (submitButton) {
+
+            submitButton.disabled =
+                true;
+
+
+            submitButton.textContent =
+                "Excluindo...";
+        }
+
+
+        const resultado =
+            await apiRequest(
+                "/usuarios/conta",
+                {
+                    method:
+                        "DELETE",
+
+                    body:
+                        JSON.stringify({
+                            senha
+                        })
+                }
+            );
+
+
+        showToast(
+            resultado?.message ||
+            "Conta excluída com sucesso."
+        );
+
+
+        // =========================
+        // LIMPAR SESSÃO
+        // =========================
+
+        clearSession();
+
+
+        // =========================
+        // IR PARA LOGIN
+        // =========================
+
+        window.setTimeout(
+            () => {
+
+                window.location.href =
+                    "login.html";
+
+            },
+            700
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao excluir conta:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Erro ao excluir conta."
+        );
+
+
+    } finally {
+
+        if (submitButton) {
+
+            submitButton.disabled =
+                false;
+
+
+            submitButton.textContent =
+                "Excluir conta";
+        }
+    }
+}
+
 
 // =====================================================
 // API
@@ -1012,7 +1131,7 @@ function applyTheme(theme) {
                 card.classList.toggle(
                     "active",
                     card.dataset.theme ===
-                        theme
+                    theme
                 );
             }
         );
@@ -1184,16 +1303,15 @@ function renderCategories() {
 
                             <i
                                 class="category-color-dot"
-                                style="background: ${
-                                    categoria.cor ||
-                                    "#168a52"
-                                }"
+                                style="background: ${categoria.cor ||
+                        "#168a52"
+                        }"
                             ></i>
 
                             <strong>
                                 ${escapeHtml(
-                                    categoria.nome
-                                )}
+                            categoria.nome
+                        )}
                             </strong>
 
                             <div class="category-item-actions">
@@ -1623,7 +1741,7 @@ function switchSection(sectionId) {
                 section.classList.toggle(
                     "active",
                     section.id ===
-                        sectionId
+                    sectionId
                 );
             }
         );
@@ -1639,7 +1757,7 @@ function switchSection(sectionId) {
                 button.classList.toggle(
                     "active",
                     button.dataset.section ===
-                        sectionId
+                    sectionId
                 );
             }
         );
@@ -1653,6 +1771,14 @@ function switchSection(sectionId) {
 async function changePassword(event) {
 
     event.preventDefault();
+
+
+    // =================================================
+    // GUARDA O FORMULÁRIO ANTES DOS AWAITS
+    // =================================================
+
+    const form =
+        event.currentTarget;
 
 
     // =================================================
@@ -1754,7 +1880,7 @@ async function changePassword(event) {
     // =================================================
 
     const submitButton =
-        event.currentTarget.querySelector(
+        form?.querySelector(
             'button[type="submit"]'
         );
 
@@ -1797,10 +1923,13 @@ async function changePassword(event) {
 
 
         // =================================================
-        // LIMPAR FORM
+        // LIMPAR FORMULÁRIO
         // =================================================
 
-        event.currentTarget.reset();
+        if (form) {
+
+            form.reset();
+        }
 
 
         // =================================================
@@ -1948,13 +2077,12 @@ async function exportAllData() {
 
 
         link.download =
-            `backup-conecta-financas-${
-                new Date()
-                    .toISOString()
-                    .slice(
-                        0,
-                        10
-                    )
+            `backup-conecta-financas-${new Date()
+                .toISOString()
+                .slice(
+                    0,
+                    10
+                )
             }.json`;
 
 
@@ -2729,6 +2857,40 @@ function setupEvents() {
                 deleteAllFinancialData
             );
         }
+    );
+
+    // Excluir conta
+
+    getElement(
+        "deleteAccountButton"
+    )?.addEventListener(
+        "click",
+        () => {
+
+            const form =
+                getElement(
+                    "deleteAccountForm"
+                );
+
+
+            if (form) {
+
+                form.reset();
+            }
+
+
+            getElement(
+                "deleteAccountModal"
+            )?.showModal();
+        }
+    );
+
+
+    getElement(
+        "deleteAccountForm"
+    )?.addEventListener(
+        "submit",
+        deleteAccount
     );
 
 

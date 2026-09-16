@@ -55,6 +55,12 @@ router.put(
     AuthController.alterarSenha
 );
 
+// Excluir a conta do usuário
+router.delete(
+    "/usuarios/conta",
+    verificarUsuario,
+    AuthController.excluirConta
+);
 
 // =====================================================
 // ROTAS DO DASHBOARD

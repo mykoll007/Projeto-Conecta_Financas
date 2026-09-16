@@ -516,6 +516,156 @@ class AuthController {
             });
         }
     }
+
+    // =========================
+// Excluir conta
+// =========================
+async excluirConta(req, res) {
+
+    const {
+        senha
+    } = req.body;
+
+
+    if (!senha) {
+
+        return res.status(400).json({
+            message:
+                "Informe sua senha para excluir a conta."
+        });
+    }
+
+
+    try {
+
+        // =========================
+        // BUSCAR USUÁRIO
+        // =========================
+
+        const usuario =
+            await database(
+                "usuarios"
+            )
+                .where(
+                    "id",
+                    req.usuarioId
+                )
+                .first();
+
+
+        if (!usuario) {
+
+            return res.status(404).json({
+                message:
+                    "Usuário não encontrado."
+            });
+        }
+
+
+        // =========================
+        // VALIDAR SENHA
+        // =========================
+
+        const senhaCorreta =
+            await bcrypt.compare(
+                senha,
+                usuario.senha
+            );
+
+
+        if (!senhaCorreta) {
+
+            return res.status(400).json({
+                message:
+                    "Senha incorreta."
+            });
+        }
+
+
+        // =========================
+        // TRANSAÇÃO
+        // =========================
+
+        await database.transaction(
+            async trx => {
+
+                // Movimentações
+                await trx(
+                    "movimentacoes"
+                )
+                    .where(
+                        "usuario_id",
+                        req.usuarioId
+                    )
+                    .del();
+
+
+                // Fixos
+                await trx(
+                    "fixos"
+                )
+                    .where(
+                        "usuario_id",
+                        req.usuarioId
+                    )
+                    .del();
+
+
+                // Categorias
+                await trx(
+                    "categorias"
+                )
+                    .where(
+                        "usuario_id",
+                        req.usuarioId
+                    )
+                    .del();
+
+
+                // Configurações
+                await trx(
+                    "configuracoes"
+                )
+                    .where(
+                        "usuario_id",
+                        req.usuarioId
+                    )
+                    .del();
+
+
+                // Usuário por último
+                await trx(
+                    "usuarios"
+                )
+                    .where(
+                        "id",
+                        req.usuarioId
+                    )
+                    .del();
+            }
+        );
+
+
+        return res.status(200).json({
+            message:
+                "Conta excluída com sucesso."
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao excluir conta:",
+            error
+        );
+
+
+        return res.status(500).json({
+            message:
+                "Erro ao excluir conta."
+        });
+    }
+}
 }
 
 module.exports = new AuthController();
