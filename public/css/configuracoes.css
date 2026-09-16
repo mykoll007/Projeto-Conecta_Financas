@@ -1002,6 +1002,91 @@ input[type="color"] {
 }
 
 /* =====================================================
+   PROGRESSO DA IMPORTAÇÃO
+===================================================== */
+
+.import-progress {
+  width: 100%;
+
+  margin-top: 24px;
+
+  padding: 16px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 12px;
+
+  background: var(--surface-soft);
+
+  text-align: left;
+}
+
+
+.import-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 10px;
+}
+
+
+.import-progress-header span {
+  color: var(--text);
+
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+
+.import-progress-header strong {
+  color: var(--primary);
+
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+
+.import-progress-track {
+  width: 100%;
+  height: 9px;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+
+  background: var(--border);
+}
+
+
+.import-progress-bar {
+  width: 0%;
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: var(--primary);
+
+  transition:
+    width 220ms ease;
+}
+
+
+.import-progress small {
+  display: block;
+
+  margin-top: 9px;
+
+  color: var(--text-secondary);
+
+  font-size: 0.66rem;
+
+  line-height: 1.4;
+}
+
+/* =====================================================
    EXCLUIR CONTA
 ===================================================== */
 
@@ -1176,6 +1261,7 @@ input[type="color"] {
     width: 100%;
   }
 }
+
 
 /* Toast */
 

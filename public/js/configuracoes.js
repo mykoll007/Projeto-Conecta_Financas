@@ -2130,6 +2130,880 @@ async function exportAllData() {
     }
 }
 
+// =====================================================
+// IMPORTAR DADOS
+// =====================================================
+
+async function importDataFromJson(file) {
+
+    if (!file) {
+        return;
+    }
+
+
+    let backup;
+
+
+    try {
+
+        const text =
+            await file.text();
+
+
+        backup =
+            JSON.parse(
+                text
+            );
+
+
+    } catch (error) {
+
+        showToast(
+            "O arquivo JSON é inválido."
+        );
+
+        return;
+    }
+
+
+    // =================================================
+    // VALIDAR ESTRUTURA
+    // =================================================
+
+    if (
+        !backup ||
+        typeof backup !== "object"
+    ) {
+
+        showToast(
+            "O arquivo de backup é inválido."
+        );
+
+        return;
+    }
+
+
+    const movimentacoes =
+        Array.isArray(
+            backup.movimentacoes
+        )
+            ? backup.movimentacoes
+            : [];
+
+
+    const fixos =
+        Array.isArray(
+            backup.fixos
+        )
+            ? backup.fixos
+            : [];
+
+
+    const categoriasBackup =
+        Array.isArray(
+            backup.categorias
+        )
+            ? backup.categorias
+            : [];
+
+
+    const configuracoesBackup =
+        backup.configuracoes &&
+            typeof backup.configuracoes === "object"
+            ? backup.configuracoes
+            : null;
+
+
+    openConfirmation(
+
+        "Importar backup",
+
+        "Os dados financeiros atuais serão substituídos pelos dados do arquivo selecionado. Deseja continuar?",
+
+        async () => {
+
+            await executeImportBackup({
+                movimentacoes,
+                fixos,
+                categorias:
+                    categoriasBackup,
+                configuracoes:
+                    configuracoesBackup
+            });
+
+        }
+    );
+}
+
+// =====================================================
+// PROGRESSO DA IMPORTAÇÃO
+// =====================================================
+
+function updateImportProgress(
+    current,
+    total,
+    text = ""
+) {
+
+    const progress =
+        getElement(
+            "importProgress"
+        );
+
+    const progressBar =
+        getElement(
+            "importProgressBar"
+        );
+
+    const progressPercent =
+        getElement(
+            "importProgressPercent"
+        );
+
+    const progressText =
+        getElement(
+            "importProgressText"
+        );
+
+
+    if (!progress) {
+        return;
+    }
+
+
+    // Mostrar progresso
+    progress.hidden =
+        false;
+
+
+    const percentage =
+        total > 0
+            ? Math.round(
+                (current / total) * 100
+            )
+            : 0;
+
+
+    const value =
+        Math.min(
+            100,
+            Math.max(
+                0,
+                percentage
+            )
+        );
+
+
+    if (progressBar) {
+
+        progressBar.style.width =
+            `${value}%`;
+    }
+
+
+    if (progressPercent) {
+
+        progressPercent.textContent =
+            `${value}%`;
+    }
+
+
+    if (progressText) {
+
+        progressText.textContent =
+            text ||
+            "Importando dados...";
+    }
+}
+
+
+// =====================================================
+// RESETAR PROGRESSO
+// =====================================================
+
+function resetImportProgress() {
+
+    const progress =
+        getElement(
+            "importProgress"
+        );
+
+    const progressBar =
+        getElement(
+            "importProgressBar"
+        );
+
+    const progressPercent =
+        getElement(
+            "importProgressPercent"
+        );
+
+    const progressText =
+        getElement(
+            "importProgressText"
+        );
+
+
+    if (progress) {
+
+        progress.hidden =
+            true;
+    }
+
+
+    if (progressBar) {
+
+        progressBar.style.width =
+            "0%";
+    }
+
+
+    if (progressPercent) {
+
+        progressPercent.textContent =
+            "0%";
+    }
+
+
+    if (progressText) {
+
+        progressText.textContent =
+            "Preparando importação...";
+    }
+}
+
+// =====================================================
+// EXECUTAR IMPORTAÇÃO
+// =====================================================
+
+// =====================================================
+// EXECUTAR IMPORTAÇÃO
+// =====================================================
+
+async function executeImportBackup(
+    backup
+) {
+
+    const button =
+        getElement(
+            "confirmationButton"
+        );
+
+
+    const modal =
+        getElement(
+            "confirmationModal"
+        );
+
+
+    try {
+
+        // =================================================
+        // LOADING
+        // =================================================
+
+        if (button) {
+
+            button.disabled =
+                true;
+
+            button.textContent =
+                "Importando...";
+        }
+
+
+        updateImportProgress(
+            0,
+            100,
+            "Preparando importação..."
+        );
+
+
+        // Dá tempo do navegador desenhar a barra
+        await new Promise(
+            resolve =>
+                requestAnimationFrame(
+                    resolve
+                )
+        );
+
+
+        // =================================================
+        // BUSCAR DADOS ATUAIS
+        // =================================================
+
+        const [
+            movimentacoesAtuais,
+            fixosAtuais,
+            categoriasAtuais
+        ] =
+            await Promise.all([
+
+                apiRequest(
+                    "/movimentacoes"
+                ),
+
+                apiRequest(
+                    "/fixos"
+                ),
+
+                apiRequest(
+                    "/categorias"
+                )
+            ]);
+
+
+        // =================================================
+        // CALCULAR TOTAL DE OPERAÇÕES
+        // =================================================
+
+        const totalOperations =
+
+            movimentacoesAtuais.length +
+
+            fixosAtuais.length +
+
+            categoriasAtuais.length +
+
+            backup.categorias.length +
+
+            backup.fixos.length +
+
+            backup.movimentacoes.length +
+
+            (
+                backup.configuracoes
+                    ? 1
+                    : 0
+            );
+
+
+        let completedOperations =
+            0;
+
+
+        function advanceProgress(
+            text
+        ) {
+
+            completedOperations++;
+
+
+            updateImportProgress(
+                completedOperations,
+                totalOperations,
+                text
+            );
+        }
+
+
+        // =================================================
+        // EXCLUIR MOVIMENTAÇÕES ATUAIS
+        // =================================================
+
+        for (
+            const movimentacao
+            of movimentacoesAtuais
+        ) {
+
+            await apiRequest(
+                `/movimentacoes/${movimentacao.id}`,
+                {
+                    method:
+                        "DELETE"
+                }
+            );
+
+
+            advanceProgress(
+                "Removendo movimentações atuais..."
+            );
+        }
+
+
+        // =================================================
+        // EXCLUIR FIXOS ATUAIS
+        // =================================================
+
+        for (
+            const fixo
+            of fixosAtuais
+        ) {
+
+            await apiRequest(
+                `/fixos/${fixo.id}`,
+                {
+                    method:
+                        "DELETE"
+                }
+            );
+
+
+            advanceProgress(
+                "Removendo lançamentos fixos..."
+            );
+        }
+
+
+        // =================================================
+        // EXCLUIR CATEGORIAS ATUAIS
+        // =================================================
+
+        for (
+            const categoria
+            of categoriasAtuais
+        ) {
+
+            try {
+
+                await apiRequest(
+                    `/categorias/${categoria.id}`,
+                    {
+                        method:
+                            "DELETE"
+                    }
+                );
+
+            } catch (error) {
+
+                console.warn(
+                    "Categoria não removida:",
+                    categoria.nome,
+                    error.message
+                );
+            }
+
+
+            advanceProgress(
+                "Preparando categorias..."
+            );
+        }
+
+
+        // =================================================
+        // MAPA DE CATEGORIAS
+        // =================================================
+
+        const categoryIdMap =
+            new Map();
+
+
+        // =================================================
+        // IMPORTAR CATEGORIAS
+        // =================================================
+
+        for (
+            const categoria
+            of backup.categorias
+        ) {
+
+            const resultado =
+                await apiRequest(
+                    "/categorias",
+                    {
+                        method:
+                            "POST",
+
+                        body:
+                            JSON.stringify({
+
+                                nome:
+                                    categoria.nome,
+
+                                cor:
+                                    categoria.cor ||
+                                    "#168a52"
+                            })
+                    }
+                );
+
+
+            if (
+                resultado?.categoriaId
+            ) {
+
+                categoryIdMap.set(
+                    Number(
+                        categoria.id
+                    ),
+                    Number(
+                        resultado.categoriaId
+                    )
+                );
+            }
+
+
+            advanceProgress(
+                `Importando categoria: ${categoria.nome}`
+            );
+        }
+
+
+        // =================================================
+        // IMPORTAR CONFIGURAÇÕES
+        // =================================================
+
+        if (
+            backup.configuracoes
+        ) {
+
+            await apiRequest(
+                "/configuracoes",
+                {
+                    method:
+                        "PUT",
+
+                    body:
+                        JSON.stringify({
+
+                            moeda:
+                                backup.configuracoes.moeda ||
+                                "BRL",
+
+                            orcamento_mensal:
+                                Number(
+                                    backup.configuracoes
+                                        .orcamento_mensal ||
+                                    0
+                                ),
+
+                            inicio_mes:
+                                Number(
+                                    backup.configuracoes
+                                        .inicio_mes ||
+                                    1
+                                ),
+
+                            forma_pagamento_padrao:
+                                backup.configuracoes
+                                    .forma_pagamento_padrao ||
+                                "Pix",
+
+                            incluir_pendencias:
+                                Boolean(
+                                    Number(
+                                        backup.configuracoes
+                                            .incluir_pendencias ??
+                                        1
+                                    )
+                                ),
+
+                            confirmar_exclusao:
+                                Boolean(
+                                    Number(
+                                        backup.configuracoes
+                                            .confirmar_exclusao ??
+                                        1
+                                    )
+                                )
+                        })
+                }
+            );
+
+
+            advanceProgress(
+                "Restaurando preferências..."
+            );
+        }
+
+
+        // =================================================
+        // MAPA DE FIXOS
+        // =================================================
+
+        const fixedIdMap =
+            new Map();
+
+
+        // =================================================
+        // IMPORTAR FIXOS
+        // =================================================
+
+        for (
+            const fixo
+            of backup.fixos
+        ) {
+
+            const novaCategoriaId =
+                categoryIdMap.get(
+                    Number(
+                        fixo.categoria_id
+                    )
+                ) ||
+                null;
+
+
+            if (!novaCategoriaId) {
+
+                console.warn(
+                    "Fixo ignorado por categoria inválida:",
+                    fixo.descricao
+                );
+
+
+                advanceProgress(
+                    `Ignorando fixo: ${fixo.descricao}`
+                );
+
+
+                continue;
+            }
+
+
+            const resultado =
+                await apiRequest(
+                    "/fixos",
+                    {
+                        method:
+                            "POST",
+
+                        body:
+                            JSON.stringify({
+
+                                descricao:
+                                    fixo.descricao,
+
+                                tipo:
+                                    fixo.tipo,
+
+                                valor:
+                                    Number(
+                                        fixo.valor
+                                    ),
+
+                                categoria_id:
+                                    novaCategoriaId,
+
+                                dia_vencimento:
+                                    Number(
+                                        fixo.dia_vencimento
+                                    ),
+
+                                forma_pagamento:
+                                    fixo.forma_pagamento ||
+                                    "Pix",
+
+                                status_padrao:
+                                    fixo.status_padrao ||
+                                    "pending",
+
+                                ativo:
+                                    Boolean(
+                                        Number(
+                                            fixo.ativo
+                                        )
+                                    )
+                            })
+                    }
+                );
+
+
+            if (
+                resultado?.fixoId
+            ) {
+
+                fixedIdMap.set(
+                    Number(
+                        fixo.id
+                    ),
+                    Number(
+                        resultado.fixoId
+                    )
+                );
+            }
+
+
+            advanceProgress(
+                `Importando fixo: ${fixo.descricao}`
+            );
+        }
+
+
+        // =================================================
+        // IMPORTAR MOVIMENTAÇÕES
+        // =================================================
+
+        for (
+            const movimentacao
+            of backup.movimentacoes
+        ) {
+
+            const novaCategoriaId =
+                categoryIdMap.get(
+                    Number(
+                        movimentacao.categoria_id
+                    )
+                ) ||
+                null;
+
+
+            if (!novaCategoriaId) {
+
+                console.warn(
+                    "Movimentação ignorada por categoria inválida:",
+                    movimentacao.descricao
+                );
+
+
+                advanceProgress(
+                    `Ignorando movimentação: ${movimentacao.descricao}`
+                );
+
+
+                continue;
+            }
+
+
+            const novoFixoId =
+                movimentacao.fixo_id
+                    ? (
+                        fixedIdMap.get(
+                            Number(
+                                movimentacao.fixo_id
+                            )
+                        ) ||
+                        null
+                    )
+                    : null;
+
+
+            await apiRequest(
+                "/movimentacoes",
+                {
+                    method:
+                        "POST",
+
+                    body:
+                        JSON.stringify({
+
+                            descricao:
+                                movimentacao.descricao,
+
+                            tipo:
+                                movimentacao.tipo,
+
+                            valor:
+                                Number(
+                                    movimentacao.valor
+                                ),
+
+                            categoria_id:
+                                novaCategoriaId,
+
+                            data:
+                                movimentacao.data ||
+                                movimentacao.data_movimentacao,
+
+                            status:
+                                movimentacao.status,
+
+                            forma_pagamento:
+                                movimentacao.forma_pagamento ||
+                                "Pix",
+
+                            fixo_id:
+                                novoFixoId
+                        })
+                }
+            );
+
+
+            advanceProgress(
+                `Importando movimentação: ${movimentacao.descricao}`
+            );
+        }
+
+
+        // =================================================
+        // GARANTIR 100%
+        // =================================================
+
+        updateImportProgress(
+            100,
+            100,
+            "Importação concluída!"
+        );
+
+
+        // Deixar o usuário visualizar os 100%
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    700
+                )
+        );
+
+
+        // =================================================
+        // RECARREGAR TELA
+        // =================================================
+
+        await Promise.all([
+            loadFinanceSettings(),
+            loadCategories()
+        ]);
+
+
+        // =================================================
+        // FECHAR MODAL
+        // =================================================
+
+        if (
+            modal?.open
+        ) {
+
+            modal.close();
+        }
+
+
+        confirmationAction =
+            null;
+
+
+        // =================================================
+        // SUCESSO
+        // =================================================
+
+        showToast(
+            "Backup importado com sucesso."
+        );
+
+
+        // Limpar depois que modal já fechou
+        resetImportProgress();
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao importar backup:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Erro ao importar o backup."
+        );
+
+
+        resetImportProgress();
+
+
+    } finally {
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+            button.textContent =
+                "Confirmar";
+        }
+    }
+}
+
 
 // =====================================================
 // APAGAR TODOS OS DADOS FINANCEIROS
@@ -2143,17 +3017,48 @@ async function deleteAllFinancialData() {
         );
 
 
+    const modal =
+        getElement(
+            "confirmationModal"
+        );
+
+
     try {
 
-        button.disabled =
-            true;
+        // =================================================
+        // LOADING
+        // =================================================
+
+        if (button) {
+
+            button.disabled =
+                true;
 
 
-        button.textContent =
-            "Apagando...";
+            button.textContent =
+                "Apagando...";
+        }
 
 
-        // Primeiro busca os dados existentes
+        updateImportProgress(
+            0,
+            100,
+            "Preparando exclusão dos dados..."
+        );
+
+
+        await new Promise(
+            resolve =>
+                requestAnimationFrame(
+                    resolve
+                )
+        );
+
+
+        // =================================================
+        // BUSCAR DADOS
+        // =================================================
+
         const [
             movimentacoes,
             fixos,
@@ -2175,9 +3080,43 @@ async function deleteAllFinancialData() {
             ]);
 
 
-        // =========================
-        // Excluir movimentações
-        // =========================
+        // =================================================
+        // TOTAL DE OPERAÇÕES
+        // =================================================
+
+        const totalOperations =
+
+            movimentacoes.length +
+
+            fixos.length +
+
+            categoriasData.length +
+
+            1;
+
+
+        let completedOperations =
+            0;
+
+
+        function advanceProgress(
+            text
+        ) {
+
+            completedOperations++;
+
+
+            updateImportProgress(
+                completedOperations,
+                totalOperations,
+                text
+            );
+        }
+
+
+        // =================================================
+        // EXCLUIR MOVIMENTAÇÕES
+        // =================================================
 
         for (
             const movimentacao
@@ -2191,12 +3130,17 @@ async function deleteAllFinancialData() {
                         "DELETE"
                 }
             );
+
+
+            advanceProgress(
+                "Apagando movimentações..."
+            );
         }
 
 
-        // =========================
-        // Excluir fixos
-        // =========================
+        // =================================================
+        // EXCLUIR FIXOS
+        // =================================================
 
         for (
             const fixo
@@ -2210,12 +3154,17 @@ async function deleteAllFinancialData() {
                         "DELETE"
                 }
             );
+
+
+            advanceProgress(
+                "Apagando lançamentos fixos..."
+            );
         }
 
 
-        // =========================
-        // Excluir categorias
-        // =========================
+        // =================================================
+        // EXCLUIR CATEGORIAS
+        // =================================================
 
         for (
             const categoria
@@ -2240,12 +3189,17 @@ async function deleteAllFinancialData() {
                     error.message
                 );
             }
+
+
+            advanceProgress(
+                "Apagando categorias..."
+            );
         }
 
 
-        // =========================
-        // Zerar orçamento
-        // =========================
+        // =================================================
+        // RESETAR CONFIGURAÇÕES
+        // =================================================
 
         await apiRequest(
             "/configuracoes",
@@ -2262,7 +3216,7 @@ async function deleteAllFinancialData() {
                         orcamento_mensal:
                             0,
 
-                        dia_inicio_mes:
+                        inicio_mes:
                             1,
 
                         forma_pagamento_padrao:
@@ -2278,6 +3232,35 @@ async function deleteAllFinancialData() {
         );
 
 
+        advanceProgress(
+            "Restaurando configurações padrão..."
+        );
+
+
+        // =================================================
+        // GARANTIR 100%
+        // =================================================
+
+        updateImportProgress(
+            100,
+            100,
+            "Dados apagados com sucesso!"
+        );
+
+
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    700
+                )
+        );
+
+
+        // =================================================
+        // ATUALIZAR ESTADO LOCAL
+        // =================================================
+
         configuracoes = {
 
             moeda:
@@ -2286,7 +3269,7 @@ async function deleteAllFinancialData() {
             orcamento_mensal:
                 0,
 
-            dia_inicio_mes:
+            inicio_mes:
                 1,
 
             forma_pagamento_padrao:
@@ -2300,14 +3283,47 @@ async function deleteAllFinancialData() {
         };
 
 
-        await loadCategories();
+        // =================================================
+        // RECARREGAR TELA
+        // =================================================
+
+        await Promise.all([
+
+            loadFinanceSettings(),
+
+            loadCategories()
+        ]);
+
 
         renderFinanceSettings();
 
 
+        // =================================================
+        // FECHAR MODAL
+        // =================================================
+
+        if (
+            modal?.open
+        ) {
+
+            modal.close();
+        }
+
+
+        confirmationAction =
+            null;
+
+
+        // =================================================
+        // SUCESSO
+        // =================================================
+
         showToast(
             "Dados financeiros apagados."
         );
+
+
+        resetImportProgress();
 
 
     } catch (error) {
@@ -2319,18 +3335,25 @@ async function deleteAllFinancialData() {
 
 
         showToast(
-            error.message
+            error.message ||
+            "Erro ao apagar dados financeiros."
         );
+
+
+        resetImportProgress();
 
 
     } finally {
 
-        button.disabled =
-            false;
+        if (button) {
+
+            button.disabled =
+                false;
 
 
-        button.textContent =
-            "Confirmar";
+            button.textContent =
+                "Confirmar";
+        }
     }
 }
 
@@ -2791,6 +3814,46 @@ function setupEvents() {
             showToast(
                 "O envio de foto será adicionado posteriormente."
             );
+        }
+    );
+
+    // Importar
+
+    getElement(
+        "importDataButton"
+    )?.addEventListener(
+        "click",
+        () => {
+
+            getElement(
+                "importDataInput"
+            )?.click();
+        }
+    );
+
+
+    getElement(
+        "importDataInput"
+    )?.addEventListener(
+        "change",
+        event => {
+
+            const file =
+                event.target.files?.[0];
+
+
+            if (!file) {
+                return;
+            }
+
+
+            importDataFromJson(
+                file
+            );
+
+
+            event.target.value =
+                "";
         }
     );
 

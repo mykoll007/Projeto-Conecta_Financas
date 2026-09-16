@@ -604,6 +604,33 @@
             </button>
           </div>
 
+          <div class="data-action-card">
+
+            <div class="data-action-icon export-icon">
+              ↑
+            </div>
+
+            <div>
+
+              <strong>
+                Importar dados
+              </strong>
+
+              <p>
+                Restaure categorias, movimentações,
+                fixos e preferências a partir de um backup JSON.
+              </p>
+
+            </div>
+
+            <input type="file" id="importDataInput" accept="application/json,.json" hidden>
+
+            <button type="button" class="secondary-button" id="importDataButton">
+              Importar
+            </button>
+
+          </div>
+
           <!-- =====================================================
      APAGAR DADOS FINANCEIROS
 ===================================================== -->
@@ -728,6 +755,41 @@
       <p id="confirmationText">
         Deseja continuar?
       </p>
+
+      <div
+  class="import-progress"
+  id="importProgress"
+  hidden
+>
+
+  <div class="import-progress-header">
+
+    <span>
+      Importando dados...
+    </span>
+
+    <strong id="importProgressPercent">
+      0%
+    </strong>
+
+  </div>
+
+
+  <div class="import-progress-track">
+
+    <div
+      class="import-progress-bar"
+      id="importProgressBar"
+    ></div>
+
+  </div>
+
+
+  <small id="importProgressText">
+    Preparando importação...
+  </small>
+
+</div>
 
       <div class="modal-actions">
         <button type="button" class="secondary-button" data-close-modal="confirmationModal">
