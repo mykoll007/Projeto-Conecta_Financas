@@ -6,35 +6,176 @@ const LOGIN_KEY = "clara-financas-login";
 const TOKEN_KEY = "clara-financas-token";
 const THEME_KEY = "clara-financas-tema";
 
-const API_URL = "https://projeto-conecta-financas.vercel.app/api";
+const API_URL =
+    "https://projeto-conecta-financas.vercel.app/api";
+
+
+// =====================================================
+// MOEDA
+// =====================================================
+
+let currentCurrency =
+    "BRL";
+
+
+let currency =
+    createCurrencyFormatter(
+        currentCurrency
+    );
+
+
+function createCurrencyFormatter(
+    currencyCode
+) {
+
+    return new Intl.NumberFormat(
+        "pt-BR",
+        {
+            style:
+                "currency",
+
+            currency:
+                currencyCode,
+
+            minimumFractionDigits:
+                2,
+
+            maximumFractionDigits:
+                2
+        }
+    );
+}
+
+
+// =====================================================
+// CONFIGURAÇÃO DE PENDÊNCIAS
+// =====================================================
+
+let includePendingInReports =
+    true;
+
+
+// =====================================================
+// CARREGAR CONFIGURAÇÕES
+// =====================================================
+
+async function loadFinancialSettings() {
+
+    try {
+
+        const configuracao =
+            await apiRequest(
+                "/configuracoes"
+            );
+
+
+        // =========================
+        // MOEDA
+        // =========================
+
+        currentCurrency =
+            configuracao?.moeda ||
+            "BRL";
+
+
+        currency =
+            createCurrencyFormatter(
+                currentCurrency
+            );
+
+
+        // =========================
+        // INCLUIR PENDÊNCIAS
+        // =========================
+
+        includePendingInReports =
+            Boolean(
+                Number(
+                    configuracao
+                        ?.incluir_pendencias ??
+                    1
+                )
+            );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao carregar configurações:",
+            error
+        );
+
+
+        // =========================
+        // FALLBACK MOEDA
+        // =========================
+
+        currentCurrency =
+            "BRL";
+
+
+        currency =
+            createCurrencyFormatter(
+                "BRL"
+            );
+
+
+        // =========================
+        // FALLBACK PENDÊNCIAS
+        // =========================
+
+        includePendingInReports =
+            true;
+    }
+}
 
 
 // =====================================================
 // FORMATADORES
 // =====================================================
 
-const currency = new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL"
-});
-
-
 const monthFormatter =
-    new Intl.DateTimeFormat("pt-BR", {
-        month: "short"
-    });
+    new Intl.DateTimeFormat(
+        "pt-BR",
+        {
+            month:
+                "short"
+        }
+    );
 
+
+// =====================================================
+// CORES DAS CATEGORIAS
+// =====================================================
 
 const categoryColors = {
-    Alimentação: "#e84c3d",
-    Moradia: "#3385d6",
-    Transporte: "#e9a319",
-    Saúde: "#8854d0",
-    Lazer: "#21a366",
-    Salário: "#087747",
-    Educação: "#3b82f6",
-    Assinaturas: "#ec4899",
-    Outros: "#95a19a"
+
+    Alimentação:
+        "#e84c3d",
+
+    Moradia:
+        "#3385d6",
+
+    Transporte:
+        "#e9a319",
+
+    Saúde:
+        "#8854d0",
+
+    Lazer:
+        "#21a366",
+
+    Salário:
+        "#087747",
+
+    Educação:
+        "#3b82f6",
+
+    Assinaturas:
+        "#ec4899",
+
+    Outros:
+        "#95a19a"
 };
 
 
@@ -43,11 +184,17 @@ const categoryColors = {
 // =====================================================
 
 let appData = {
-    transactions: [],
-    categories: []
+
+    transactions:
+        [],
+
+    categories:
+        []
 };
 
-let reportTransactions = [];
+
+let reportTransactions =
+    [];
 
 
 // =====================================================
@@ -55,7 +202,10 @@ let reportTransactions = [];
 // =====================================================
 
 function getElement(id) {
-    return document.getElementById(id);
+
+    return document.getElementById(
+        id
+    );
 }
 
 
@@ -64,9 +214,14 @@ function getElement(id) {
 // =====================================================
 
 function getToken() {
+
     return (
-        localStorage.getItem(TOKEN_KEY) ||
-        sessionStorage.getItem(TOKEN_KEY)
+        localStorage.getItem(
+            TOKEN_KEY
+        ) ||
+        sessionStorage.getItem(
+            TOKEN_KEY
+        )
     );
 }
 
@@ -78,19 +233,29 @@ function getToken() {
 function getSession() {
 
     const savedSession =
-        localStorage.getItem(LOGIN_KEY) ||
-        sessionStorage.getItem(LOGIN_KEY);
+        localStorage.getItem(
+            LOGIN_KEY
+        ) ||
+        sessionStorage.getItem(
+            LOGIN_KEY
+        );
+
 
     const token =
         getToken();
 
 
-    if (!savedSession || !token) {
+    if (
+        !savedSession ||
+        !token
+    ) {
 
         clearSession();
 
+
         window.location.href =
             "login.html";
+
 
         return null;
     }
@@ -102,17 +267,24 @@ function getSession() {
             savedSession
         );
 
+
     } catch (error) {
 
         clearSession();
 
+
         window.location.href =
             "login.html";
+
 
         return null;
     }
 }
 
+
+// =====================================================
+// LIMPAR SESSÃO
+// =====================================================
 
 function clearSession() {
 
@@ -120,13 +292,16 @@ function clearSession() {
         LOGIN_KEY
     );
 
+
     localStorage.removeItem(
         TOKEN_KEY
     );
 
+
     sessionStorage.removeItem(
         LOGIN_KEY
     );
+
 
     sessionStorage.removeItem(
         TOKEN_KEY
@@ -151,8 +326,10 @@ async function apiRequest(
 
         clearSession();
 
+
         window.location.href =
             "login.html";
+
 
         throw new Error(
             "Usuário não autenticado."
@@ -167,7 +344,10 @@ async function apiRequest(
 
     if (
         options.body &&
-        !(options.body instanceof FormData)
+        !(
+            options.body
+            instanceof FormData
+        )
     ) {
 
         headers["Content-Type"] =
@@ -184,13 +364,15 @@ async function apiRequest(
 
     try {
 
-        response = await fetch(
-            `${API_URL}${endpoint}`,
-            {
-                ...options,
-                headers
-            }
-        );
+        response =
+            await fetch(
+                `${API_URL}${endpoint}`,
+                {
+                    ...options,
+                    headers
+                }
+            );
+
 
     } catch (error) {
 
@@ -200,7 +382,8 @@ async function apiRequest(
     }
 
 
-    let data = null;
+    let data =
+        null;
 
 
     try {
@@ -208,18 +391,25 @@ async function apiRequest(
         data =
             await response.json();
 
+
     } catch (error) {
 
-        data = null;
+        data =
+            null;
     }
 
 
-    if (response.status === 401) {
+    if (
+        response.status ===
+        401
+    ) {
 
         clearSession();
 
+
         window.location.href =
             "login.html";
+
 
         throw new Error(
             "Sua sessão expirou."
@@ -227,7 +417,9 @@ async function apiRequest(
     }
 
 
-    if (!response.ok) {
+    if (
+        !response.ok
+    ) {
 
         throw new Error(
             data?.message ||
@@ -247,7 +439,9 @@ async function apiRequest(
 function showToast(message) {
 
     const toast =
-        getElement("toast");
+        getElement(
+            "toast"
+        );
 
 
     if (!toast) {
@@ -287,19 +481,27 @@ function showToast(message) {
 // UTILITÁRIOS
 // =====================================================
 
-function escapeHtml(value = "") {
+function escapeHtml(
+    value = ""
+) {
 
     const element =
         document.createElement(
             "div"
         );
 
+
     element.textContent =
         value;
+
 
     return element.innerHTML;
 }
 
+
+// =====================================================
+// NORMALIZAR DATA
+// =====================================================
 
 function normalizeDate(value) {
 
@@ -309,7 +511,9 @@ function normalizeDate(value) {
 
 
     const text =
-        String(value);
+        String(
+            value
+        );
 
 
     const match =
@@ -319,12 +523,15 @@ function normalizeDate(value) {
 
 
     if (match) {
+
         return match[0];
     }
 
 
     const date =
-        new Date(value);
+        new Date(
+            value
+        );
 
 
     if (
@@ -332,12 +539,14 @@ function normalizeDate(value) {
             date.getTime()
         )
     ) {
+
         return "";
     }
 
 
     const year =
         date.getFullYear();
+
 
     const month =
         String(
@@ -346,6 +555,7 @@ function normalizeDate(value) {
             2,
             "0"
         );
+
 
     const day =
         String(
@@ -356,11 +566,19 @@ function normalizeDate(value) {
         );
 
 
-    return `${year}-${month}-${day}`;
+    return (
+        `${year}-${month}-${day}`
+    );
 }
 
 
-function formatDate(dateValue) {
+// =====================================================
+// FORMATAR DATA
+// =====================================================
+
+function formatDate(
+    dateValue
+) {
 
     const normalized =
         normalizeDate(
@@ -369,6 +587,7 @@ function formatDate(dateValue) {
 
 
     if (!normalized) {
+
         return "-";
     }
 
@@ -382,6 +601,10 @@ function formatDate(dateValue) {
     );
 }
 
+
+// =====================================================
+// DATA PARA INPUT
+// =====================================================
 
 function formatInputDate(date) {
 
@@ -407,7 +630,9 @@ function formatInputDate(date) {
         );
 
 
-    return `${year}-${month}-${day}`;
+    return (
+        `${year}-${month}-${day}`
+    );
 }
 
 
@@ -431,7 +656,10 @@ async function renderUser() {
 
 
         const firstName =
-            name.split(" ")[0];
+            name
+                .split(
+                    " "
+                )[0];
 
 
         const profileName =
@@ -457,7 +685,9 @@ async function renderUser() {
 
             profileAvatar.textContent =
                 firstName
-                    .charAt(0)
+                    .charAt(
+                        0
+                    )
                     .toUpperCase();
         }
 
@@ -490,20 +720,34 @@ function setupInitialDates() {
         );
 
 
-    getElement(
-        "startDate"
-    ).value =
-        formatInputDate(
-            firstDay
+    const startDate =
+        getElement(
+            "startDate"
         );
 
 
-    getElement(
-        "endDate"
-    ).value =
-        formatInputDate(
-            today
+    const endDate =
+        getElement(
+            "endDate"
         );
+
+
+    if (startDate) {
+
+        startDate.value =
+            formatInputDate(
+                firstDay
+            );
+    }
+
+
+    if (endDate) {
+
+        endDate.value =
+            formatInputDate(
+                today
+            );
+    }
 }
 
 
@@ -522,7 +766,9 @@ async function loadCategories() {
 
 
         appData.categories =
-            Array.isArray(categories)
+            Array.isArray(
+                categories
+            )
                 ? categories
                 : [];
 
@@ -545,6 +791,10 @@ async function loadCategories() {
 }
 
 
+// =====================================================
+// OPTIONS DAS CATEGORIAS
+// =====================================================
+
 function renderCategoryOptions() {
 
     const select =
@@ -558,20 +808,27 @@ function renderCategoryOptions() {
     }
 
 
+    const currentValue =
+        select.value;
+
+
     const options =
         appData.categories
-            .map(category => {
+            .map(
+                category => {
 
-                return `
-                    <option value="${category.id}">
-                        ${escapeHtml(
-                            category.nome
-                        )}
-                    </option>
-                `;
-
-            })
-            .join("");
+                    return `
+                        <option value="${category.id}">
+                            ${escapeHtml(
+                                category.nome
+                            )}
+                        </option>
+                    `;
+                }
+            )
+            .join(
+                ""
+            );
 
 
     select.innerHTML = `
@@ -581,6 +838,22 @@ function renderCategoryOptions() {
 
         ${options}
     `;
+
+
+    const exists =
+        [...select.options]
+            .some(
+                option =>
+                    option.value ===
+                    currentValue
+            );
+
+
+    if (exists) {
+
+        select.value =
+            currentValue;
+    }
 }
 
 
@@ -683,8 +956,12 @@ async function loadTransactions() {
 
 
         showToast(
-            error.message
+            error.message ||
+            "Erro ao carregar movimentações."
         );
+
+
+        throw error;
     }
 }
 
@@ -698,31 +975,36 @@ function getFilteredTransactions() {
     const startDate =
         getElement(
             "startDate"
-        ).value;
+        )?.value ||
+        "";
 
 
     const endDate =
         getElement(
             "endDate"
-        ).value;
+        )?.value ||
+        "";
 
 
     const type =
         getElement(
             "typeFilter"
-        ).value;
+        )?.value ||
+        "all";
 
 
     const status =
         getElement(
             "statusFilter"
-        ).value;
+        )?.value ||
+        "all";
 
 
     const category =
         getElement(
             "categoryFilter"
-        ).value;
+        )?.value ||
+        "all";
 
 
     return appData.transactions
@@ -732,25 +1014,25 @@ function getFilteredTransactions() {
                 const matchesStart =
                     !startDate ||
                     transaction.date >=
-                        startDate;
+                    startDate;
 
 
                 const matchesEnd =
                     !endDate ||
                     transaction.date <=
-                        endDate;
+                    endDate;
 
 
                 const matchesType =
                     type === "all" ||
                     transaction.type ===
-                        type;
+                    type;
 
 
                 const matchesStatus =
                     status === "all" ||
                     transaction.status ===
-                        status;
+                    status;
 
 
                 const matchesCategory =
@@ -758,7 +1040,9 @@ function getFilteredTransactions() {
                     String(
                         transaction.categoryId
                     ) ===
-                    String(category);
+                    String(
+                        category
+                    );
 
 
                 return (
@@ -776,10 +1060,12 @@ function getFilteredTransactions() {
                 second
             ) => {
 
-                return second.date
-                    .localeCompare(
-                        first.date
-                    );
+                return (
+                    second.date
+                        .localeCompare(
+                            first.date
+                        )
+                );
             }
         );
 }
@@ -795,7 +1081,9 @@ function sumTransactions(
 ) {
 
     return transactions
-        .filter(filter)
+        .filter(
+            filter
+        )
         .reduce(
             (
                 total,
@@ -808,10 +1096,40 @@ function sumTransactions(
                         transaction.amount
                     )
                 );
-
             },
             0
         );
+}
+
+
+// =====================================================
+// REGRA CENTRAL DAS PENDÊNCIAS
+// =====================================================
+
+function shouldIncludeInFinancialIndicators(
+    transaction
+) {
+
+    if (
+        transaction.status ===
+        "paid"
+    ) {
+
+        return true;
+    }
+
+
+    if (
+        transaction.status ===
+            "pending" &&
+        includePendingInReports
+    ) {
+
+        return true;
+    }
+
+
+    return false;
 }
 
 
@@ -821,46 +1139,48 @@ function sumTransactions(
 
 function renderSummary() {
 
-    const incomeTransactions =
+    const indicatorTransactions =
         reportTransactions.filter(
-            transaction => {
-
-                return (
-                    transaction.type ===
-                        "income" &&
-
-                    transaction.status ===
-                        "paid"
-                );
-            }
+            shouldIncludeInFinancialIndicators
         );
 
+
+    // =========================
+    // ENTRADAS
+    // =========================
+
+    const incomeTransactions =
+        indicatorTransactions.filter(
+            transaction =>
+                transaction.type ===
+                "income"
+        );
+
+
+    // =========================
+    // DESPESAS
+    // =========================
 
     const expenseTransactions =
-        reportTransactions.filter(
-            transaction => {
-
-                return (
-                    transaction.type ===
-                        "expense" &&
-
-                    transaction.status ===
-                        "paid"
-                );
-            }
+        indicatorTransactions.filter(
+            transaction =>
+                transaction.type ===
+                "expense"
         );
 
+
+    // =========================
+    // PENDÊNCIAS
+    // =========================
 
     const pendingTransactions =
-        reportTransactions.filter(
-            transaction => {
-
-                return (
+        includePendingInReports
+            ? reportTransactions.filter(
+                transaction =>
                     transaction.status ===
                     "pending"
-                );
-            }
-        );
+            )
+            : [];
 
 
     const income =
@@ -885,30 +1205,25 @@ function renderSummary() {
 
 
     const balance =
-        income - expense;
+        income -
+        expense;
 
 
-    getElement(
-        "totalIncome"
-    ).textContent =
-        currency.format(
-            income
+    const totalIncome =
+        getElement(
+            "totalIncome"
         );
 
 
-    getElement(
-        "totalExpense"
-    ).textContent =
-        currency.format(
-            expense
+    const totalExpense =
+        getElement(
+            "totalExpense"
         );
 
 
-    getElement(
-        "totalPending"
-    ).textContent =
-        currency.format(
-            pending
+    const totalPending =
+        getElement(
+            "totalPending"
         );
 
 
@@ -918,52 +1233,103 @@ function renderSummary() {
         );
 
 
-    periodBalance.textContent =
-        currency.format(
-            balance
+    const incomeCount =
+        getElement(
+            "incomeCount"
         );
 
 
-    periodBalance.classList.toggle(
-        "expense-text",
-        balance < 0
-    );
+    const expenseCount =
+        getElement(
+            "expenseCount"
+        );
 
 
-    periodBalance.classList.toggle(
-        "income-text",
-        balance >= 0
-    );
+    const pendingCount =
+        getElement(
+            "pendingCount"
+        );
 
 
-    getElement(
-        "incomeCount"
-    ).textContent =
-        `${incomeTransactions.length} recebimento${
-            incomeTransactions.length === 1
-                ? ""
-                : "s"
-        }`;
+    if (totalIncome) {
+
+        totalIncome.textContent =
+            currency.format(
+                income
+            );
+    }
 
 
-    getElement(
-        "expenseCount"
-    ).textContent =
-        `${expenseTransactions.length} pagamento${
-            expenseTransactions.length === 1
-                ? ""
-                : "s"
-        }`;
+    if (totalExpense) {
+
+        totalExpense.textContent =
+            currency.format(
+                expense
+            );
+    }
 
 
-    getElement(
-        "pendingCount"
-    ).textContent =
-        `${pendingTransactions.length} pendência${
-            pendingTransactions.length === 1
-                ? ""
-                : "s"
-        }`;
+    if (totalPending) {
+
+        totalPending.textContent =
+            currency.format(
+                pending
+            );
+    }
+
+
+    if (periodBalance) {
+
+        periodBalance.textContent =
+            currency.format(
+                balance
+            );
+
+
+        periodBalance.classList.toggle(
+            "expense-text",
+            balance < 0
+        );
+
+
+        periodBalance.classList.toggle(
+            "income-text",
+            balance >= 0
+        );
+    }
+
+
+    if (incomeCount) {
+
+        incomeCount.textContent =
+            `${incomeTransactions.length} recebimento${
+                incomeTransactions.length === 1
+                    ? ""
+                    : "s"
+            }`;
+    }
+
+
+    if (expenseCount) {
+
+        expenseCount.textContent =
+            `${expenseTransactions.length} pagamento${
+                expenseTransactions.length === 1
+                    ? ""
+                    : "s"
+            }`;
+    }
+
+
+    if (pendingCount) {
+
+        pendingCount.textContent =
+            `${pendingTransactions.length} pendência${
+                pendingTransactions.length === 1
+                    ? ""
+                    : "s"
+            }`;
+    }
 
 
     renderIndicators(
@@ -1008,8 +1374,10 @@ function renderIndicators(
 
     const averageExpense =
         expenseTransactions.length > 0
-            ? expense /
+            ? (
+                expense /
                 expenseTransactions.length
+            )
             : 0;
 
 
@@ -1057,70 +1425,123 @@ function renderIndicators(
             )[0];
 
 
-    getElement(
-        "savingRate"
-    ).textContent =
-        `${Math.round(
-            savingRate
-        )}%`;
-
-
-    getElement(
-        "savingProgress"
-    ).style.width =
-        `${normalizedSavingRate}%`;
-
-
-    getElement(
-        "savingProgress"
-    ).style.background =
-        savingRate < 0
-            ? "var(--expense)"
-            : savingRate < 15
-                ? "var(--warning)"
-                : "var(--primary)";
-
-
-    getElement(
-        "averageExpense"
-    ).textContent =
-        currency.format(
-            averageExpense
+    const savingRateElement =
+        getElement(
+            "savingRate"
         );
 
 
-    getElement(
-        "highestExpense"
-    ).textContent =
-        currency.format(
-            highest?.amount ||
-            0
+    const savingProgress =
+        getElement(
+            "savingProgress"
         );
 
 
-    getElement(
-        "highestExpenseDescription"
-    ).textContent =
-        highest
-            ? `${highest.description} em ${formatDate(highest.date)}.`
-            : "Nenhuma despesa encontrada.";
+    const averageExpenseElement =
+        getElement(
+            "averageExpense"
+        );
 
 
-    getElement(
-        "topCategory"
-    ).textContent =
-        topCategory?.[0] ||
-        "Nenhuma";
+    const highestExpense =
+        getElement(
+            "highestExpense"
+        );
 
 
-    getElement(
-        "topCategoryValue"
-    ).textContent =
-        topCategory
-            ? `${currency.format(
-                topCategory[1].total
-            )} em despesas.`
-            : "R$ 0,00 em despesas.";
+    const highestExpenseDescription =
+        getElement(
+            "highestExpenseDescription"
+        );
+
+
+    const topCategoryElement =
+        getElement(
+            "topCategory"
+        );
+
+
+    const topCategoryValue =
+        getElement(
+            "topCategoryValue"
+        );
+
+
+    if (savingRateElement) {
+
+        savingRateElement.textContent =
+            `${Math.round(
+                savingRate
+            )}%`;
+    }
+
+
+    if (savingProgress) {
+
+        savingProgress.style.width =
+            `${normalizedSavingRate}%`;
+
+
+        savingProgress.style.background =
+            savingRate < 0
+                ? "var(--expense)"
+                : savingRate < 15
+                    ? "var(--warning)"
+                    : "var(--primary)";
+    }
+
+
+    if (averageExpenseElement) {
+
+        averageExpenseElement.textContent =
+            currency.format(
+                averageExpense
+            );
+    }
+
+
+    if (highestExpense) {
+
+        highestExpense.textContent =
+            currency.format(
+                highest?.amount ||
+                0
+            );
+    }
+
+
+    if (
+        highestExpenseDescription
+    ) {
+
+        highestExpenseDescription.textContent =
+            highest
+                ? `${highest.description} em ${formatDate(
+                    highest.date
+                )}.`
+                : "Nenhuma despesa encontrada.";
+    }
+
+
+    if (topCategoryElement) {
+
+        topCategoryElement.textContent =
+            topCategory?.[0] ||
+            "Nenhuma";
+    }
+
+
+    if (topCategoryValue) {
+
+        topCategoryValue.textContent =
+            topCategory
+                ? `${currency.format(
+                    topCategory[1].total
+                )} em despesas.`
+                : `${currency.format(
+                    0
+                )} em despesas.`;
+    }
 }
 
 
@@ -1143,26 +1564,43 @@ function calculateCategoryTotals(
                 "Outros";
 
 
-            if (!totals[category]) {
+            if (
+                !totals[
+                    category
+                ]
+            ) {
 
-                totals[category] = {
-                    total: 0,
-                    count: 0,
+                totals[
+                    category
+                ] = {
+
+                    total:
+                        0,
+
+                    count:
+                        0,
+
                     color:
                         transaction.categoryColor ||
-                        categoryColors[category] ||
+                        categoryColors[
+                            category
+                        ] ||
                         categoryColors.Outros
                 };
             }
 
 
-            totals[category].total +=
+            totals[
+                category
+            ].total +=
                 Number(
                     transaction.amount
                 );
 
 
-            totals[category].count +=
+            totals[
+                category
+            ].count +=
                 1;
         }
     );
@@ -1181,13 +1619,13 @@ function getMonthsBetweenDates() {
     const startValue =
         getElement(
             "startDate"
-        ).value;
+        )?.value;
 
 
     const endValue =
         getElement(
             "endDate"
-        ).value;
+        )?.value;
 
 
     if (
@@ -1211,7 +1649,8 @@ function getMonthsBetweenDates() {
         );
 
 
-    const months = [];
+    const months =
+        [];
 
 
     const current =
@@ -1275,13 +1714,23 @@ function renderMonthlyChart() {
         getMonthsBetweenDates();
 
 
+    const monthlyChart =
+        getElement(
+            "monthlyChart"
+        );
+
+
+    if (!monthlyChart) {
+        return;
+    }
+
+
     if (
         months.length === 0
     ) {
 
-        getElement(
-            "monthlyChart"
-        ).innerHTML = "";
+        monthlyChart.innerHTML =
+            "";
 
         return;
     }
@@ -1304,12 +1753,11 @@ function renderMonthlyChart() {
                             return (
                                 date.getMonth() ===
                                     period.month &&
-
                                 date.getFullYear() ===
                                     period.year &&
-
-                                transaction.status ===
-                                    "paid"
+                                shouldIncludeInFinancialIndicators(
+                                    transaction
+                                )
                             );
                         }
                     );
@@ -1357,9 +1805,7 @@ function renderMonthlyChart() {
         );
 
 
-    getElement(
-        "monthlyChart"
-    ).innerHTML =
+    monthlyChart.innerHTML =
         values
             .map(
                 value => {
@@ -1396,29 +1842,37 @@ function renderMonthlyChart() {
                             <div
                                 class="bar income"
                                 style="height: ${incomeHeight}%"
-                                title="Entradas: ${currency.format(value.income)}"
+                                title="Entradas: ${currency.format(
+                                    value.income
+                                )}"
                             ></div>
 
                             <div
                                 class="bar expense"
                                 style="height: ${expenseHeight}%"
-                                title="Despesas: ${currency.format(value.expense)}"
+                                title="Despesas: ${currency.format(
+                                    value.expense
+                                )}"
                             ></div>
 
                             <label>
-                                ${escapeHtml(value.label)}
+                                ${escapeHtml(
+                                    value.label
+                                )}
                             </label>
 
                         </div>
                     `;
                 }
             )
-            .join("");
+            .join(
+                ""
+            );
 }
 
 
 // =====================================================
-// GRÁFICO DE CATEGORIA
+// GRÁFICO POR CATEGORIA
 // =====================================================
 
 function renderCategoryChart() {
@@ -1430,9 +1884,9 @@ function renderCategoryChart() {
                 return (
                     transaction.type ===
                         "expense" &&
-
-                    transaction.status ===
-                        "paid"
+                    shouldIncludeInFinancialIndicators(
+                        transaction
+                    )
                 );
             }
         );
@@ -1478,17 +1932,31 @@ function renderCategoryChart() {
         );
 
 
-    getElement(
-        "donutTotal"
-    ).textContent =
-        currency
-            .format(
+    const donutTotal =
+        getElement(
+            "donutTotal"
+        );
+
+
+    const categoryDonut =
+        getElement(
+            "categoryDonut"
+        );
+
+
+    const categoryLegend =
+        getElement(
+            "categoryLegend"
+        );
+
+
+    if (donutTotal) {
+
+        donutTotal.textContent =
+            currency.format(
                 total
-            )
-            .replace(
-                ",00",
-                ""
             );
+    }
 
 
     if (
@@ -1496,25 +1964,30 @@ function renderCategoryChart() {
         total <= 0
     ) {
 
-        getElement(
-            "categoryDonut"
-        ).style.background =
-            "conic-gradient(var(--border) 0 100%)";
+        if (categoryDonut) {
+
+            categoryDonut.style.background =
+                "conic-gradient(var(--border) 0 100%)";
+        }
 
 
-        getElement(
-            "categoryLegend"
-        ).innerHTML =
-            "<p>Sem despesas no período.</p>";
+        if (categoryLegend) {
+
+            categoryLegend.innerHTML =
+                "<p>Sem despesas no período.</p>";
+        }
 
 
         return;
     }
 
 
-    let accumulated = 0;
+    let accumulated =
+        0;
 
-    const segments = [];
+
+    const segments =
+        [];
 
 
     entries.forEach(
@@ -1555,86 +2028,117 @@ function renderCategoryChart() {
     );
 
 
-    getElement(
-        "categoryDonut"
-    ).style.background =
-        `conic-gradient(${segments.join(",")})`;
+    if (categoryDonut) {
+
+        categoryDonut.style.background =
+            `conic-gradient(${segments.join(
+                ","
+            )})`;
+    }
 
 
-    getElement(
-        "categoryLegend"
-    ).innerHTML =
-        entries
-            .slice(
-                0,
-                8
-            )
-            .map(
-                (
-                    [
-                        category,
-                        data
-                    ]
-                ) => {
+    if (categoryLegend) {
 
-                    const percentage =
-                        Math.round(
-                            (
-                                data.total /
-                                total
-                            ) * 100
-                        );
+        categoryLegend.innerHTML =
+            entries
+                .slice(
+                    0,
+                    8
+                )
+                .map(
+                    (
+                        [
+                            category,
+                            data
+                        ]
+                    ) => {
 
-
-                    const color =
-                        data.color ||
-                        categoryColors[
-                            category
-                        ] ||
-                        categoryColors.Outros;
+                        const percentage =
+                            Math.round(
+                                (
+                                    data.total /
+                                    total
+                                ) * 100
+                            );
 
 
-                    return `
-                        <span>
+                        const color =
+                            data.color ||
+                            categoryColors[
+                                category
+                            ] ||
+                            categoryColors.Outros;
 
-                            <i
-                                style="background: ${color}"
-                            ></i>
 
-                            ${escapeHtml(category)}
-                            ·
-                            ${percentage}%
+                        return `
+                            <span>
 
-                        </span>
-                    `;
-                }
-            )
-            .join("");
+                                <i
+                                    style="background: ${color}"
+                                ></i>
+
+                                ${escapeHtml(
+                                    category
+                                )}
+
+                                ·
+
+                                ${percentage}%
+
+                            </span>
+                        `;
+                    }
+                )
+                .join(
+                    ""
+                );
+    }
 }
 
 
 // =====================================================
-// RANKING DE DESPESAS
+// RANKING
 // =====================================================
 
 function renderExpenseRanking() {
 
     const transactions =
         reportTransactions
-            .filter(transaction => {
-                return (
-                    transaction.status === "paid"
-                );
-            })
-            .sort((first, second) => {
+            .filter(
+                transaction =>
+                    shouldIncludeInFinancialIndicators(
+                        transaction
+                    )
+            )
+            .filter(
+                transaction =>
 
-                return (
-                    Number(second.amount) -
-                    Number(first.amount)
-                );
+                    transaction.type ===
+                        "income" ||
 
-            })
-            .slice(0, 5);
+                    transaction.type ===
+                        "expense"
+            )
+            .sort(
+                (
+                    first,
+                    second
+                ) => {
+
+                    return (
+                        Number(
+                            second.amount
+                        ) -
+                        Number(
+                            first.amount
+                        )
+                    );
+                }
+            )
+            .slice(
+                0,
+                5
+            );
 
 
     const container =
@@ -1643,8 +2147,14 @@ function renderExpenseRanking() {
         );
 
 
+    if (!container) {
+        return;
+    }
+
+
     if (
-        transactions.length === 0
+        transactions.length ===
+        0
     ) {
 
         container.innerHTML = `
@@ -1659,12 +2169,13 @@ function renderExpenseRanking() {
                 </strong>
 
                 <p>
-                    Não existem entradas ou despesas pagas
-                    neste período.
+                    Não existem movimentações consideradas
+                    nos indicadores deste período.
                 </p>
 
             </div>
         `;
+
 
         return;
     }
@@ -1752,7 +2263,9 @@ function renderExpenseRanking() {
                     `;
                 }
             )
-            .join("");
+            .join(
+                ""
+            );
 }
 
 
@@ -1762,6 +2275,10 @@ function renderExpenseRanking() {
 
 function renderInsights() {
 
+    // =========================
+    // ENTRADAS
+    // =========================
+
     const income =
         sumTransactions(
             reportTransactions,
@@ -1770,13 +2287,17 @@ function renderInsights() {
                 return (
                     transaction.type ===
                         "income" &&
-
-                    transaction.status ===
-                        "paid"
+                    shouldIncludeInFinancialIndicators(
+                        transaction
+                    )
                 );
             }
         );
 
+
+    // =========================
+    // DESPESAS
+    // =========================
 
     const expense =
         sumTransactions(
@@ -1786,21 +2307,27 @@ function renderInsights() {
                 return (
                     transaction.type ===
                         "expense" &&
-
-                    transaction.status ===
-                        "paid"
+                    shouldIncludeInFinancialIndicators(
+                        transaction
+                    )
                 );
             }
         );
 
 
+    // =========================
+    // PENDENTES
+    // =========================
+
     const pending =
-        sumTransactions(
-            reportTransactions,
-            transaction =>
-                transaction.status ===
-                "pending"
-        );
+        includePendingInReports
+            ? sumTransactions(
+                reportTransactions,
+                transaction =>
+                    transaction.status ===
+                    "pending"
+            )
+            : 0;
 
 
     const expenseRate =
@@ -1820,9 +2347,9 @@ function renderInsights() {
                     return (
                         transaction.type ===
                             "expense" &&
-
-                        transaction.status ===
-                            "paid"
+                        shouldIncludeInFinancialIndicators(
+                            transaction
+                        )
                     );
                 }
             )
@@ -1847,8 +2374,13 @@ function renderInsights() {
             )[0];
 
 
-    const insights = [];
+    const insights =
+        [];
 
+
+    // =========================
+    // SITUAÇÃO GERAL
+    // =========================
 
     if (
         income === 0 &&
@@ -1856,6 +2388,7 @@ function renderInsights() {
     ) {
 
         insights.push({
+
             type:
                 "warning",
 
@@ -1866,14 +2399,16 @@ function renderInsights() {
                 "Poucos dados disponíveis",
 
             text:
-                "Não existem entradas ou despesas pagas no período selecionado."
+                "Não existem entradas ou despesas consideradas no período selecionado."
         });
+
 
     } else if (
         expenseRate <= 70
     ) {
 
         insights.push({
+
             type:
                 "success",
 
@@ -1884,14 +2419,18 @@ function renderInsights() {
                 "Período equilibrado",
 
             text:
-                `As despesas representam ${Math.round(expenseRate)}% das entradas recebidas.`
+                `As despesas representam ${Math.round(
+                    expenseRate
+                )}% das entradas.`
         });
+
 
     } else if (
         expenseRate <= 100
     ) {
 
         insights.push({
+
             type:
                 "warning",
 
@@ -1902,12 +2441,16 @@ function renderInsights() {
                 "Atenção aos gastos",
 
             text:
-                `Você utilizou ${Math.round(expenseRate)}% das entradas com despesas.`
+                `Você utilizou ${Math.round(
+                    expenseRate
+                )}% das entradas com despesas.`
         });
+
 
     } else {
 
         insights.push({
+
             type:
                 "danger",
 
@@ -1918,14 +2461,22 @@ function renderInsights() {
                 "Despesas acima das entradas",
 
             text:
-                `Os gastos ultrapassaram as entradas em ${currency.format(expense - income)}.`
+                `Os gastos ultrapassaram as entradas em ${currency.format(
+                    expense -
+                    income
+                )}.`
         });
     }
 
 
+    // =========================
+    // MAIOR CATEGORIA
+    // =========================
+
     if (topCategory) {
 
         insights.push({
+
             type:
                 "success",
 
@@ -1936,48 +2487,75 @@ function renderInsights() {
                 "Categoria com maior gasto",
 
             text:
-                `${topCategory[0]} concentrou ${currency.format(topCategory[1].total)} das despesas.`
+                `${topCategory[0]} concentrou ${currency.format(
+                    topCategory[1].total
+                )} das despesas.`
         });
     }
 
 
-    if (pending > 0) {
+    // =========================
+    // PENDÊNCIAS
+    // =========================
 
-        insights.push({
-            type:
-                "warning",
+    if (
+        includePendingInReports
+    ) {
 
-            icon:
-                "!",
+        if (
+            pending > 0
+        ) {
 
-            title:
-                "Contas pendentes",
+            insights.push({
 
-            text:
-                `Existem ${currency.format(pending)} aguardando pagamento ou recebimento.`
-        });
+                type:
+                    "warning",
 
-    } else {
+                icon:
+                    "!",
 
-        insights.push({
-            type:
-                "success",
+                title:
+                    "Contas pendentes",
 
-            icon:
-                "✓",
+                text:
+                    `Existem ${currency.format(
+                        pending
+                    )} aguardando pagamento ou recebimento.`
+            });
 
-            title:
-                "Sem pendências",
 
-            text:
-                "Não existem contas pendentes no período selecionado."
-        });
+        } else {
+
+            insights.push({
+
+                type:
+                    "success",
+
+                icon:
+                    "✓",
+
+                title:
+                    "Sem pendências",
+
+                text:
+                    "Não existem contas pendentes no período selecionado."
+            });
+        }
     }
 
 
-    getElement(
-        "insightsList"
-    ).innerHTML =
+    const insightsList =
+        getElement(
+            "insightsList"
+        );
+
+
+    if (!insightsList) {
+        return;
+    }
+
+
+    insightsList.innerHTML =
         insights
             .map(
                 insight => {
@@ -1994,11 +2572,15 @@ function renderInsights() {
                             <div>
 
                                 <strong>
-                                    ${escapeHtml(insight.title)}
+                                    ${escapeHtml(
+                                        insight.title
+                                    )}
                                 </strong>
 
                                 <p>
-                                    ${escapeHtml(insight.text)}
+                                    ${escapeHtml(
+                                        insight.text
+                                    )}
                                 </p>
 
                             </div>
@@ -2007,7 +2589,9 @@ function renderInsights() {
                     `;
                 }
             )
-            .join("");
+            .join(
+                ""
+            );
 }
 
 
@@ -2024,9 +2608,9 @@ function renderCategoryTable() {
                 return (
                     transaction.type ===
                         "expense" &&
-
-                    transaction.status ===
-                        "paid"
+                    shouldIncludeInFinancialIndicators(
+                        transaction
+                    )
                 );
             }
         );
@@ -2084,8 +2668,17 @@ function renderCategoryTable() {
         );
 
 
-    emptyState.hidden =
-        entries.length > 0;
+    if (emptyState) {
+
+        emptyState.hidden =
+            entries.length >
+            0;
+    }
+
+
+    if (!body) {
+        return;
+    }
 
 
     body.innerHTML =
@@ -2127,7 +2720,9 @@ function renderCategoryTable() {
                                         style="background: ${color}"
                                     ></i>
 
-                                    ${escapeHtml(category)}
+                                    ${escapeHtml(
+                                        category
+                                    )}
 
                                 </div>
 
@@ -2142,7 +2737,9 @@ function renderCategoryTable() {
                             <td>
 
                                 <strong>
-                                    ${currency.format(data.total)}
+                                    ${currency.format(
+                                        data.total
+                                    )}
                                 </strong>
 
                             </td>
@@ -2163,8 +2760,11 @@ function renderCategoryTable() {
 
                                     </div>
 
+
                                     <span>
-                                        ${Math.round(percentage)}%
+                                        ${Math.round(
+                                            percentage
+                                        )}%
                                     </span>
 
                                 </div>
@@ -2175,7 +2775,9 @@ function renderCategoryTable() {
                     `;
                 }
             )
-            .join("");
+            .join(
+                ""
+            );
 }
 
 
@@ -2188,24 +2790,28 @@ function renderReport() {
     const startDate =
         getElement(
             "startDate"
-        ).value;
+        )?.value ||
+        "";
 
 
     const endDate =
         getElement(
             "endDate"
-        ).value;
+        )?.value ||
+        "";
 
 
     if (
         startDate &&
         endDate &&
-        startDate > endDate
+        startDate >
+        endDate
     ) {
 
         showToast(
             "A data inicial não pode ser maior que a data final."
         );
+
 
         return;
     }
@@ -2247,38 +2853,73 @@ function setCurrentMonth() {
         );
 
 
-    getElement(
-        "startDate"
-    ).value =
-        formatInputDate(
-            firstDay
+    const startDate =
+        getElement(
+            "startDate"
         );
 
 
-    getElement(
-        "endDate"
-    ).value =
-        formatInputDate(
-            today
+    const endDate =
+        getElement(
+            "endDate"
         );
 
 
-    getElement(
-        "typeFilter"
-    ).value =
-        "all";
+    const typeFilter =
+        getElement(
+            "typeFilter"
+        );
 
 
-    getElement(
-        "statusFilter"
-    ).value =
-        "all";
+    const statusFilter =
+        getElement(
+            "statusFilter"
+        );
 
 
-    getElement(
-        "categoryFilter"
-    ).value =
-        "all";
+    const categoryFilter =
+        getElement(
+            "categoryFilter"
+        );
+
+
+    if (startDate) {
+
+        startDate.value =
+            formatInputDate(
+                firstDay
+            );
+    }
+
+
+    if (endDate) {
+
+        endDate.value =
+            formatInputDate(
+                today
+            );
+    }
+
+
+    if (typeFilter) {
+
+        typeFilter.value =
+            "all";
+    }
+
+
+    if (statusFilter) {
+
+        statusFilter.value =
+            "all";
+    }
+
+
+    if (categoryFilter) {
+
+        categoryFilter.value =
+            "all";
+    }
 
 
     renderReport();
@@ -2292,24 +2933,33 @@ function setCurrentMonth() {
 function exportCsv() {
 
     if (
-        reportTransactions.length === 0
+        reportTransactions.length ===
+        0
     ) {
 
         showToast(
             "Não existem movimentações para exportar."
         );
 
+
         return;
     }
 
 
     const header = [
+
         "Descrição",
+
         "Tipo",
+
         "Categoria",
+
         "Data",
+
         "Status",
+
         "Pagamento",
+
         "Valor"
     ];
 
@@ -2318,21 +2968,40 @@ function exportCsv() {
         reportTransactions.map(
             transaction => {
 
+                let typeText =
+                    "Despesa";
+
+
+                if (
+                    transaction.type ===
+                    "income"
+                ) {
+
+                    typeText =
+                        "Entrada";
+
+                } else if (
+                    transaction.type ===
+                    "saved"
+                ) {
+
+                    typeText =
+                        "Reserva";
+                }
+
+
                 return [
 
                     transaction.description,
 
-                    transaction.type ===
-                    "income"
-                        ? "Entrada"
-                        : "Despesa",
+                    typeText,
 
                     transaction.category,
 
                     transaction.date,
 
                     transaction.status ===
-                    "paid"
+                        "paid"
                         ? "Pago ou recebido"
                         : "Pendente",
 
@@ -2341,7 +3010,9 @@ function exportCsv() {
                     Number(
                         transaction.amount
                     )
-                        .toFixed(2)
+                        .toFixed(
+                            2
+                        )
                         .replace(
                             ".",
                             ","
@@ -2366,19 +3037,26 @@ function exportCsv() {
                                 const escaped =
                                     String(
                                         value
-                                    ).replace(
-                                        /"/g,
-                                        '""'
-                                    );
+                                    )
+                                        .replace(
+                                            /"/g,
+                                            '""'
+                                        );
 
 
-                                return `"${escaped}"`;
+                                return (
+                                    `"${escaped}"`
+                                );
                             }
                         )
-                        .join(";");
+                        .join(
+                            ";"
+                        );
                 }
             )
-            .join("\n");
+            .join(
+                "\n"
+            );
 
 
     const blob =
@@ -2414,12 +3092,12 @@ function exportCsv() {
         `relatorio-financeiro-${
             getElement(
                 "startDate"
-            ).value ||
+            )?.value ||
             "inicio"
         }-${
             getElement(
                 "endDate"
-            ).value ||
+            )?.value ||
             "fim"
         }.csv`;
 
@@ -2430,6 +3108,7 @@ function exportCsv() {
 
 
     link.click();
+
 
     link.remove();
 
@@ -2452,12 +3131,14 @@ function exportCsv() {
 function exportJsonReport() {
 
     if (
-        reportTransactions.length === 0
+        reportTransactions.length ===
+        0
     ) {
 
         showToast(
             "Não existem dados para exportar."
         );
+
 
         return;
     }
@@ -2469,17 +3150,25 @@ function exportJsonReport() {
             new Date()
                 .toISOString(),
 
+        currency:
+            currentCurrency,
+
+        includePending:
+            includePendingInReports,
+
         period: {
 
             start:
                 getElement(
                     "startDate"
-                ).value,
+                )?.value ||
+                "",
 
             end:
                 getElement(
                     "endDate"
-                ).value
+                )?.value ||
+                ""
         },
 
         filters: {
@@ -2487,17 +3176,20 @@ function exportJsonReport() {
             type:
                 getElement(
                     "typeFilter"
-                ).value,
+                )?.value ||
+                "all",
 
             status:
                 getElement(
                     "statusFilter"
-                ).value,
+                )?.value ||
+                "all",
 
             category:
                 getElement(
                     "categoryFilter"
-                ).value
+                )?.value ||
+                "all"
         },
 
         transactions:
@@ -2548,6 +3240,7 @@ function exportJsonReport() {
 
     link.click();
 
+
     link.remove();
 
 
@@ -2584,6 +3277,7 @@ function setupProfileMenu() {
         !button ||
         !dropdown
     ) {
+
         return;
     }
 
@@ -2605,7 +3299,9 @@ function setupProfileMenu() {
 
             button.setAttribute(
                 "aria-expanded",
-                String(isOpen)
+                String(
+                    isOpen
+                )
             );
         }
     );
@@ -2656,14 +3352,13 @@ function setupTheme() {
     if (
         localStorage.getItem(
             THEME_KEY
-        ) === "dark"
+        ) ===
+        "dark"
     ) {
 
-        document.body
-            .classList
-            .add(
-                "dark"
-            );
+        document.body.classList.add(
+            "dark"
+        );
 
 
         button.textContent =
@@ -2675,25 +3370,19 @@ function setupTheme() {
         "click",
         () => {
 
-            document.body
-                .classList
-                .toggle(
+            document.body.classList.toggle(
+                "dark"
+            );
+
+
+            const isDark =
+                document.body.classList.contains(
                     "dark"
                 );
 
 
-            const isDark =
-                document.body
-                    .classList
-                    .contains(
-                        "dark"
-                    );
-
-
             localStorage.setItem(
-
                 THEME_KEY,
-
                 isDark
                     ? "dark"
                     : "light"
@@ -2731,6 +3420,7 @@ function setupMobileMenu() {
         !button ||
         !navigation
     ) {
+
         return;
     }
 
@@ -2739,11 +3429,9 @@ function setupMobileMenu() {
         "click",
         () => {
 
-            navigation
-                .classList
-                .toggle(
-                    "show"
-                );
+            navigation.classList.toggle(
+                "show"
+            );
         }
     );
 }
@@ -2805,66 +3493,102 @@ function setupEvents() {
         );
 
 
-    if (applyFiltersButton) {
+    // =========================
+    // APLICAR FILTROS
+    // =========================
 
+    if (
         applyFiltersButton
-            .addEventListener(
-                "click",
-                renderReport
-            );
+    ) {
+
+        applyFiltersButton.addEventListener(
+            "click",
+            renderReport
+        );
     }
 
 
-    if (currentMonthButton) {
+    // =========================
+    // MÊS ATUAL
+    // =========================
 
+    if (
         currentMonthButton
-            .addEventListener(
-                "click",
-                setCurrentMonth
-            );
+    ) {
+
+        currentMonthButton.addEventListener(
+            "click",
+            setCurrentMonth
+        );
     }
 
 
-    if (exportCsvButton) {
+    // =========================
+    // EXPORTAR CSV
+    // =========================
 
+    if (
         exportCsvButton
-            .addEventListener(
-                "click",
-                exportCsv
-            );
+    ) {
+
+        exportCsvButton.addEventListener(
+            "click",
+            exportCsv
+        );
     }
 
 
-    if (exportReportButton) {
+    // =========================
+    // EXPORTAR JSON
+    // =========================
 
+    if (
         exportReportButton
-            .addEventListener(
-                "click",
-                exportJsonReport
-            );
+    ) {
+
+        exportReportButton.addEventListener(
+            "click",
+            exportJsonReport
+        );
     }
 
 
-    if (printButton) {
+    // =========================
+    // IMPRIMIR
+    // =========================
 
+    if (
         printButton
-            .addEventListener(
-                "click",
-                () =>
-                    window.print()
-            );
+    ) {
+
+        printButton.addEventListener(
+            "click",
+            () => {
+
+                window.print();
+            }
+        );
     }
 
 
-    if (logoutButton) {
+    // =========================
+    // LOGOUT
+    // =========================
 
+    if (
         logoutButton
-            .addEventListener(
-                "click",
-                logout
-            );
+    ) {
+
+        logoutButton.addEventListener(
+            "click",
+            logout
+        );
     }
 
+
+    // =========================
+    // FILTROS AUTOMÁTICOS
+    // =========================
 
     [
         "startDate",
@@ -2876,7 +3600,9 @@ function setupEvents() {
         id => {
 
             const element =
-                getElement(id);
+                getElement(
+                    id
+                );
 
 
             if (!element) {
@@ -2899,28 +3625,52 @@ function setupEvents() {
 
 async function initializePage() {
 
-    if (!getSession()) {
+    if (
+        !getSession()
+    ) {
+
         return;
     }
 
 
     setupInitialDates();
 
+
     setupProfileMenu();
+
 
     setupTheme();
 
+
     setupMobileMenu();
+
 
     setupEvents();
 
 
     try {
 
+        /*
+            IMPORTANTE:
+
+            Primeiro carregamos:
+            - usuário
+            - categorias
+            - movimentações
+            - configurações
+
+            Só depois renderizamos.
+
+            Dessa forma a moeda e a opção
+            incluir_pendencias já estão
+            disponíveis antes dos cálculos.
+        */
+
         await Promise.all([
             renderUser(),
             loadCategories(),
-            loadTransactions()
+            loadTransactions(),
+            loadFinancialSettings()
         ]);
 
 
@@ -2942,5 +3692,9 @@ async function initializePage() {
     }
 }
 
+
+// =====================================================
+// INICIAR
+// =====================================================
 
 initializePage();

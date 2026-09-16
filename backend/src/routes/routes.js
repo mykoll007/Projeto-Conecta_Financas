@@ -48,6 +48,12 @@ router.put(
     AuthController.atualizarPerfil
 );
 
+// Atualizar a senha do usuário
+router.put(
+    "/usuarios/senha",
+    verificarUsuario,
+    AuthController.alterarSenha
+);
 
 
 // =====================================================

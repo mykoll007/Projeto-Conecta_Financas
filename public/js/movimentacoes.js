@@ -16,18 +16,145 @@ const API_URL =
     "https://projeto-conecta-financas.vercel.app/api";
 
 
+    // =====================================================
+// CONFIRMAR EXCLUSÃO
+// =====================================================
+
+let confirmBeforeDelete =
+    true;
+
+    
+
+
 // =====================================================
 // FORMATADOR
 // =====================================================
 
-const currency =
-    new Intl.NumberFormat(
+// =====================================================
+// MOEDA
+// =====================================================
+
+let currentCurrency =
+    "BRL";
+
+
+let currency =
+    createCurrencyFormatter(
+        currentCurrency
+    );
+
+
+function createCurrencyFormatter(
+    currencyCode
+) {
+
+    return new Intl.NumberFormat(
         "pt-BR",
         {
-            style: "currency",
-            currency: "BRL"
+            style:
+                "currency",
+
+            currency:
+                currencyCode,
+
+            minimumFractionDigits:
+                2,
+
+            maximumFractionDigits:
+                2
         }
     );
+}
+
+// =====================================================
+// CARREGAR CONFIGURAÇÕES
+// =====================================================
+
+async function loadFinancialSettings() {
+
+    try {
+
+        const configuracao =
+            await apiRequest(
+                "/configuracoes"
+            );
+
+
+        // =========================
+        // MOEDA
+        // =========================
+
+        currentCurrency =
+            configuracao?.moeda ||
+            "BRL";
+
+
+        currency =
+            createCurrencyFormatter(
+                currentCurrency
+            );
+
+
+        // =========================
+        // FORMA DE PAGAMENTO PADRÃO
+        // =========================
+
+        defaultPaymentMethod =
+            configuracao?.forma_pagamento_padrao ||
+            "Pix";
+
+
+        // =========================
+        // CONFIRMAR ANTES DE EXCLUIR
+        // =========================
+
+        confirmBeforeDelete =
+            Boolean(
+                Number(
+                    configuracao?.confirmar_exclusao ??
+                    1
+                )
+            );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao carregar configurações:",
+            error
+        );
+
+
+        // =========================
+        // FALLBACK MOEDA
+        // =========================
+
+        currentCurrency =
+            "BRL";
+
+
+        currency =
+            createCurrencyFormatter(
+                "BRL"
+            );
+
+
+        // =========================
+        // FALLBACK PAGAMENTO
+        // =========================
+
+        defaultPaymentMethod =
+            "Pix";
+
+
+        // =========================
+        // FALLBACK CONFIRMAÇÃO
+        // =========================
+
+        confirmBeforeDelete =
+            true;
+    }
+}
 
 
 // =====================================================
@@ -2600,10 +2727,34 @@ function openNewModal() {
         "paid";
 
 
+const paymentSelect =
     getElement(
         "payment"
-    ).value =
-        "Pix";
+    );
+
+
+if (paymentSelect) {
+
+    const paymentExists =
+        [...paymentSelect.options]
+            .some(
+                option =>
+                    option.value ===
+                    defaultPaymentMethod
+            );
+
+
+    if (paymentExists) {
+
+        paymentSelect.value =
+            defaultPaymentMethod;
+
+    } else {
+
+        paymentSelect.value =
+            "Pix";
+    }
+}
 
 
     const category =
@@ -3012,17 +3163,173 @@ async function saveTransaction(
 // EXCLUSÃO
 // =====================================================
 
-function openDeleteModal(id) {
+async function openDeleteModal(id) {
 
-    transactionToDelete =
+    const numericId =
         Number(
             id
         );
 
 
-    getElement(
-        "deleteModal"
-    )?.showModal();
+    if (!numericId) {
+        return;
+    }
+
+
+    transactionToDelete =
+        numericId;
+
+
+    // =================================================
+    // COM CONFIRMAÇÃO
+    // =================================================
+
+    if (
+        confirmBeforeDelete
+    ) {
+
+        getElement(
+            "deleteModal"
+        )?.showModal();
+
+
+        return;
+    }
+
+
+    // =================================================
+    // SEM CONFIRMAÇÃO
+    // =================================================
+
+    await deleteTransaction();
+}
+
+
+async function deleteTransaction() {
+
+    if (!transactionToDelete) {
+        return;
+    }
+
+
+    const button =
+        getElement(
+            "confirmDelete"
+        );
+
+
+    try {
+
+        // =================================================
+        // LOADING DO BOTÃO
+        // =================================================
+
+        if (button) {
+
+            button.disabled =
+                true;
+
+
+            button.textContent =
+                "Excluindo...";
+        }
+
+
+        // =================================================
+        // EXCLUIR NA API
+        // =================================================
+
+        const resultado =
+            await apiRequest(
+                `/movimentacoes/${transactionToDelete}`,
+                {
+                    method:
+                        "DELETE"
+                }
+            );
+
+
+        // =================================================
+        // LIMPAR ID
+        // =================================================
+
+        transactionToDelete =
+            null;
+
+
+        // =================================================
+        // FECHAR MODAL SOMENTE SE ESTIVER ABERTO
+        // =================================================
+
+        const modal =
+            getElement(
+                "deleteModal"
+            );
+
+
+        if (
+            modal?.open
+        ) {
+
+            modal.close();
+        }
+
+
+        // =================================================
+        // VOLTAR PARA AS 4 MAIS RECENTES
+        // =================================================
+
+        showAllTransactions =
+            false;
+
+
+        // =================================================
+        // MENSAGEM
+        // =================================================
+
+        showToast(
+            resultado?.message ||
+            "Movimentação excluída."
+        );
+
+
+        // =================================================
+        // RECARREGAR
+        // =================================================
+
+        await refreshTransactions();
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao excluir movimentação:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Erro ao excluir movimentação."
+        );
+
+
+    } finally {
+
+        // =================================================
+        // RESTAURAR BOTÃO
+        // =================================================
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+
+            button.textContent =
+                "Excluir";
+        }
+    }
 }
 
 
@@ -4305,7 +4612,8 @@ async function initializePage() {
 
         await Promise.all([
             renderUser(),
-            loadCategories()
+            loadCategories(),
+            loadFinancialSettings()
         ]);
 
 

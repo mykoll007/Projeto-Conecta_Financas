@@ -1655,28 +1655,46 @@ async function changePassword(event) {
     event.preventDefault();
 
 
+    // =================================================
+    // CAMPOS
+    // =================================================
+
     const senhaAtual =
         getElement(
             "currentPassword"
-        ).value;
+        )?.value || "";
 
 
     const novaSenha =
         getElement(
             "newPassword"
-        ).value;
+        )?.value || "";
 
 
-    const confirmacao =
+    const confirmarNovaSenha =
         getElement(
             "confirmPassword"
-        ).value;
+        )?.value || "";
 
+
+    // =================================================
+    // VALIDAÇÕES
+    // =================================================
 
     if (!senhaAtual) {
 
         showToast(
             "Informe sua senha atual."
+        );
+
+        return;
+    }
+
+
+    if (!novaSenha) {
+
+        showToast(
+            "Informe a nova senha."
         );
 
         return;
@@ -1695,9 +1713,19 @@ async function changePassword(event) {
     }
 
 
+    if (!confirmarNovaSenha) {
+
+        showToast(
+            "Confirme sua nova senha."
+        );
+
+        return;
+    }
+
+
     if (
         novaSenha !==
-        confirmacao
+        confirmarNovaSenha
     ) {
 
         showToast(
@@ -1708,6 +1736,23 @@ async function changePassword(event) {
     }
 
 
+    if (
+        senhaAtual ===
+        novaSenha
+    ) {
+
+        showToast(
+            "A nova senha deve ser diferente da senha atual."
+        );
+
+        return;
+    }
+
+
+    // =================================================
+    // BOTÃO
+    // =================================================
+
     const submitButton =
         event.currentTarget.querySelector(
             'button[type="submit"]'
@@ -1716,38 +1761,54 @@ async function changePassword(event) {
 
     try {
 
-        submitButton.disabled =
-            true;
+        if (submitButton) {
+
+            submitButton.disabled =
+                true;
 
 
-        submitButton.textContent =
-            "Alterando...";
+            submitButton.textContent =
+                "Alterando...";
+        }
 
+
+        // =================================================
+        // API
+        // =================================================
 
         const resultado =
             await apiRequest(
                 "/usuarios/senha",
                 {
-                    method: "PUT",
+                    method:
+                        "PUT",
 
                     body:
                         JSON.stringify({
 
-                            senha_atual:
-                                senhaAtual,
+                            senhaAtual,
 
-                            nova_senha:
-                                novaSenha
+                            novaSenha,
+
+                            confirmarNovaSenha
                         })
                 }
             );
 
 
+        // =================================================
+        // LIMPAR FORM
+        // =================================================
+
         event.currentTarget.reset();
 
 
+        // =================================================
+        // SUCESSO
+        // =================================================
+
         showToast(
-            resultado.message ||
+            resultado?.message ||
             "Senha alterada com sucesso."
         );
 
@@ -1761,18 +1822,22 @@ async function changePassword(event) {
 
 
         showToast(
-            error.message
+            error.message ||
+            "Erro ao alterar senha."
         );
 
 
     } finally {
 
-        submitButton.disabled =
-            false;
+        if (submitButton) {
+
+            submitButton.disabled =
+                false;
 
 
-        submitButton.textContent =
-            "Alterar senha";
+            submitButton.textContent =
+                "Alterar senha";
+        }
     }
 }
 

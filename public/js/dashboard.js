@@ -13,11 +13,102 @@ const API_URL = "https://projeto-conecta-financas.vercel.app/api";
 // FORMATADORES
 // =====================================================
 
-const currency = new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL"
-});
+// =====================================================
+// MOEDA
+// =====================================================
 
+let currentCurrency =
+    "BRL";
+
+
+let currency =
+    createCurrencyFormatter(
+        currentCurrency
+    );
+
+
+function createCurrencyFormatter(
+    currencyCode
+) {
+
+    return new Intl.NumberFormat(
+        "pt-BR",
+        {
+            style:
+                "currency",
+
+            currency:
+                currencyCode,
+
+            minimumFractionDigits:
+                2,
+
+            maximumFractionDigits:
+                2
+        }
+    );
+}
+
+// =====================================================
+// CARREGAR CONFIGURAÇÕES
+// =====================================================
+
+async function loadFinancialSettings() {
+
+    try {
+
+        const configuracao =
+            await apiRequest(
+                "/configuracoes"
+            );
+
+
+        // =========================
+        // MOEDA
+        // =========================
+
+        currentCurrency =
+            configuracao?.moeda ||
+            "BRL";
+
+
+        currency =
+            createCurrencyFormatter(
+                currentCurrency
+            );
+
+
+        // =========================
+        // FORMA DE PAGAMENTO PADRÃO
+        // =========================
+
+        defaultPaymentMethod =
+            configuracao?.forma_pagamento_padrao ||
+            "Pix";
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao carregar configurações:",
+            error
+        );
+
+
+        currentCurrency =
+            "BRL";
+
+
+        currency =
+            createCurrencyFormatter(
+                "BRL"
+            );
+
+
+        defaultPaymentMethod =
+            "Pix";
+    }
+}
 
 const monthNames = [
     "Janeiro",
@@ -1191,10 +1282,9 @@ async function loadSummary() {
         incomeCountElement.textContent =
             incomeCount === 0
                 ? "Nenhum recebimento"
-                : `${incomeCount} recebimento${
-                    incomeCount > 1
-                        ? "s"
-                        : ""
+                : `${incomeCount} recebimento${incomeCount > 1
+                    ? "s"
+                    : ""
                 }`;
     }
 
@@ -1204,10 +1294,9 @@ async function loadSummary() {
         expenseCountElement.textContent =
             expenseCount === 0
                 ? "Nenhum pagamento"
-                : `${expenseCount} pagamento${
-                    expenseCount > 1
-                        ? "s"
-                        : ""
+                : `${expenseCount} pagamento${expenseCount > 1
+                    ? "s"
+                    : ""
                 }`;
     }
 
@@ -1217,14 +1306,12 @@ async function loadSummary() {
         savedCountElement.textContent =
             savedCount === 0
                 ? "Nenhum valor reservado"
-                : `${savedCount} valor${
-                    savedCount === 1
-                        ? ""
-                        : "es"
-                } reservado${
-                    savedCount === 1
-                        ? ""
-                        : "s"
+                : `${savedCount} valor${savedCount === 1
+                    ? ""
+                    : "es"
+                } reservado${savedCount === 1
+                    ? ""
+                    : "s"
                 }`;
     }
 
@@ -2119,10 +2206,34 @@ function openTransactionModal() {
         "paid";
 
 
-    getElement(
-        "payment"
-    ).value =
-        "Pix";
+    const paymentSelect =
+        getElement(
+            "payment"
+        );
+
+
+    if (paymentSelect) {
+
+        const paymentExists =
+            [...paymentSelect.options]
+                .some(
+                    option =>
+                        option.value ===
+                        defaultPaymentMethod
+                );
+
+
+        if (paymentExists) {
+
+            paymentSelect.value =
+                defaultPaymentMethod;
+
+        } else {
+
+            paymentSelect.value =
+                "Pix";
+        }
+    }
 
 
     const category =
@@ -3071,20 +3182,20 @@ function setupEvents() {
     }
     if (openCategoryButton) {
 
-    openCategoryButton.addEventListener(
-        "click",
-        openCategoryModal
-    );
-}
+        openCategoryButton.addEventListener(
+            "click",
+            openCategoryModal
+        );
+    }
 
 
-if (categoryForm) {
+    if (categoryForm) {
 
-    categoryForm.addEventListener(
-        "submit",
-        saveCategory
-    );
-}
+        categoryForm.addEventListener(
+            "submit",
+            saveCategory
+        );
+    }
 
 
     if (budgetForm) {
@@ -3134,7 +3245,8 @@ async function initializeDashboard() {
 
         await Promise.all([
             renderUser(),
-            loadCategories()
+            loadCategories(),
+            loadFinancialSettings()
         ]);
 
 

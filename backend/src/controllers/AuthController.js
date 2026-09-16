@@ -316,6 +316,206 @@ class AuthController {
             });
         }
     }
+
+    // =========================
+    // Alterar senha
+    // =========================
+    async alterarSenha(req, res) {
+
+        const {
+            senhaAtual,
+            novaSenha,
+            confirmarNovaSenha
+        } = req.body;
+
+
+        // =========================
+        // CAMPOS OBRIGATÓRIOS
+        // =========================
+
+        if (
+            !senhaAtual ||
+            !novaSenha ||
+            !confirmarNovaSenha
+        ) {
+
+            return res.status(400).json({
+                message:
+                    "Preencha a senha atual, a nova senha e a confirmação."
+            });
+        }
+
+
+        // =========================
+        // TAMANHO DA NOVA SENHA
+        // =========================
+
+        if (
+            novaSenha.length < 6
+        ) {
+
+            return res.status(400).json({
+                message:
+                    "A nova senha deve possuir pelo menos 6 caracteres."
+            });
+        }
+
+
+        // =========================
+        // CONFIRMAÇÃO
+        // =========================
+
+        if (
+            novaSenha !==
+            confirmarNovaSenha
+        ) {
+
+            return res.status(400).json({
+                message:
+                    "A confirmação da nova senha não confere."
+            });
+        }
+
+
+        // =========================
+        // NÃO PERMITIR MESMA SENHA
+        // =========================
+
+        if (
+            senhaAtual ===
+            novaSenha
+        ) {
+
+            return res.status(400).json({
+                message:
+                    "A nova senha deve ser diferente da senha atual."
+            });
+        }
+
+
+        try {
+
+            // =========================
+            // BUSCAR USUÁRIO
+            // =========================
+
+            const usuario =
+                await database(
+                    "usuarios"
+                )
+                    .where(
+                        "id",
+                        req.usuarioId
+                    )
+                    .first();
+
+
+            if (!usuario) {
+
+                return res.status(404).json({
+                    message:
+                        "Usuário não encontrado."
+                });
+            }
+
+
+            // =========================
+            // VALIDAR SENHA ATUAL
+            // =========================
+
+            const senhaAtualCorreta =
+                await bcrypt.compare(
+                    senhaAtual,
+                    usuario.senha
+                );
+
+
+            if (
+                !senhaAtualCorreta
+            ) {
+
+                return res.status(400).json({
+                    message:
+                        "A senha atual está incorreta."
+                });
+            }
+
+
+            // =========================
+            // VERIFICAR SE A NOVA SENHA
+            // JÁ É A MESMA SALVA
+            // =========================
+
+            const mesmaSenha =
+                await bcrypt.compare(
+                    novaSenha,
+                    usuario.senha
+                );
+
+
+            if (
+                mesmaSenha
+            ) {
+
+                return res.status(400).json({
+                    message:
+                        "A nova senha deve ser diferente da senha atual."
+                });
+            }
+
+
+            // =========================
+            // GERAR NOVO HASH
+            // =========================
+
+            const novaSenhaHash =
+                await bcrypt.hash(
+                    novaSenha,
+                    12
+                );
+
+
+            // =========================
+            // ATUALIZAR BANCO
+            // =========================
+
+            await database(
+                "usuarios"
+            )
+                .where(
+                    "id",
+                    req.usuarioId
+                )
+                .update({
+
+                    senha:
+                        novaSenhaHash,
+
+                    atualizado_em:
+                        database.fn.now()
+                });
+
+
+            return res.status(200).json({
+                message:
+                    "Senha alterada com sucesso."
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "Erro ao alterar senha:",
+                error
+            );
+
+
+            return res.status(500).json({
+                message:
+                    "Erro ao alterar senha."
+            });
+        }
+    }
 }
 
 module.exports = new AuthController();

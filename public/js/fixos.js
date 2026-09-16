@@ -15,19 +15,142 @@ const THEME_KEY =
 const API_URL =
     "https://projeto-conecta-financas.vercel.app/api";
 
+// =====================================================
+// CONFIRMAR EXCLUSÃO
+// =====================================================
+
+let confirmBeforeDelete =
+    true;
+
+// =====================================================
+// MOEDA
+// =====================================================
+
+let currentCurrency =
+    "BRL";
+
+
+let currency =
+    createCurrencyFormatter(
+        currentCurrency
+    );
+
+
+function createCurrencyFormatter(
+    currencyCode
+) {
+
+    return new Intl.NumberFormat(
+        "pt-BR",
+        {
+            style:
+                "currency",
+
+            currency:
+                currencyCode,
+
+            minimumFractionDigits:
+                2,
+
+            maximumFractionDigits:
+                2
+        }
+    );
+}
+
+// =====================================================
+// CARREGAR CONFIGURAÇÕES
+// =====================================================
+
+async function loadFinancialSettings() {
+
+    try {
+
+        const configuracao =
+            await apiRequest(
+                "/configuracoes"
+            );
+
+
+        // =========================
+        // MOEDA
+        // =========================
+
+        currentCurrency =
+            configuracao?.moeda ||
+            "BRL";
+
+
+        currency =
+            createCurrencyFormatter(
+                currentCurrency
+            );
+
+
+        // =========================
+        // FORMA DE PAGAMENTO PADRÃO
+        // =========================
+
+        defaultPaymentMethod =
+            configuracao?.forma_pagamento_padrao ||
+            "Pix";
+
+
+        // =========================
+        // CONFIRMAR ANTES DE EXCLUIR
+        // =========================
+
+        confirmBeforeDelete =
+            Boolean(
+                Number(
+                    configuracao?.confirmar_exclusao ??
+                    1
+                )
+            );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao carregar configurações:",
+            error
+        );
+
+
+        // =========================
+        // FALLBACK MOEDA
+        // =========================
+
+        currentCurrency =
+            "BRL";
+
+
+        currency =
+            createCurrencyFormatter(
+                "BRL"
+            );
+
+
+        // =========================
+        // FALLBACK PAGAMENTO
+        // =========================
+
+        defaultPaymentMethod =
+            "Pix";
+
+
+        // =========================
+        // FALLBACK CONFIRMAÇÃO
+        // =========================
+
+        confirmBeforeDelete =
+            true;
+    }
+}
 
 // =====================================================
 // FORMATADORES
 // =====================================================
-
-const currency =
-    new Intl.NumberFormat(
-        "pt-BR",
-        {
-            style: "currency",
-            currency: "BRL"
-        }
-    );
 
 
 const monthNames = [
@@ -755,8 +878,8 @@ function renderCategoryOptions() {
                     return `
                         <option value="${category.id}">
                             ${escapeHtml(
-                                category.nome
-                            )}
+                        category.nome
+                    )}
                         </option>
                     `;
                 }
@@ -946,11 +1069,10 @@ function setupPeriodOptions() {
                         return `
                             <option
                                 value="${year}"
-                                ${
-                                    year === currentYear
-                                        ? "selected"
-                                        : ""
-                                }
+                                ${year === currentYear
+                                ? "selected"
+                                : ""
+                            }
                             >
                                 ${year}
                             </option>
@@ -1351,14 +1473,12 @@ function renderSummary() {
     if (fixedIncomeCount) {
 
         fixedIncomeCount.textContent =
-            `${incomeCount} lançamento${
-                incomeCount === 1
-                    ? ""
-                    : "s"
-            } ativo${
-                incomeCount === 1
-                    ? ""
-                    : "s"
+            `${incomeCount} lançamento${incomeCount === 1
+                ? ""
+                : "s"
+            } ativo${incomeCount === 1
+                ? ""
+                : "s"
             }`;
     }
 
@@ -1366,14 +1486,12 @@ function renderSummary() {
     if (fixedExpenseCount) {
 
         fixedExpenseCount.textContent =
-            `${expenseCount} lançamento${
-                expenseCount === 1
-                    ? ""
-                    : "s"
-            } ativo${
-                expenseCount === 1
-                    ? ""
-                    : "s"
+            `${expenseCount} lançamento${expenseCount === 1
+                ? ""
+                : "s"
+            } ativo${expenseCount === 1
+                ? ""
+                : "s"
             }`;
     }
 
@@ -1381,14 +1499,12 @@ function renderSummary() {
     if (fixedSavedCount) {
 
         fixedSavedCount.textContent =
-            `${savedCount} lançamento${
-                savedCount === 1
-                    ? ""
-                    : "s"
-            } ativo${
-                savedCount === 1
-                    ? ""
-                    : "s"
+            `${savedCount} lançamento${savedCount === 1
+                ? ""
+                : "s"
+            } ativo${savedCount === 1
+                ? ""
+                : "s"
             }`;
     }
 
@@ -1396,14 +1512,12 @@ function renderSummary() {
     if (inactiveFixedCount) {
 
         inactiveFixedCount.textContent =
-            `${inactiveCount} lançamento${
-                inactiveCount === 1
-                    ? ""
-                    : "s"
-            } inativo${
-                inactiveCount === 1
-                    ? ""
-                    : "s"
+            `${inactiveCount} lançamento${inactiveCount === 1
+                ? ""
+                : "s"
+            } inativo${inactiveCount === 1
+                ? ""
+                : "s"
             }`;
     }
 }
@@ -1488,18 +1602,17 @@ function createFixedItem(item) {
 
     const statusText =
         item.defaultStatus ===
-        "paid"
+            "paid"
             ? typeInfo.paidLabel
             : "Pendente";
 
 
     return `
         <article
-            class="fixed-item ${
-                item.active
-                    ? ""
-                    : "inactive"
-            }"
+            class="fixed-item ${item.active
+            ? ""
+            : "inactive"
+        }"
         >
 
             <div
@@ -1513,22 +1626,22 @@ function createFixedItem(item) {
 
                 <strong>
                     ${escapeHtml(
-                        item.description
-                    )}
+            item.description
+        )}
                 </strong>
 
 
                 <span>
 
                     ${escapeHtml(
-                        item.category
-                    )}
+            item.category
+        )}
 
                     ·
 
                     ${escapeHtml(
-                        item.payment
-                    )}
+            item.payment
+        )}
 
                 </span>
 
@@ -1564,8 +1677,8 @@ function createFixedItem(item) {
                 ${typeInfo.signal}
 
                 ${currency.format(
-                    item.amount
-                )}
+            item.amount
+        )}
 
             </div>
 
@@ -1580,11 +1693,10 @@ function createFixedItem(item) {
                         type="checkbox"
                         class="active-toggle"
                         data-id="${item.id}"
-                        ${
-                            item.active
-                                ? "checked"
-                                : ""
-                        }
+                        ${item.active
+            ? "checked"
+            : ""
+        }
                     >
 
                     <span
@@ -1592,11 +1704,10 @@ function createFixedItem(item) {
                     ></span>
 
                     <span>
-                        ${
-                            item.active
-                                ? "Ativo"
-                                : "Inativo"
-                        }
+                        ${item.active
+            ? "Ativo"
+            : "Inativo"
+        }
                     </span>
 
                 </label>
@@ -1862,10 +1973,34 @@ function openNewModal() {
         5;
 
 
-    getElement(
-        "payment"
-    ).value =
-        "Pix";
+    const paymentSelect =
+        getElement(
+            "payment"
+        );
+
+
+    if (paymentSelect) {
+
+        const paymentExists =
+            [...paymentSelect.options]
+                .some(
+                    option =>
+                        option.value ===
+                        defaultPaymentMethod
+                );
+
+
+        if (paymentExists) {
+
+            paymentSelect.value =
+                defaultPaymentMethod;
+
+        } else {
+
+            paymentSelect.value =
+                "Pix";
+        }
+    }
 
 
     getElement(
@@ -2351,22 +2486,54 @@ async function toggleFixedStatus(
 
 
 // =====================================================
-// EXCLUIR
+// EXCLUSÃO
 // =====================================================
 
-function openDeleteModal(id) {
+async function openDeleteModal(id) {
 
-    fixedToDelete =
+    const numericId =
         Number(
             id
         );
 
 
-    getElement(
-        "deleteModal"
-    )?.showModal();
+    if (!numericId) {
+        return;
+    }
+
+
+    fixedToDelete =
+        numericId;
+
+
+    // =================================================
+    // COM CONFIRMAÇÃO
+    // =================================================
+
+    if (
+        confirmBeforeDelete
+    ) {
+
+        getElement(
+            "deleteModal"
+        )?.showModal();
+
+
+        return;
+    }
+
+
+    // =================================================
+    // SEM CONFIRMAÇÃO
+    // =================================================
+
+    await deleteFixed();
 }
 
+
+// =====================================================
+// EXCLUIR FIXO
+// =====================================================
 
 async function deleteFixed() {
 
@@ -2383,6 +2550,10 @@ async function deleteFixed() {
 
     try {
 
+        // =================================================
+        // LOADING DO BOTÃO
+        // =================================================
+
         if (button) {
 
             button.disabled =
@@ -2394,6 +2565,10 @@ async function deleteFixed() {
         }
 
 
+        // =================================================
+        // EXCLUIR NA API
+        // =================================================
+
         const resultado =
             await apiRequest(
                 `/fixos/${fixedToDelete}`,
@@ -2404,20 +2579,45 @@ async function deleteFixed() {
             );
 
 
+        // =================================================
+        // LIMPAR ID
+        // =================================================
+
         fixedToDelete =
             null;
 
 
-        getElement(
-            "deleteModal"
-        )?.close();
+        // =================================================
+        // FECHAR MODAL SE ESTIVER ABERTO
+        // =================================================
 
+        const modal =
+            getElement(
+                "deleteModal"
+            );
+
+
+        if (
+            modal?.open
+        ) {
+
+            modal.close();
+        }
+
+
+        // =================================================
+        // MENSAGEM
+        // =================================================
 
         showToast(
             resultado?.message ||
             "Lançamento excluído."
         );
 
+
+        // =================================================
+        // RECARREGAR FIXOS
+        // =================================================
 
         await refreshFixed();
 
@@ -2437,6 +2637,10 @@ async function deleteFixed() {
 
 
     } finally {
+
+        // =================================================
+        // RESTAURAR BOTÃO
+        // =================================================
 
         if (button) {
 
@@ -2557,22 +2761,18 @@ function openLaunchModal() {
     if (text) {
 
         text.textContent =
-            `${activeCount} lançamento${
-                activeCount === 1
-                    ? ""
-                    : "s"
-            } ativo${
-                activeCount === 1
-                    ? ""
-                    : "s"
-            } será${
-                activeCount === 1
-                    ? ""
-                    : "ão"
-            } adicionado${
-                activeCount === 1
-                    ? ""
-                    : "s"
+            `${activeCount} lançamento${activeCount === 1
+                ? ""
+                : "s"
+            } ativo${activeCount === 1
+                ? ""
+                : "s"
+            } será${activeCount === 1
+                ? ""
+                : "ão"
+            } adicionado${activeCount === 1
+                ? ""
+                : "s"
             } em ${monthNames[month]} de ${year}.`;
     }
 
@@ -2767,14 +2967,12 @@ async function launchFixedTransactions() {
 
 
         let message =
-            `${added} lançamento${
-                added === 1
-                    ? ""
-                    : "s"
-            } adicionado${
-                added === 1
-                    ? ""
-                    : "s"
+            `${added} lançamento${added === 1
+                ? ""
+                : "s"
+            } adicionado${added === 1
+                ? ""
+                : "s"
             } às movimentações.`;
 
 
@@ -2784,10 +2982,9 @@ async function launchFixedTransactions() {
         ) {
 
             message +=
-                ` ${ignored} já existia${
-                    ignored === 1
-                        ? ""
-                        : "m"
+                ` ${ignored} já existia${ignored === 1
+                    ? ""
+                    : "m"
                 }.`;
         }
 
@@ -3584,7 +3781,8 @@ async function initializePage() {
 
         await Promise.all([
             renderUser(),
-            loadCategories()
+            loadCategories(),
+            loadFinancialSettings()
         ]);
 
 
