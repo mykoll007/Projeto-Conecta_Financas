@@ -757,6 +757,493 @@ function openCategoryModal() {
     );
 }
 
+// =====================================================
+// CARREGAR PRÓXIMOS COMPROMISSOS
+// =====================================================
+
+async function loadUpcomingAgenda() {
+
+    const list =
+        getElement(
+            "upcomingAgendaList"
+        );
+
+
+    const loading =
+        getElement(
+            "upcomingAgendaLoading"
+        );
+
+
+    const empty =
+        getElement(
+            "upcomingAgendaEmpty"
+        );
+
+
+    try {
+
+        // =================================================
+        // LOADING
+        // =================================================
+
+        if (loading) {
+
+            loading.hidden =
+                false;
+        }
+
+
+        if (empty) {
+
+            empty.hidden =
+                true;
+        }
+
+
+        // =================================================
+        // BUSCAR AGENDA
+        // =================================================
+
+        const data =
+            await apiRequest(
+                "/agendamentos"
+            );
+
+
+        console.log(
+            "Agendamentos recebidos:",
+            data
+        );
+
+
+        const now =
+            new Date();
+
+
+        // =================================================
+        // FILTRAR PRÓXIMOS
+        // =================================================
+
+        const upcoming =
+            (
+                Array.isArray(
+                    data
+                )
+                    ? data
+                    : []
+            )
+
+                // =========================================
+                // SOMENTE AGENDADOS
+                // =========================================
+
+                .filter(
+                    item =>
+                        item.status ===
+                        "scheduled"
+                )
+
+
+                // =========================================
+                // SOMENTE DATA/HORA FUTURA
+                // =========================================
+
+                .filter(
+                    item => {
+
+                        const date =
+                            normalizeDate(
+                                item.data_agendamento
+                            );
+
+
+                        const time =
+                            String(
+                                item.horario ||
+                                ""
+                            ).slice(
+                                0,
+                                5
+                            );
+
+
+                        if (
+                            !date ||
+                            !time
+                        ) {
+
+                            return false;
+                        }
+
+
+                        const scheduleDate =
+                            new Date(
+                                `${date}T${time}:00`
+                            );
+
+
+                        if (
+                            Number.isNaN(
+                                scheduleDate.getTime()
+                            )
+                        ) {
+
+                            console.warn(
+                                "Data de agendamento inválida:",
+                                item
+                            );
+
+
+                            return false;
+                        }
+
+
+                        return (
+                            scheduleDate >=
+                            now
+                        );
+                    }
+                )
+
+
+                // =========================================
+                // ORDENAR DO MAIS PRÓXIMO
+                // =========================================
+
+                .sort(
+                    (
+                        first,
+                        second
+                    ) => {
+
+                        const firstDate =
+                            normalizeDate(
+                                first.data_agendamento
+                            );
+
+
+                        const secondDate =
+                            normalizeDate(
+                                second.data_agendamento
+                            );
+
+
+                        const firstTime =
+                            String(
+                                first.horario ||
+                                "00:00"
+                            ).slice(
+                                0,
+                                5
+                            );
+
+
+                        const secondTime =
+                            String(
+                                second.horario ||
+                                "00:00"
+                            ).slice(
+                                0,
+                                5
+                            );
+
+
+                        const firstValue =
+                            new Date(
+                                `${firstDate}T${firstTime}:00`
+                            );
+
+
+                        const secondValue =
+                            new Date(
+                                `${secondDate}T${secondTime}:00`
+                            );
+
+
+                        return (
+                            firstValue -
+                            secondValue
+                        );
+                    }
+                )
+
+
+                // =========================================
+                // SOMENTE 3 NO DASHBOARD
+                // =========================================
+
+                .slice(
+                    0,
+                    3
+                );
+
+
+        console.log(
+            "Próximos compromissos:",
+            upcoming
+        );
+
+
+        // =================================================
+        // ESCONDER LOADING
+        // =================================================
+
+        if (loading) {
+
+            loading.hidden =
+                true;
+        }
+
+
+        // =================================================
+        // VAZIO
+        // =================================================
+
+        if (
+            upcoming.length ===
+            0
+        ) {
+
+            if (list) {
+
+                list.innerHTML =
+                    "";
+            }
+
+
+            if (empty) {
+
+                empty.hidden =
+                    false;
+            }
+
+
+            return;
+        }
+
+
+        if (empty) {
+
+            empty.hidden =
+                true;
+        }
+
+
+        if (!list) {
+
+            console.error(
+                "Elemento #upcomingAgendaList não encontrado."
+            );
+
+
+            return;
+        }
+
+
+        // =================================================
+        // RENDERIZAR
+        // =================================================
+
+        list.innerHTML =
+            upcoming
+                .map(
+                    item => {
+
+                        const normalizedDate =
+                            normalizeDate(
+                                item.data_agendamento
+                            );
+
+
+                        const valor =
+                            item.valor !== null &&
+                            item.valor !== undefined
+
+                                ? currency.format(
+                                    Number(
+                                        item.valor
+                                    )
+                                )
+
+                                : "Sem valor";
+
+
+                        const nome =
+                            item.cliente_nome ||
+                            item.titulo ||
+                            "Compromisso";
+
+
+                        const descricao =
+                            item.descricao ||
+                            item.titulo ||
+                            "Sem descrição";
+
+
+                        const horario =
+                            String(
+                                item.horario ||
+                                ""
+                            ).slice(
+                                0,
+                                5
+                            );
+
+
+                        return `
+                            <article class="upcoming-agenda-item">
+
+                                <div class="upcoming-agenda-time">
+
+                                    <strong>
+                                        ${formatAgendaDate(
+                                            normalizedDate
+                                        )}
+                                    </strong>
+
+                                    <span>
+                                        ${escapeHtml(
+                                            horario
+                                        )}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="upcoming-agenda-info">
+
+                                    <strong>
+                                        ${escapeHtml(
+                                            nome
+                                        )}
+                                    </strong>
+
+                                    <span>
+                                        ${escapeHtml(
+                                            descricao
+                                        )}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="upcoming-agenda-value">
+                                    ${escapeHtml(
+                                        valor
+                                    )}
+                                </div>
+
+                            </article>
+                        `;
+                    }
+                )
+                .join(
+                    ""
+                );
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao carregar agenda no início:",
+            error
+        );
+
+
+        if (loading) {
+
+            loading.hidden =
+                true;
+        }
+
+
+        if (list) {
+
+            list.innerHTML =
+                "";
+        }
+
+
+        if (empty) {
+
+            empty.hidden =
+                false;
+        }
+    }
+}
+
+function formatAgendaDate(
+    value
+) {
+
+    if (!value) {
+
+        return "";
+    }
+
+
+    const today =
+        new Date();
+
+
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    const date =
+        new Date(
+            `${value}T12:00:00`
+        );
+
+
+    const tomorrow =
+        new Date(
+            today
+        );
+
+
+    tomorrow.setDate(
+        tomorrow.getDate() + 1
+    );
+
+
+    if (
+        date.toDateString() ===
+        today.toDateString()
+    ) {
+
+        return "Hoje";
+    }
+
+
+    if (
+        date.toDateString() ===
+        tomorrow.toDateString()
+    ) {
+
+        return "Amanhã";
+    }
+
+
+    return new Intl.DateTimeFormat(
+        "pt-BR",
+        {
+            day:
+                "2-digit",
+
+            month:
+                "2-digit"
+        }
+    ).format(
+        date
+    );
+}
+
 
 // =====================================================
 // SALVAR CATEGORIA
@@ -3243,12 +3730,17 @@ async function initializeDashboard() {
         setupEvents();
 
 
-        await Promise.all([
-            renderUser(),
-            loadCategories(),
-            loadFinancialSettings()
-        ]);
+await Promise.all([
+    renderUser(),
+    loadCategories(),
+    loadFinancialSettings()
+]);
 
+
+await Promise.all([
+    loadUpcomingAgenda(),
+    renderDashboard()
+]);
 
         await renderDashboard();
 

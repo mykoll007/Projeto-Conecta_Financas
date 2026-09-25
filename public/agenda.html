@@ -3,19 +3,13 @@
 
 <head>
 
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Agenda | Conecta Finanças</title>
+    <title>Agenda | Conecta Finanças</title>
 
-  <link
-    rel="stylesheet"
-    href="css/agenda.css"
-  >
+    <link rel="stylesheet" href="css/agenda.css">
 
 </head>
 
@@ -23,1071 +17,868 @@
 <body>
 
 
-  <!-- =====================================================
+    <!-- =====================================================
        TOPO
   ====================================================== -->
 
-  <header class="topbar">
+    <header class="topbar">
 
-    <div class="topbar-container">
-
-
-      <!-- LOGO -->
-
-      <a
-        href="index.html"
-        class="brand"
-      >
-
-        <div class="brand-icon">
-          $
-        </div>
+        <div class="topbar-container">
 
 
-        <div class="brand-text">
+            <!-- LOGO -->
 
-          <strong>
-            Conecta Finanças
-          </strong>
+            <a href="index.html" class="brand">
 
-          <span>
-            Seu dinheiro, sem complicação
-          </span>
-
-        </div>
-
-      </a>
+                <div class="brand-icon">
+                    $
+                </div>
 
 
-      <!-- MENU DESKTOP -->
+                <div class="brand-text">
 
-      <nav class="desktop-nav">
+                    <strong>
+                        Conecta Finanças
+                    </strong>
 
-        <a
-          href="index.html"
-          class="nav-link"
-        >
-          Início
-        </a>
+                    <span>
+                        Seu dinheiro, sem complicação
+                    </span>
 
+                </div>
 
-        <a
-          href="movimentacoes.html"
-          class="nav-link"
-        >
-          Movimentações
-        </a>
-
-
-        <a
-          href="fixos.html"
-          class="nav-link"
-        >
-          Fixos mensais
-        </a>
-
-
-        <a
-          href="relatorios.html"
-          class="nav-link"
-        >
-          Relatórios
-        </a>
-
-
-        <a
-          href="agenda.html"
-          class="nav-link active"
-        >
-          Agenda
-        </a>
-
-      </nav>
-
-
-      <!-- AÇÕES -->
-
-      <div class="topbar-actions">
-
-        <button
-          type="button"
-          class="icon-button"
-          id="themeToggle"
-          aria-label="Alterar tema"
-        >
-          ☾
-        </button>
-
-
-        <div class="profile-menu">
-
-          <button
-            type="button"
-            class="profile-button"
-            id="profileButton"
-            aria-expanded="false"
-          >
-
-            <span
-              class="profile-avatar"
-              id="profileAvatar"
-            >
-              M
-            </span>
-
-
-            <span class="profile-info">
-
-              <strong id="profileName">
-                Usuário
-              </strong>
-
-              <small>
-                Minha conta
-              </small>
-
-            </span>
-
-
-            <span class="profile-arrow">
-              ⌄
-            </span>
-
-          </button>
-
-
-          <div
-            class="profile-dropdown"
-            id="profileDropdown"
-          >
-
-            <a href="configuracoes.html">
-              Configurações
             </a>
 
 
-            <button
-              type="button"
-              id="logoutButton"
-            >
-              Sair da conta
-            </button>
+            <!-- MENU DESKTOP -->
 
-          </div>
+            <nav class="desktop-nav">
+
+                <a href="index.html" class="nav-link">
+                    Início
+                </a>
+
+
+                <a href="movimentacoes.html" class="nav-link">
+                    Movimentações
+                </a>
+
+
+                <a href="fixos.html" class="nav-link">
+                    Fixos mensais
+                </a>
+
+
+                <a href="relatorios.html" class="nav-link">
+                    Relatórios
+                </a>
+
+
+                <a href="agenda.html" class="nav-link active">
+                    Agenda
+                </a>
+
+            </nav>
+
+
+            <!-- AÇÕES -->
+
+            <div class="topbar-actions">
+
+                <button type="button" class="icon-button" id="themeToggle" aria-label="Alterar tema">
+                    ☾
+                </button>
+
+
+                <div class="profile-menu">
+
+                    <button type="button" class="profile-button" id="profileButton" aria-expanded="false">
+
+                        <span class="profile-avatar" id="profileAvatar">
+                            M
+                        </span>
+
+
+                        <span class="profile-info">
+
+                            <strong id="profileName">
+                                Usuário
+                            </strong>
+
+                            <small>
+                                Minha conta
+                            </small>
+
+                        </span>
+
+
+                        <span class="profile-arrow">
+                            ⌄
+                        </span>
+
+                    </button>
+
+
+                    <div class="profile-dropdown" id="profileDropdown">
+
+                        <a href="configuracoes.html">
+                            Configurações
+                        </a>
+
+
+                        <button type="button" id="logoutButton">
+                            Sair da conta
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <button type="button" class="mobile-menu-button" id="mobileMenuButton" aria-label="Abrir menu">
+                    ☰
+                </button>
+
+            </div>
 
         </div>
 
 
-        <button
-          type="button"
-          class="mobile-menu-button"
-          id="mobileMenuButton"
-          aria-label="Abrir menu"
-        >
-          ☰
-        </button>
+        <!-- MENU MOBILE -->
 
-      </div>
+        <nav class="mobile-nav" id="mobileNav">
 
-    </div>
+            <a href="index.html">
+                Início
+            </a>
 
+            <a href="movimentacoes.html">
+                Movimentações
+            </a>
 
-    <!-- MENU MOBILE -->
+            <a href="fixos.html">
+                Fixos mensais
+            </a>
 
-    <nav
-      class="mobile-nav"
-      id="mobileNav"
-    >
+            <a href="relatorios.html">
+                Relatórios
+            </a>
 
-      <a href="index.html">
-        Início
-      </a>
+            <a href="agenda.html" class="active">
+                Agenda
+            </a>
 
-      <a href="movimentacoes.html">
-        Movimentações
-      </a>
+            <a href="configuracoes.html">
+                Configurações
+            </a>
 
-      <a href="fixos.html">
-        Fixos mensais
-      </a>
+        </nav>
 
-      <a href="relatorios.html">
-        Relatórios
-      </a>
-
-      <a
-        href="agenda.html"
-        class="active"
-      >
-        Agenda
-      </a>
-
-      <a href="configuracoes.html">
-        Configurações
-      </a>
-
-    </nav>
-
-  </header>
+    </header>
 
 
-  <!-- =====================================================
+    <!-- =====================================================
        CONTEÚDO
   ====================================================== -->
 
-  <main class="page-container">
+    <main class="page-container">
 
 
-    <!-- =====================================================
+        <!-- =====================================================
          CABEÇALHO
     ====================================================== -->
 
-    <section class="page-header">
+        <section class="page-header">
 
-      <div>
+            <div>
 
-        <span class="section-label">
-          Compromissos
-        </span>
-
-
-        <h1>
-          Agenda
-        </h1>
+                <span class="section-label">
+                    Compromissos
+                </span>
 
 
-        <p>
-          Organize seus horários e compromissos em um só lugar.
-        </p>
-
-      </div>
+                <h1>
+                    Agenda
+                </h1>
 
 
-      <div class="header-actions">
+                <p>
+                    Organize seus horários e compromissos em um só lugar.
+                </p>
 
-        <button
-          type="button"
-          class="primary-button"
-          id="newScheduleButton"
-        >
-          + Novo compromisso
-        </button>
-
-      </div>
-
-    </section>
+            </div>
 
 
-    <!-- =====================================================
+            <div class="header-actions">
+
+                <button type="button" class="primary-button" id="newScheduleButton">
+                    + Novo compromisso
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
          RESUMO
     ====================================================== -->
 
-    <section class="summary-grid">
+        <section class="summary-grid">
 
 
-      <article class="summary-card">
+            <article class="summary-card">
 
-        <div class="summary-icon today-icon">
-          ◷
-        </div>
-
-
-        <div>
-
-          <span>
-            Hoje
-          </span>
-
-          <strong id="todayCount">
-            0
-          </strong>
-
-          <small>
-            compromissos
-          </small>
-
-        </div>
-
-      </article>
+                <div class="summary-icon today-icon">
+                    ◷
+                </div>
 
 
-      <article class="summary-card">
+                <div>
 
-        <div class="summary-icon scheduled-icon">
-          ●
-        </div>
+                    <span>
+                        Hoje
+                    </span>
 
+                    <strong id="todayCount">
+                        0
+                    </strong>
 
-        <div>
+                    <small>
+                        compromissos
+                    </small>
 
-          <span>
-            Agendados
-          </span>
+                </div>
 
-          <strong id="scheduledCount">
-            0
-          </strong>
-
-          <small>
-            aguardando
-          </small>
-
-        </div>
-
-      </article>
+            </article>
 
 
-      <article class="summary-card">
+            <article class="summary-card">
 
-        <div class="summary-icon completed-icon">
-          ✓
-        </div>
-
-
-        <div>
-
-          <span>
-            Concluídos
-          </span>
-
-          <strong id="completedCount">
-            0
-          </strong>
-
-          <small>
-            no período
-          </small>
-
-        </div>
-
-      </article>
+                <div class="summary-icon scheduled-icon">
+                    ●
+                </div>
 
 
-      <article class="summary-card">
+                <div>
 
-        <div class="summary-icon finance-icon">
-          $
-        </div>
+                    <span>
+                        Agendados
+                    </span>
 
+                    <strong id="scheduledCount">
+                        0
+                    </strong>
 
-        <div>
+                    <small>
+                        aguardando
+                    </small>
 
-          <span>
-            Valores previstos
-          </span>
+                </div>
 
-          <strong id="scheduledValue">
-            R$ 0,00
-          </strong>
-
-          <small>
-            compromissos agendados
-          </small>
-
-        </div>
-
-      </article>
-
-    </section>
+            </article>
 
 
-    <!-- =====================================================
+            <article class="summary-card">
+
+                <div class="summary-icon completed-icon">
+                    ✓
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Concluídos
+                    </span>
+
+                    <strong id="completedCount">
+                        0
+                    </strong>
+
+                    <small>
+                        no período
+                    </small>
+
+                </div>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <div class="summary-icon finance-icon">
+                    $
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Valores previstos
+                    </span>
+
+                    <strong id="scheduledValue">
+                        R$ 0,00
+                    </strong>
+
+                    <small>
+                        compromissos agendados
+                    </small>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================================
          AGENDA
     ====================================================== -->
 
-    <section class="agenda-card">
+        <section class="agenda-card">
 
 
-      <!-- CABEÇALHO -->
+            <!-- CABEÇALHO -->
 
-      <div class="agenda-header">
+            <div class="agenda-header">
 
-        <div>
+                <div>
 
-          <span class="card-label">
-            Sua agenda
-          </span>
-
-
-          <h2 id="agendaTitle">
-            Compromissos de hoje
-          </h2>
+                    <span class="card-label">
+                        Sua agenda
+                    </span>
 
 
-          <p id="agendaDescription">
-            Veja os próximos horários agendados.
-          </p>
-
-        </div>
+                    <h2 id="agendaTitle">
+                        Compromissos de hoje
+                    </h2>
 
 
-        <div class="agenda-header-actions">
+                    <p id="agendaDescription">
+                        Veja os próximos horários agendados.
+                    </p>
 
-          <div
-            class="period-tabs"
-            role="group"
-            aria-label="Período da agenda"
-          >
-
-            <button
-              type="button"
-              class="period-button active"
-              data-period="today"
-            >
-              Hoje
-            </button>
+                </div>
 
 
-            <button
-              type="button"
-              class="period-button"
-              data-period="week"
-            >
-              Semana
-            </button>
+                <div class="agenda-header-actions">
+
+                    <div class="period-tabs" role="group" aria-label="Período da agenda">
+
+                        <button type="button" class="period-button active" data-period="today">
+                            Hoje
+                        </button>
 
 
-            <button
-              type="button"
-              class="period-button"
-              data-period="month"
-            >
-              Mês
-            </button>
-
-          </div>
+                        <button type="button" class="period-button" data-period="week">
+                            Semana
+                        </button>
 
 
-          <button
-            type="button"
-            class="filter-icon-button"
-            id="openFiltersButton"
-            aria-label="Abrir filtros"
-            title="Filtros"
-          >
+                        <button type="button" class="period-button" data-period="month">
+                            Mês
+                        </button>
 
-            ⚙
-
-            <span
-              class="filter-active-dot"
-              id="filterActiveDot"
-              hidden
-            ></span>
-
-          </button>
-
-        </div>
-
-      </div>
+                    </div>
 
 
-      <!-- PESQUISA -->
+                    <button type="button" class="filter-icon-button" id="openFiltersButton" aria-label="Abrir filtros"
+                        title="Filtros">
 
-      <div class="agenda-search">
+                        ⚙
 
-        <div class="search-container">
+                        <span class="filter-active-dot" id="filterActiveDot" hidden></span>
 
-          <span class="search-icon">
-            ⌕
-          </span>
+                    </button>
 
+                </div>
 
-          <input
-            type="search"
-            id="searchInput"
-            placeholder="Buscar cliente, título ou procedimento..."
-            autocomplete="off"
-          >
+            </div>
 
 
-          <span
-            class="search-loading"
-            id="searchLoading"
-            hidden
-          ></span>
+            <!-- PESQUISA -->
 
-        </div>
+            <div class="agenda-search">
 
-      </div>
+                <div class="search-container">
 
-
-      <!-- LOADING -->
-
-      <div
-        class="agenda-loading"
-        id="agendaLoading"
-      >
-
-        <span class="agenda-loading-spinner"></span>
-
-        <span>
-          Carregando agenda...
-        </span>
-
-      </div>
+                    <span class="search-icon">
+                        ⌕
+                    </span>
 
 
-      <!-- LISTA -->
-
-      <div
-        class="agenda-list"
-        id="agendaList"
-        hidden
-      ></div>
+                    <input type="search" id="searchInput" placeholder="Buscar cliente, título ou procedimento..."
+                        autocomplete="off">
 
 
-      <!-- ESTADO VAZIO -->
+                    <span class="search-loading" id="searchLoading" hidden></span>
 
-      <div
-        class="empty-state"
-        id="agendaEmptyState"
-        hidden
-      >
+                </div>
 
-        <div class="empty-icon">
-          ◷
-        </div>
+            </div>
 
 
-        <strong>
-          Nenhum compromisso encontrado
-        </strong>
+            <!-- LOADING -->
+
+            <div class="agenda-loading" id="agendaLoading">
+
+                <span class="agenda-loading-spinner"></span>
+
+                <span>
+                    Carregando agenda...
+                </span>
+
+            </div>
 
 
-        <p>
-          Sua agenda está livre neste período.
-        </p>
+            <!-- LISTA -->
+
+            <div class="agenda-list" id="agendaList" hidden></div>
 
 
-        <button
-          type="button"
-          class="primary-button"
-          id="emptyNewScheduleButton"
-        >
-          + Novo compromisso
-        </button>
+            <!-- ESTADO VAZIO -->
 
-      </div>
+            <div class="empty-state" id="agendaEmptyState" hidden>
 
-    </section>
-
-  </main>
+                <div class="empty-icon">
+                    ◷
+                </div>
 
 
-  <!-- =====================================================
+                <strong>
+                    Nenhum compromisso encontrado
+                </strong>
+
+
+                <p>
+                    Sua agenda está livre neste período.
+                </p>
+
+
+                <button type="button" class="primary-button" id="emptyNewScheduleButton">
+                    + Novo compromisso
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
        MODAL AGENDAMENTO
   ====================================================== -->
 
-  <dialog
-    class="modal"
-    id="scheduleModal"
-  >
+    <dialog class="modal" id="scheduleModal">
 
-    <form
-      class="modal-card"
-      id="scheduleForm"
-    >
+        <form class="modal-card" id="scheduleForm">
 
 
-      <!-- CABEÇALHO MODAL -->
+            <!-- CABEÇALHO MODAL -->
 
-      <div class="modal-header">
+            <div class="modal-header">
 
-        <div>
+                <div>
 
-          <span
-            class="card-label"
-            id="scheduleModalLabel"
-          >
-            Agenda
-          </span>
+                    <span class="card-label" id="scheduleModalLabel">
+                        Agenda
+                    </span>
 
 
-          <h2 id="scheduleModalTitle">
-            Novo compromisso
-          </h2>
+                    <h2 id="scheduleModalTitle">
+                        Novo compromisso
+                    </h2>
 
-        </div>
+                </div>
 
 
-        <button
-          type="button"
-          class="modal-close"
-          data-close-modal="scheduleModal"
-          aria-label="Fechar"
-        >
-          ×
-        </button>
+                <button type="button" class="modal-close" data-close-modal="scheduleModal" aria-label="Fechar">
+                    ×
+                </button>
 
-      </div>
+            </div>
 
 
-      <input
-        type="hidden"
-        id="scheduleId"
-      >
+            <input type="hidden" id="scheduleId">
 
 
-      <div class="form-grid">
+            <div class="form-grid">
 
 
-        <!-- TÍTULO -->
+                <!-- TÍTULO -->
 
-        <div class="form-group full-width">
+                <div class="form-group full-width">
 
-          <label for="scheduleTitle">
-            Título
-          </label>
+                    <label for="scheduleTitle">
+                        Título
+                    </label>
 
-          <input
-            type="text"
-            id="scheduleTitle"
-            placeholder="Ex.: Atendimento"
-            maxlength="150"
-            required
-          >
+                    <input type="text" id="scheduleTitle" placeholder="Ex.: Atendimento" maxlength="150" required>
 
-        </div>
+                </div>
 
 
-        <!-- CLIENTE -->
+                <!-- CLIENTE -->
 
-        <div class="form-group">
+                <div class="form-group">
 
-          <label for="clientName">
-            Cliente
-          </label>
+                    <label for="clientName">
+                        Cliente
+                    </label>
 
-          <input
-            type="text"
-            id="clientName"
-            placeholder="Nome do cliente"
-            maxlength="150"
-          >
+                    <input type="text" id="clientName" placeholder="Nome do cliente" maxlength="150">
 
-        </div>
+                </div>
 
 
-        <!-- PROCEDIMENTO -->
+                <!-- PROCEDIMENTO -->
 
-        <div class="form-group">
+                <div class="form-group">
 
-          <label for="scheduleDescription">
-            Procedimento / descrição
-          </label>
+                    <label for="scheduleDescription">
+                        Procedimento / descrição
+                    </label>
 
-          <input
-            type="text"
-            id="scheduleDescription"
-            placeholder="Ex.: Corte + escova"
-            maxlength="255"
-          >
+                    <input type="text" id="scheduleDescription" placeholder="Ex.: Corte + escova" maxlength="255">
 
-        </div>
+                </div>
 
 
-        <!-- DATA -->
+                <!-- DATA -->
 
-        <div class="form-group">
+                <div class="form-group">
 
-          <label for="scheduleDate">
-            Data
-          </label>
+                    <label for="scheduleDate">
+                        Data
+                    </label>
 
-          <input
-            type="date"
-            id="scheduleDate"
-            required
-          >
+                    <input type="date" id="scheduleDate" required>
 
-        </div>
+                </div>
 
 
-        <!-- HORÁRIO -->
+                <!-- HORÁRIO -->
 
-        <div class="form-group">
+                <div class="form-group">
 
-          <label for="scheduleTime">
-            Horário
-          </label>
+                    <label for="scheduleTime">
+                        Horário
+                    </label>
 
-          <input
-            type="time"
-            id="scheduleTime"
-            required
-          >
+                    <input type="time" id="scheduleTime" required>
 
-        </div>
+                </div>
 
 
-        <!-- VALOR -->
+                <!-- VALOR -->
 
-        <div class="form-group">
+                <div class="form-group">
 
-          <label for="scheduleValue">
-            Valor
-          </label>
+                    <label for="scheduleValue">
+                        Valor
+                    </label>
 
-          <input
-            type="number"
-            id="scheduleValue"
-            min="0"
-            step="0.01"
-            placeholder="0,00"
-          >
+                    <input type="text" id="scheduleValue" placeholder="0,00" inputmode="numeric" autocomplete="off">
 
-          <small class="field-help">
-            Opcional.
-          </small>
+                    <small class="field-help">
+                        Opcional.
+                    </small>
 
-        </div>
+                </div>
 
 
-        <!-- FINANCEIRO -->
+                <!-- FINANCEIRO -->
 
-        <div class="form-group">
+                <div class="form-group">
 
-          <label for="financialType">
-            Ao concluir
-          </label>
+                    <label for="financialType">
+                        Ao concluir
+                    </label>
 
-          <select id="financialType">
+                    <select id="financialType">
 
-            <option value="none">
-              Não lançar no financeiro
-            </option>
+                        <option value="none">
+                            Não lançar no financeiro
+                        </option>
 
-            <option value="income">
-              Lançar como entrada
-            </option>
+                        <option value="income">
+                            Lançar como entrada
+                        </option>
 
-            <option value="expense">
-              Lançar como despesa
-            </option>
+                        <option value="expense">
+                            Lançar como despesa
+                        </option>
 
-          </select>
+                    </select>
 
-        </div>
+                </div>
 
 
-        <!-- OBSERVAÇÃO -->
+                <!-- OBSERVAÇÃO -->
 
-        <div class="form-group full-width">
+                <div class="form-group full-width">
 
-          <label for="scheduleObservation">
-            Observação
-          </label>
+                    <label for="scheduleObservation">
+                        Observação
+                    </label>
 
-          <textarea
-            id="scheduleObservation"
-            rows="3"
-            placeholder="Informação adicional..."
-          ></textarea>
+                    <textarea id="scheduleObservation" rows="3" placeholder="Informação adicional..."></textarea>
 
-        </div>
+                </div>
 
-      </div>
+            </div>
 
 
-      <!-- AÇÕES -->
+            <!-- AÇÕES -->
 
-      <div class="modal-actions">
+            <div class="modal-actions">
 
-        <button
-          type="button"
-          class="secondary-button"
-          data-close-modal="scheduleModal"
-        >
-          Cancelar
-        </button>
+                <button type="button" class="secondary-button" data-close-modal="scheduleModal">
+                    Cancelar
+                </button>
 
 
-        <button
-          type="submit"
-          class="primary-button"
-          id="saveScheduleButton"
-        >
-          Salvar compromisso
-        </button>
+                <button type="submit" class="primary-button" id="saveScheduleButton">
+                    Salvar compromisso
+                </button>
 
-      </div>
+            </div>
 
-    </form>
+        </form>
 
-  </dialog>
+    </dialog>
 
 
-  <!-- =====================================================
+    <!-- =====================================================
        MODAL DE CONCLUSÃO
   ====================================================== -->
 
-  <dialog
-    class="modal"
-    id="completeModal"
-  >
+    <dialog class="modal" id="completeModal">
 
-    <div class="modal-card small-modal complete-modal">
+        <div class="modal-card small-modal complete-modal">
 
 
-      <div class="complete-icon">
-        ✓
-      </div>
+            <div class="complete-icon">
+                ✓
+            </div>
 
 
-      <h2>
-        Concluir compromisso?
-      </h2>
+            <h2>
+                Concluir compromisso?
+            </h2>
 
 
-      <p id="completeModalText">
-        O compromisso será marcado como concluído.
-      </p>
+            <p id="completeModalText">
+                O compromisso será marcado como concluído.
+            </p>
 
 
-      <div
-        class="finance-preview"
-        id="financePreview"
-        hidden
-      >
+            <div class="finance-preview" id="financePreview" hidden>
 
-        <span>
-          Será lançado no financeiro
-        </span>
+                <span>
+                    Será lançado no financeiro
+                </span>
 
 
-        <strong id="financePreviewValue">
-          R$ 0,00
-        </strong>
+                <strong id="financePreviewValue">
+                    R$ 0,00
+                </strong>
 
 
-        <small id="financePreviewType">
-          Entrada
-        </small>
+                <small id="financePreviewType">
+                    Entrada
+                </small>
 
-      </div>
-
-
-      <div class="modal-actions">
-
-        <button
-          type="button"
-          class="secondary-button"
-          data-close-modal="completeModal"
-        >
-          Voltar
-        </button>
+            </div>
 
 
-        <button
-          type="button"
-          class="primary-button"
-          id="confirmCompleteButton"
-        >
-          Concluir
-        </button>
+            <div class="modal-actions">
 
-      </div>
-
-    </div>
-
-  </dialog>
+                <button type="button" class="secondary-button" data-close-modal="completeModal">
+                    Voltar
+                </button>
 
 
-  <!-- =====================================================
+                <button type="button" class="primary-button" id="confirmCompleteButton">
+                    Concluir
+                </button>
+
+            </div>
+
+        </div>
+
+    </dialog>
+
+
+    <!-- =====================================================
        MODAL EXCLUSÃO
   ====================================================== -->
 
-  <dialog
-    class="modal"
-    id="deleteModal"
-  >
+    <dialog class="modal" id="deleteModal">
 
-    <div class="modal-card small-modal delete-modal-card">
+        <div class="modal-card small-modal delete-modal-card">
 
 
-      <div class="delete-icon">
-        !
-      </div>
+            <div class="delete-icon">
+                !
+            </div>
 
 
-      <h2>
-        Excluir compromisso?
-      </h2>
+            <h2>
+                Excluir compromisso?
+            </h2>
 
 
-      <p>
-        Essa ação remove o compromisso da agenda.
-      </p>
+            <p>
+                Essa ação remove o compromisso da agenda.
+            </p>
 
 
-      <div class="modal-actions">
+            <div class="modal-actions">
 
-        <button
-          type="button"
-          class="secondary-button"
-          data-close-modal="deleteModal"
-        >
-          Cancelar
-        </button>
+                <button type="button" class="secondary-button" data-close-modal="deleteModal">
+                    Cancelar
+                </button>
 
 
-        <button
-          type="button"
-          class="danger-button"
-          id="confirmDeleteButton"
-        >
-          Excluir
-        </button>
+                <button type="button" class="danger-button" id="confirmDeleteButton">
+                    Excluir
+                </button>
 
-      </div>
+            </div>
 
-    </div>
+        </div>
 
-  </dialog>
+    </dialog>
 
 
-  <!-- =====================================================
+    <!-- =====================================================
        FILTROS
   ====================================================== -->
 
-  <dialog
-    class="modal"
-    id="filtersModal"
-  >
+    <dialog class="modal" id="filtersModal">
 
-    <div class="modal-card filters-modal-card">
+        <div class="modal-card filters-modal-card">
 
 
-      <div class="modal-header">
+            <div class="modal-header">
 
-        <div>
+                <div>
 
-          <span class="card-label">
-            Agenda
-          </span>
+                    <span class="card-label">
+                        Agenda
+                    </span>
 
-          <h2>
-            Filtrar compromissos
-          </h2>
+                    <h2>
+                        Filtrar compromissos
+                    </h2>
+
+                </div>
+
+
+                <button type="button" class="modal-close" data-close-modal="filtersModal">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="filters-grid">
+
+
+                <div class="form-group">
+
+                    <label for="statusFilter">
+                        Status
+                    </label>
+
+                    <select id="statusFilter">
+
+                        <option value="all">
+                            Todos
+                        </option>
+
+                        <option value="scheduled">
+                            Agendados
+                        </option>
+
+                        <option value="completed">
+                            Concluídos
+                        </option>
+
+                        <option value="cancelled">
+                            Cancelados
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="financialFilter">
+                        Financeiro
+                    </label>
+
+                    <select id="financialFilter">
+
+                        <option value="all">
+                            Todos
+                        </option>
+
+                        <option value="income">
+                            Entrada
+                        </option>
+
+                        <option value="expense">
+                            Despesa
+                        </option>
+
+                        <option value="none">
+                            Sem lançamento
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="filters-actions">
+
+                <button type="button" class="clear-filter-button" id="clearFiltersButton">
+                    Limpar filtros
+                </button>
+
+
+                <button type="button" class="primary-button" id="applyFiltersButton">
+                    Aplicar filtros
+                </button>
+
+            </div>
 
         </div>
 
-
-        <button
-          type="button"
-          class="modal-close"
-          data-close-modal="filtersModal"
-        >
-          ×
-        </button>
-
-      </div>
+    </dialog>
 
 
-      <div class="filters-grid">
-
-
-        <div class="form-group">
-
-          <label for="statusFilter">
-            Status
-          </label>
-
-          <select id="statusFilter">
-
-            <option value="all">
-              Todos
-            </option>
-
-            <option value="scheduled">
-              Agendados
-            </option>
-
-            <option value="completed">
-              Concluídos
-            </option>
-
-            <option value="cancelled">
-              Cancelados
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label for="financialFilter">
-            Financeiro
-          </label>
-
-          <select id="financialFilter">
-
-            <option value="all">
-              Todos
-            </option>
-
-            <option value="income">
-              Entrada
-            </option>
-
-            <option value="expense">
-              Despesa
-            </option>
-
-            <option value="none">
-              Sem lançamento
-            </option>
-
-          </select>
-
-        </div>
-
-      </div>
-
-
-      <div class="filters-actions">
-
-        <button
-          type="button"
-          class="clear-filter-button"
-          id="clearFiltersButton"
-        >
-          Limpar filtros
-        </button>
-
-
-        <button
-          type="button"
-          class="primary-button"
-          id="applyFiltersButton"
-        >
-          Aplicar filtros
-        </button>
-
-      </div>
-
-    </div>
-
-  </dialog>
-
-
-  <!-- =====================================================
+    <!-- =====================================================
        TOAST
   ====================================================== -->
 
-  <div
-    class="toast"
-    id="toast"
-  ></div>
+    <div class="toast" id="toast"></div>
 
 
-  <!-- =====================================================
+    <!-- =====================================================
        JS
   ====================================================== -->
 
-  <script src="js/agenda.js"></script>
+    <script src="js/agenda.js"></script>
 
 
 </body>

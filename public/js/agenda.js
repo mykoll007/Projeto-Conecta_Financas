@@ -1498,6 +1498,83 @@ function getFinancialValueText(
     );
 }
 
+// =====================================================
+// MÁSCARA DE VALOR
+// =====================================================
+
+function formatMoneyInput(value) {
+
+    const numbers =
+        String(value || "")
+            .replace(/\D/g, "");
+
+
+    if (!numbers) {
+        return "";
+    }
+
+
+    const amount =
+        Number(numbers) / 100;
+
+
+    return amount.toLocaleString(
+        "pt-BR",
+        {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }
+    );
+}
+
+
+function moneyInputToNumber(value) {
+
+    if (!value) {
+        return null;
+    }
+
+
+    const normalized =
+        String(value)
+            .replace(/\./g, "")
+            .replace(",", ".");
+
+
+    const amount =
+        Number(normalized);
+
+
+    return Number.isNaN(amount)
+        ? null
+        : amount;
+}
+
+
+function setupScheduleMoneyInput() {
+
+    const input =
+        getElement(
+            "scheduleValue"
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    input.addEventListener(
+        "input",
+        event => {
+
+            event.target.value =
+                formatMoneyInput(
+                    event.target.value
+                );
+        }
+    );
+}
 
 // =====================================================
 // RESUMO
@@ -2002,35 +2079,36 @@ async function saveSchedule(
     }
 
 
-    let value =
-        null;
+let value =
+    null;
+
+
+if (
+    valueText !==
+    ""
+) {
+
+    value =
+        moneyInputToNumber(
+            valueText
+        );
 
 
     if (
-        valueText !==
-        ""
+        value === null ||
+        Number.isNaN(
+            value
+        ) ||
+        value < 0
     ) {
 
-        value =
-            Number(
-                valueText
-            );
+        showToast(
+            "Informe um valor válido."
+        );
 
-
-        if (
-            Number.isNaN(
-                value
-            ) ||
-            value < 0
-        ) {
-
-            showToast(
-                "Informe um valor válido."
-            );
-
-            return;
-        }
+        return;
     }
+}
 
 
     if (
@@ -3227,6 +3305,8 @@ async function initializePage() {
     setupEvents();
 
     setupSearch();
+
+    setupScheduleMoneyInput();
 
 
     try {
