@@ -61,6 +61,13 @@
           Relatórios
         </a>
 
+                 <a
+  href="agenda.html"
+  class="nav-link"
+>
+  Agenda
+</a>
+
       </nav>
 
 
@@ -150,12 +157,9 @@
         Relatórios
       </a>
 
-      <a
-  href="agenda.html"
-  class="nav-link"
->
-  Agenda
-</a>
+      <a href="agenda.html" class="nav-link">
+        Agenda
+      </a>
 
       <a href="configuracoes.html">
         Configurações
@@ -1047,94 +1051,66 @@
 
   </dialog>
 
-  <dialog
-  class="modal"
-  id="categoryModal"
->
+  <dialog class="modal" id="categoryModal">
 
-  <form
-    class="modal-card small-modal"
-    id="categoryForm"
-  >
+    <form class="modal-card small-modal" id="categoryForm">
 
-    <div class="modal-header">
+      <div class="modal-header">
 
-      <div>
-        <span class="card-label">
-          Categoria
-        </span>
+        <div>
+          <span class="card-label">
+            Categoria
+          </span>
 
-        <h2>
-          Nova categoria
-        </h2>
+          <h2>
+            Nova categoria
+          </h2>
+        </div>
+
+        <button type="button" class="modal-close" data-close-modal="categoryModal" aria-label="Fechar">
+          ×
+        </button>
+
       </div>
 
-      <button
-        type="button"
-        class="modal-close"
-        data-close-modal="categoryModal"
-        aria-label="Fechar"
-      >
-        ×
-      </button>
 
-    </div>
+      <div class="form-group">
 
+        <label for="newCategoryName">
+          Nome
+        </label>
 
-    <div class="form-group">
+        <input type="text" id="newCategoryName" placeholder="Ex.: Viagem" maxlength="80" required>
 
-      <label for="newCategoryName">
-        Nome
-      </label>
-
-      <input
-        type="text"
-        id="newCategoryName"
-        placeholder="Ex.: Viagem"
-        maxlength="80"
-        required
-      >
-
-    </div>
+      </div>
 
 
-    <div class="form-group">
+      <div class="form-group">
 
-      <label for="newCategoryColor">
-        Cor
-      </label>
+        <label for="newCategoryColor">
+          Cor
+        </label>
 
-      <input
-        type="color"
-        id="newCategoryColor"
-        value="#168a52"
-      >
+        <input type="color" id="newCategoryColor" value="#168a52">
 
-    </div>
+      </div>
 
 
-    <div class="modal-actions">
+      <div class="modal-actions">
 
-      <button
-        type="button"
-        class="secondary-button"
-        data-close-modal="categoryModal"
-      >
-        Cancelar
-      </button>
+        <button type="button" class="secondary-button" data-close-modal="categoryModal">
+          Cancelar
+        </button>
 
-      <button
-        type="submit"
-        class="primary-button"
-      >
-        Adicionar categoria
-      </button>
+        <button type="submit" class="primary-button">
+          Adicionar categoria
+        </button>
 
-    </div>
+      </div>
 
-  </form>
+    </form>
 
-</dialog>
+  </dialog>
 
   <!-- =====================================================
        TOAST
