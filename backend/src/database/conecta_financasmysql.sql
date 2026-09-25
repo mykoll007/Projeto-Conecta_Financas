@@ -206,3 +206,55 @@ CREATE INDEX idx_fixos_usuario
 ON fixos (
     usuario_id
 );
+
+-- =====================================================
+-- AGENDAMENTOS
+-- =====================================================
+
+CREATE TABLE agendamentos (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    usuario_id INT UNSIGNED NOT NULL,
+    movimentacao_id INT UNSIGNED NULL,
+
+    titulo VARCHAR(150) NOT NULL,
+
+    cliente_nome VARCHAR(150) NULL,
+
+    descricao VARCHAR(255) NULL,
+
+    data_agendamento DATE NOT NULL,
+
+    horario TIME NOT NULL,
+
+    valor DECIMAL(12,2) NULL,
+
+    tipo_financeiro ENUM(
+        'none',
+        'income',
+        'expense'
+    ) DEFAULT 'none',
+
+    status ENUM(
+        'scheduled',
+        'completed',
+        'cancelled'
+    ) DEFAULT 'scheduled',
+
+    observacao TEXT NULL,
+
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    atualizado_em DATETIME NULL,
+
+    CONSTRAINT fk_agendamento_usuario
+        FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_agendamento_movimentacao
+        FOREIGN KEY (movimentacao_id)
+        REFERENCES movimentacoes(id)
+        ON DELETE SET NULL
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -8,6 +8,7 @@ const FixoController = require("../controllers/FixoController");
 const CategoriaController = require("../controllers/CategoriaController");
 const DashboardController = require("../controllers/DashboardController");
 const ConfiguracaoController = require("../controllers/ConfiguracaoController");
+const AgendaController = require("../controllers/AgendaController");
 
 
 const verificarUsuario = require("../middleware/authMiddleware");
@@ -224,6 +225,58 @@ router.put(
     "/configuracoes",
     verificarUsuario,
     ConfiguracaoController.atualizarConfiguracoes
+);
+
+// =====================================================
+// ROTAS DE AGENDAMENTOS
+// =====================================================
+
+
+// Criar um novo agendamento
+router.post(
+    "/agendamentos",
+    verificarUsuario,
+    AgendaController.criarAgendamento
+);
+
+
+// Listar todos os agendamentos do usuário
+router.get(
+    "/agendamentos",
+    verificarUsuario,
+    AgendaController.listarAgendamentos
+);
+
+
+// Atualizar um agendamento
+router.put(
+    "/agendamentos/:agendamentoId",
+    verificarUsuario,
+    AgendaController.atualizarAgendamento
+);
+
+
+// Concluir um agendamento
+router.put(
+    "/agendamentos/:agendamentoId/concluir",
+    verificarUsuario,
+    AgendaController.concluirAgendamento
+);
+
+
+// Cancelar um agendamento
+router.put(
+    "/agendamentos/:agendamentoId/cancelar",
+    verificarUsuario,
+    AgendaController.cancelarAgendamento
+);
+
+
+// Excluir um agendamento
+router.delete(
+    "/agendamentos/:agendamentoId",
+    verificarUsuario,
+    AgendaController.excluirAgendamento
 );
 
 
