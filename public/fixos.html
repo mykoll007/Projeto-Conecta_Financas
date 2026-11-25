@@ -321,175 +321,6 @@
 
 
     <!-- =====================================================
-         RESUMO
-    ====================================================== -->
-
-    <section class="summary-grid">
-
-
-      <!-- RECEITAS -->
-
-      <article class="summary-card">
-
-        <div class="summary-icon income-icon">
-          ↗
-        </div>
-
-
-        <div>
-
-          <span>
-            Receitas fixas
-          </span>
-
-
-          <strong
-            class="income-text"
-            id="fixedIncomeValue"
-          >
-            R$ 0,00
-          </strong>
-
-
-          <small id="fixedIncomeCount">
-            0 lançamentos ativos
-          </small>
-
-        </div>
-
-      </article>
-
-
-      <!-- DESPESAS -->
-
-      <article class="summary-card">
-
-        <div class="summary-icon expense-icon">
-          ↘
-        </div>
-
-
-        <div>
-
-          <span>
-            Despesas fixas
-          </span>
-
-
-          <strong
-            class="expense-text"
-            id="fixedExpenseValue"
-          >
-            R$ 0,00
-          </strong>
-
-
-          <small id="fixedExpenseCount">
-            0 lançamentos ativos
-          </small>
-
-        </div>
-
-      </article>
-
-
-      <!-- RESERVAS -->
-
-      <article class="summary-card">
-
-        <div class="summary-icon saved-icon">
-          ◆
-        </div>
-
-
-        <div>
-
-          <span>
-            Reservas fixas
-          </span>
-
-
-          <strong
-            class="saved-text"
-            id="fixedSavedValue"
-          >
-            R$ 0,00
-          </strong>
-
-
-          <small id="fixedSavedCount">
-            0 lançamentos ativos
-          </small>
-
-        </div>
-
-      </article>
-
-
-      <!-- SALDO -->
-
-      <article class="summary-card balance-card">
-
-        <div class="summary-icon balance-icon">
-          $
-        </div>
-
-
-        <div>
-
-          <span>
-            Saldo previsto
-          </span>
-
-
-          <strong id="fixedBalanceValue">
-            R$ 0,00
-          </strong>
-
-
-          <small>
-            Receitas menos despesas e reservas fixas
-          </small>
-
-        </div>
-
-      </article>
-
-
-      <!-- ATIVOS -->
-
-      <article class="summary-card">
-
-        <div class="summary-icon active-icon">
-          ✓
-        </div>
-
-
-        <div>
-
-          <span>
-            Fixos ativos
-          </span>
-
-
-          <strong id="activeFixedCount">
-            0
-          </strong>
-
-
-          <small id="inactiveFixedCount">
-            0 lançamentos inativos
-          </small>
-
-        </div>
-
-      </article>
-
-
-    </section>
-
-
-    <!-- =====================================================
          LANÇAMENTO AUTOMÁTICO
     ====================================================== -->
 
@@ -767,10 +598,26 @@
            LISTA
       ================================================== -->
 
-      <div
-        class="fixed-list"
-        id="fixedList"
-      ></div>
+<div
+  class="fixed-list"
+  id="fixedList"
+></div>
+
+<!-- VER TODOS OS LANÇAMENTOS -->
+<div class="fixed-view-all-wrapper">
+
+  <button
+    type="button"
+    class="fixed-view-all-button"
+    id="fixedViewAll"
+    aria-controls="fixedList"
+    aria-expanded="false"
+    hidden
+  >
+    Ver todos os lançamentos
+  </button>
+
+</div>
 
 
       <!-- =================================================
@@ -812,6 +659,174 @@
 
     </section>
 
+    
+    <!-- =====================================================
+         RESUMO
+    ====================================================== -->
+
+    <section class="summary-grid">
+
+
+      <!-- RECEITAS -->
+
+      <article class="summary-card">
+
+        <div class="summary-icon income-icon">
+          ↗
+        </div>
+
+
+        <div>
+
+          <span>
+            Receitas fixas
+          </span>
+
+
+          <strong
+            class="income-text"
+            id="fixedIncomeValue"
+          >
+            R$ 0,00
+          </strong>
+
+
+          <small id="fixedIncomeCount">
+            0 lançamentos ativos
+          </small>
+
+        </div>
+
+      </article>
+
+
+      <!-- DESPESAS -->
+
+      <article class="summary-card">
+
+        <div class="summary-icon expense-icon">
+          ↘
+        </div>
+
+
+        <div>
+
+          <span>
+            Despesas fixas
+          </span>
+
+
+          <strong
+            class="expense-text"
+            id="fixedExpenseValue"
+          >
+            R$ 0,00
+          </strong>
+
+
+          <small id="fixedExpenseCount">
+            0 lançamentos ativos
+          </small>
+
+        </div>
+
+      </article>
+
+
+      <!-- RESERVAS -->
+
+      <article class="summary-card">
+
+        <div class="summary-icon saved-icon">
+          ◆
+        </div>
+
+
+        <div>
+
+          <span>
+            Reservas fixas
+          </span>
+
+
+          <strong
+            class="saved-text"
+            id="fixedSavedValue"
+          >
+            R$ 0,00
+          </strong>
+
+
+          <small id="fixedSavedCount">
+            0 lançamentos ativos
+          </small>
+
+        </div>
+
+      </article>
+
+
+      <!-- SALDO -->
+
+      <article class="summary-card balance-card">
+
+        <div class="summary-icon balance-icon">
+          $
+        </div>
+
+
+        <div>
+
+          <span>
+            Saldo previsto
+          </span>
+
+
+          <strong id="fixedBalanceValue">
+            R$ 0,00
+          </strong>
+
+
+          <small>
+            Receitas menos despesas e reservas fixas
+          </small>
+
+        </div>
+
+      </article>
+
+
+      <!-- ATIVOS -->
+
+      <article class="summary-card">
+
+        <div class="summary-icon active-icon">
+          ✓
+        </div>
+
+
+        <div>
+
+          <span>
+            Fixos ativos
+          </span>
+
+
+          <strong id="activeFixedCount">
+            0
+          </strong>
+
+
+          <small id="inactiveFixedCount">
+            0 lançamentos inativos
+          </small>
+
+        </div>
+
+      </article>
+
+
+    </section>
 
   </main>
 

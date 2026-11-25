@@ -16,7 +16,7 @@
 
   <link
     rel="stylesheet"
-    href="css/movimentacoes.css"
+    href="css/movimentacoes.css?v=2"
   >
 
 </head>
@@ -357,6 +357,10 @@
 
         <div class="transactions-header-actions">
 
+          <button type="button" id="importNubank" class="nubank-import-button">
+    <i class="fas fa-file-import"></i>
+    Importar extrato
+</button>
 
           <!-- EXPORTAR -->
 
@@ -1458,6 +1462,84 @@
 
   </dialog>
 
+  <dialog id="nubankDialog" class="nubank-dialog">
+
+    <div class="nubank-header">
+        <div>
+            <h2>Importar extrato bancário</h2>
+            <p>Importe suas movimentações do Nubank</p>
+        </div>
+
+        <button type="button" id="nubankClose">
+            &times;
+        </button>
+    </div>
+
+    <div class="nubank-bank">
+        <div class="nubank-logo">nu</div>
+
+        <div>
+            <strong>Nubank</strong>
+            <p>Extrato de conta bancária</p>
+        </div>
+    </div>
+
+    <div class="nubank-upload">
+        <i class="fas fa-file-pdf"></i>
+
+        <h3>Selecione seu extrato</h3>
+
+        <p>Importe o arquivo PDF baixado pelo Nubank.</p>
+
+        <input
+            type="file"
+            id="nubankFile"
+            accept=".pdf,application/pdf"
+        >
+    </div>
+
+    <div id="nubankInfo" class="nubank-info">
+        Nenhum extrato selecionado.
+    </div>
+
+   <div class="nubank-list-header">
+
+    <div>
+        <h3>Movimentações identificadas</h3>
+
+        <small id="nubankSelectedCount">
+            0 movimentações selecionadas
+        </small>
+    </div>
+
+    <button
+        type="button"
+        id="nubankSelectAll"
+        class="nubank-select-all"
+        disabled
+    >
+        <i class="fa-solid fa-square-check"></i>
+        <span>Selecionar tudo</span>
+    </button>
+
+</div>
+
+<div id="nubankRows" class="nubank-rows"></div> 
+
+    <div class="nubank-footer">
+        <button
+            type="button"
+            id="nubankSave"
+            class="nubank-import-button"
+            disabled
+        >
+            <i class="fas fa-check"></i>
+            Confirmar importação
+        </button>
+    </div>
+
+</dialog>
+
 
   <!-- =====================================================
        TOAST
@@ -1469,7 +1551,10 @@
   ></div>
 
 
+
+
   <script src="js/movimentacoes.js"></script>
+  <script src="js/importador-nubank.js"></script>
 
 
 </body>

@@ -188,6 +188,15 @@ let searchLoadingTimeout =
 
 
 // =====================================================
+// LIMITE DE LANÇAMENTOS VISÍVEIS
+// =====================================================
+
+const FIXED_INITIAL_LIMIT = 6;
+
+let showAllFixed = false;
+
+
+// =====================================================
 // ELEMENTOS
 // =====================================================
 
@@ -464,6 +473,17 @@ function showToast(message) {
 // =====================================================
 
 function showFixedLoading() {
+
+    const viewAllButton =
+        getElement(
+            "fixedViewAll"
+        );
+
+    if (viewAllButton) {
+
+        viewAllButton.hidden = true;
+    }
+
 
     const loading =
         getElement(
@@ -1743,6 +1763,10 @@ function createFixedItem(item) {
 // LISTA
 // =====================================================
 
+// =====================================================
+// LISTA
+// =====================================================
+
 function renderFixedList() {
 
     const items =
@@ -1767,27 +1791,87 @@ function renderFixedList() {
         );
 
 
-    if (resultsText) {
+    const viewAllButton =
+        getElement(
+            "fixedViewAll"
+        );
 
-        resultsText.textContent =
-            items.length === 1
-                ? "1 lançamento encontrado"
-                : `${items.length} lançamentos encontrados`;
+
+    // =================================================
+    // VERIFICAR QUANTIDADE
+    // =================================================
+
+    if (
+        items.length <= FIXED_INITIAL_LIMIT
+    ) {
+
+        showAllFixed = false;
     }
 
+
+    // =================================================
+    // LIMITAR LANÇAMENTOS VISÍVEIS
+    // =================================================
+
+    const visibleItems =
+        showAllFixed
+            ? items
+            : items.slice(
+                0,
+                FIXED_INITIAL_LIMIT
+            );
+
+
+    // =================================================
+    // CONTADOR
+    // =================================================
+
+    if (resultsText) {
+
+        if (items.length === 0) {
+
+            resultsText.textContent =
+                "Nenhum lançamento encontrado";
+
+        } else if (items.length === 1) {
+
+            resultsText.textContent =
+                "1 lançamento encontrado";
+
+        } else if (
+            visibleItems.length < items.length
+        ) {
+
+            resultsText.textContent =
+                `Exibindo ${visibleItems.length} de ${items.length} lançamentos`;
+
+        } else {
+
+            resultsText.textContent =
+                `${items.length} lançamentos encontrados`;
+        }
+    }
+
+
+    // =================================================
+    // ESTADO VAZIO
+    // =================================================
 
     if (emptyState) {
 
         emptyState.hidden =
-            items.length >
-            0;
+            items.length > 0;
     }
 
+
+    // =================================================
+    // RENDERIZAR LANÇAMENTOS
+    // =================================================
 
     if (fixedList) {
 
         fixedList.innerHTML =
-            items
+            visibleItems
                 .map(
                     createFixedItem
                 )
@@ -1796,6 +1880,33 @@ function renderFixedList() {
                 );
     }
 
+
+    // =================================================
+    // BOTÃO VER TODOS
+    // =================================================
+
+    if (viewAllButton) {
+
+        viewAllButton.hidden =
+            items.length <= FIXED_INITIAL_LIMIT;
+
+
+        viewAllButton.textContent =
+            showAllFixed
+                ? "Mostrar menos"
+                : `Ver todos os lançamentos (${items.length})`;
+
+
+        viewAllButton.setAttribute(
+            "aria-expanded",
+            String(showAllFixed)
+        );
+    }
+
+
+    // =================================================
+    // AÇÕES DOS ITENS
+    // =================================================
 
     setupItemActions();
 }
@@ -3115,6 +3226,8 @@ function openFiltersModal() {
 
 function applyFilters() {
 
+    showAllFixed = false;
+
     renderFixedList();
 
 
@@ -3141,6 +3254,8 @@ function applyFilters() {
 // =====================================================
 
 function clearFilters() {
+
+    showAllFixed = false;
 
     hideSearchLoading();
 
@@ -3253,14 +3368,17 @@ function setupFilters() {
     }
 
 
-    searchInput.addEventListener(
-        "input",
-        () => {
+searchInput.addEventListener(
+    "input",
+    () => {
 
-            const loading =
-                getElement(
-                    "searchLoading"
-                );
+        showAllFixed = false;
+
+
+        const loading =
+            getElement(
+                "searchLoading"
+            );
 
 
             clearTimeout(
@@ -3541,6 +3659,25 @@ function logout() {
 function setupEvents() {
 
     setupMoneyInput();
+
+
+    // =================================================
+    // VER TODOS OS LANÇAMENTOS
+    // =================================================
+
+    getElement(
+        "fixedViewAll"
+    )?.addEventListener(
+        "click",
+        () => {
+
+            showAllFixed =
+                !showAllFixed;
+
+
+            renderFixedList();
+        }
+    );
 
 
     // =================================================
