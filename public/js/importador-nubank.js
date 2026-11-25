@@ -270,8 +270,8 @@
         const text = normalize(kind);
 
         if (text.includes("valor adicionado na conta por cartao")) {
-    return "Cartão de crédito";
-}
+            return "Cartão de crédito";
+        }
 
         if (text.includes("pix")) {
             return "Pix";
@@ -329,11 +329,14 @@
         }
 
         if (isInvestment) {
-            selected = false;
-            warning = "Movimentação de investimento";
+            selected = true;
 
             if (kind.includes("aplicacao")) {
                 type = "saved";
+                warning = "Aplicação em reserva";
+            } else if (kind.includes("resgate")) {
+                type = "withdrawal";
+                warning = "Resgate de reserva";
             }
         }
 
@@ -352,9 +355,9 @@
             warning = "Classificação precisa ser confirmada";
         }
         if (kind.includes("valor adicionado na conta por cartao")) {
-    selected = false;
-    warning = "Pix no crédito - não representa uma receita real";
-}
+            selected = false;
+            warning = "Pix no crédito - não representa uma receita real";
+        }
 
         if (entry.type === "income" && !warning) {
             selected = false;
@@ -387,8 +390,8 @@
         const result = [];
         const groups = [];
 
-const transactionPattern =
-    /^(Transferência (?:recebida pelo Pix(?: via)?|enviada pelo Pix|Recebida)|Reembolso recebido pelo Pix|Crédito em conta|Débito em conta|Resgate RDB|Aplicação RDB|Pagamento de fatura|Resgate de empréstimo|Pagamento de boleto efetuado|Compra no débito(?: via NuPay)?|Valor adicionado na conta por cartão(?: de crédito)?)\s*(.*?)\s+([\d.]+,\d{2})$/i;
+        const transactionPattern =
+            /^(Transferência (?:recebida pelo Pix(?: via)?|enviada pelo Pix|Recebida)|Reembolso recebido pelo Pix|Crédito em conta|Débito em conta|Resgate RDB|Aplicação RDB|Pagamento de fatura|Resgate de empréstimo|Pagamento de boleto efetuado|Compra no débito(?: via NuPay)?|Valor adicionado na conta por cartão(?: de crédito)?)\s*(.*?)\s+([\d.]+,\d{2})$/i;
 
         for (const raw of lines) {
             const line = raw.trim();
@@ -624,12 +627,17 @@ const transactionPattern =
             .filter(entry => entry.type === "saved")
             .reduce((total, entry) => total + entry.amount, 0);
 
+        const withdrawal = selected
+            .filter(entry => entry.type === "withdrawal")
+            .reduce((total, entry) => total + entry.amount, 0);
+
         info.textContent =
             `${entries.length} movimentações identificadas | ` +
             `${selected.length} selecionadas | ` +
             `Entradas: ${formatCurrency(income)} | ` +
             `Despesas: ${formatCurrency(expense)} | ` +
-            `Reservas: ${formatCurrency(saved)}`;
+            `Reservas: ${formatCurrency(saved)} | ` +
+            `Resgates: ${formatCurrency(withdrawal)}`;
 
         save.disabled = selected.length === 0;
 
@@ -681,22 +689,22 @@ const transactionPattern =
 
             checkbox.type = "checkbox";
             checkbox.checked = entry.selected;
-checkbox.addEventListener("change", () => {
+            checkbox.addEventListener("change", () => {
 
-    entry.selected = checkbox.checked;
+                entry.selected = checkbox.checked;
 
-    if (!entry.selected) {
+                if (!entry.selected) {
 
-        row.classList.remove("nubank-row-invalid");
+                    row.classList.remove("nubank-row-invalid");
 
-        row.querySelectorAll(".nubank-field-invalid")
-            .forEach(field => {
-                field.classList.remove("nubank-field-invalid");
+                    row.querySelectorAll(".nubank-field-invalid")
+                        .forEach(field => {
+                            field.classList.remove("nubank-field-invalid");
+                        });
+                }
+
+                updateSummary();
             });
-    }
-
-    updateSummary();
-});
 
             // Data e informações
 
@@ -729,6 +737,7 @@ checkbox.addEventListener("change", () => {
             type.add(new Option("Despesa", "expense"));
             type.add(new Option("Receita", "income"));
             type.add(new Option("Reserva", "saved"));
+            type.add(new Option("Resgate", "withdrawal"));
 
             type.value = entry.type;
 
@@ -912,18 +921,18 @@ checkbox.addEventListener("change", () => {
 
             save.disabled = true;
 
-} finally {
-    file.disabled = false;
+        } finally {
+            file.disabled = false;
 
-    if (selectAll) {
-        selectAll.disabled = entries.length === 0;
-    }
+            if (selectAll) {
+                selectAll.disabled = entries.length === 0;
+            }
 
-    if (selectedCount) {
-        selectedCount.textContent =
-            `${entries.filter(entry => entry.selected).length} de ${entries.length} selecionadas`;
-    }
-}
+            if (selectedCount) {
+                selectedCount.textContent =
+                    `${entries.filter(entry => entry.selected).length} de ${entries.length} selecionadas`;
+            }
+        }
     });
 
     // =========================================
@@ -942,129 +951,129 @@ checkbox.addEventListener("change", () => {
             return;
         }
 
-// =========================================
-// VALIDAR MOVIMENTAÇÕES SELECIONADAS
-// =========================================
+        // =========================================
+        // VALIDAR MOVIMENTAÇÕES SELECIONADAS
+        // =========================================
 
-const renderedRows = rows.querySelectorAll(".nubank-row");
+        const renderedRows = rows.querySelectorAll(".nubank-row");
 
-let firstInvalid = null;
-let missingCategories = 0;
-let invalidFields = 0;
+        let firstInvalid = null;
+        let missingCategories = 0;
+        let invalidFields = 0;
 
-entries.forEach((entry, index) => {
+        entries.forEach((entry, index) => {
 
-    const row = renderedRows[index];
+            const row = renderedRows[index];
 
-    if (!row) return;
+            if (!row) return;
 
-    const descriptionInput = row.querySelector(
-        'input[type="text"]'
-    );
+            const descriptionInput = row.querySelector(
+                'input[type="text"]'
+            );
 
-    const amountInput = row.querySelector(
-        'input[type="number"]'
-    );
+            const amountInput = row.querySelector(
+                'input[type="number"]'
+            );
 
-    const categorySelect = row.querySelectorAll("select")[1];
+            const categorySelect = row.querySelectorAll("select")[1];
 
-    // Limpar erros anteriores
+            // Limpar erros anteriores
 
-    row.classList.remove("nubank-row-invalid");
+            row.classList.remove("nubank-row-invalid");
 
-    descriptionInput?.classList.remove("nubank-field-invalid");
-    amountInput?.classList.remove("nubank-field-invalid");
-    categorySelect?.classList.remove("nubank-field-invalid");
+            descriptionInput?.classList.remove("nubank-field-invalid");
+            amountInput?.classList.remove("nubank-field-invalid");
+            categorySelect?.classList.remove("nubank-field-invalid");
 
-    if (!entry.selected) return;
+            if (!entry.selected) return;
 
-    let hasError = false;
+            let hasError = false;
 
-    // Validar categoria
+            // Validar categoria
 
-    if (!entry.category) {
+            if (!entry.category) {
 
-        missingCategories++;
+                missingCategories++;
 
-        categorySelect?.classList.add(
-            "nubank-field-invalid"
-        );
+                categorySelect?.classList.add(
+                    "nubank-field-invalid"
+                );
 
-        firstInvalid ||= categorySelect;
+                firstInvalid ||= categorySelect;
 
-        hasError = true;
-    }
+                hasError = true;
+            }
 
-    // Validar descrição
+            // Validar descrição
 
-    if (!entry.description.trim()) {
+            if (!entry.description.trim()) {
 
-        invalidFields++;
+                invalidFields++;
 
-        descriptionInput?.classList.add(
-            "nubank-field-invalid"
-        );
+                descriptionInput?.classList.add(
+                    "nubank-field-invalid"
+                );
 
-        firstInvalid ||= descriptionInput;
+                firstInvalid ||= descriptionInput;
 
-        hasError = true;
-    }
+                hasError = true;
+            }
 
-    // Validar valor
+            // Validar valor
 
-    if (
-        !Number.isFinite(entry.amount) ||
-        entry.amount <= 0
-    ) {
+            if (
+                !Number.isFinite(entry.amount) ||
+                entry.amount <= 0
+            ) {
 
-        invalidFields++;
+                invalidFields++;
 
-        amountInput?.classList.add(
-            "nubank-field-invalid"
-        );
+                amountInput?.classList.add(
+                    "nubank-field-invalid"
+                );
 
-        firstInvalid ||= amountInput;
+                firstInvalid ||= amountInput;
 
-        hasError = true;
-    }
+                hasError = true;
+            }
 
-    if (hasError) {
-        row.classList.add("nubank-row-invalid");
-    }
-});
+            if (hasError) {
+                row.classList.add("nubank-row-invalid");
+            }
+        });
 
-if (missingCategories || invalidFields) {
+        if (missingCategories || invalidFields) {
 
-    const messages = [];
+            const messages = [];
 
-    if (missingCategories) {
-        messages.push(
-            `${missingCategories} movimentação(ões) sem categoria.`
-        );
-    }
+            if (missingCategories) {
+                messages.push(
+                    `${missingCategories} movimentação(ões) sem categoria.`
+                );
+            }
 
-    if (invalidFields) {
-        messages.push(
-            `${invalidFields} campo(s) inválido(s).`
-        );
-    }
+            if (invalidFields) {
+                messages.push(
+                    `${invalidFields} campo(s) inválido(s).`
+                );
+            }
 
-    showImportWarning(
-        messages.join(" ") +
-        " Corrija os campos destacados antes de continuar."
-    );
+            showImportWarning(
+                messages.join(" ") +
+                " Corrija os campos destacados antes de continuar."
+            );
 
-    firstInvalid?.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-    });
+            firstInvalid?.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
 
-    firstInvalid?.focus({
-        preventScroll: true
-    });
+            firstInvalid?.focus({
+                preventScroll: true
+            });
 
-    return;
-}
+            return;
+        }
 
         save.disabled = true;
         file.disabled = true;
@@ -1072,7 +1081,7 @@ if (missingCategories || invalidFields) {
 
         close.disabled = true;
 
-        
+
         let imported = 0;
         let duplicates = 0;
 
@@ -1145,8 +1154,8 @@ if (missingCategories || invalidFields) {
         } finally {
             file.disabled = false;
             if (selectAll) {
-    selectAll.disabled = entries.length === 0;
-}
+                selectAll.disabled = entries.length === 0;
+            }
             close.disabled = false;
 
             save.disabled = !entries.some(

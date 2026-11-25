@@ -1058,7 +1058,7 @@ async function loadUpcomingAgenda() {
 
                         const valor =
                             item.valor !== null &&
-                            item.valor !== undefined
+                                item.valor !== undefined
 
                                 ? currency.format(
                                     Number(
@@ -1098,14 +1098,14 @@ async function loadUpcomingAgenda() {
 
                                     <strong>
                                         ${formatAgendaDate(
-                                            normalizedDate
-                                        )}
+                            normalizedDate
+                        )}
                                     </strong>
 
                                     <span>
                                         ${escapeHtml(
-                                            horario
-                                        )}
+                            horario
+                        )}
                                     </span>
 
                                 </div>
@@ -1115,14 +1115,14 @@ async function loadUpcomingAgenda() {
 
                                     <strong>
                                         ${escapeHtml(
-                                            nome
-                                        )}
+                            nome
+                        )}
                                     </strong>
 
                                     <span>
                                         ${escapeHtml(
-                                            descricao
-                                        )}
+                            descricao
+                        )}
                                     </span>
 
                                 </div>
@@ -1130,8 +1130,8 @@ async function loadUpcomingAgenda() {
 
                                 <div class="upcoming-agenda-value">
                                     ${escapeHtml(
-                                        valor
-                                    )}
+                            valor
+                        )}
                                 </div>
 
                             </article>
@@ -2079,14 +2079,21 @@ function renderBarChart() {
                     );
 
 
-                const saved =
+                const totalSaved =
                     sumTransactions(
                         periodTransactions,
                         transaction =>
-                            transaction.type ===
-                            "saved"
+                            transaction.type === "saved"
                     );
 
+                const withdrawal =
+                    sumTransactions(
+                        periodTransactions,
+                        transaction =>
+                            transaction.type === "withdrawal"
+                    );
+
+                const saved = totalSaved - withdrawal;
 
                 return {
                     ...period,
@@ -2154,16 +2161,12 @@ function renderBarChart() {
 
 
                     const savedHeight =
-                        Math.max(
-                            (
-                                item.saved /
-                                maximum
-                            ) * 90,
-
-                            item.saved > 0
-                                ? 3
-                                : 0
-                        );
+                        item.saved > 0
+                            ? Math.max(
+                                (item.saved / maximum) * 90,
+                                3
+                            )
+                            : 0;
 
 
                     return `
@@ -2394,53 +2397,37 @@ function renderCategoryChart() {
 function getTransactionTypeInfo(type) {
 
     if (type === "income") {
-
         return {
-            className:
-                "income",
-
-            icon:
-                "↗",
-
-            signal:
-                "+",
-
-            statusText:
-                "Recebido"
+            className: "income",
+            icon: "↗",
+            signal: "+",
+            statusText: "Recebido"
         };
     }
-
 
     if (type === "saved") {
-
         return {
-            className:
-                "saved",
-
-            icon:
-                "◆",
-
-            signal:
-                "",
-
-            statusText:
-                "Guardado"
+            className: "saved",
+            icon: "◆",
+            signal: "",
+            statusText: "Guardado"
         };
     }
 
+    if (type === "withdrawal") {
+        return {
+            className: "income",
+            icon: "↩",
+            signal: "+",
+            statusText: "Resgatado"
+        };
+    }
 
     return {
-        className:
-            "expense",
-
-        icon:
-            "↘",
-
-        signal:
-            "−",
-
-        statusText:
-            "Pago"
+        className: "expense",
+        icon: "↘",
+        signal: "−",
+        statusText: "Pago"
     };
 }
 
@@ -3730,19 +3717,17 @@ async function initializeDashboard() {
         setupEvents();
 
 
-await Promise.all([
-    renderUser(),
-    loadCategories(),
-    loadFinancialSettings()
-]);
+        await Promise.all([
+            renderUser(),
+            loadCategories(),
+            loadFinancialSettings()
+        ]);
 
 
-await Promise.all([
-    loadUpcomingAgenda(),
-    renderDashboard()
-]);
-
-        await renderDashboard();
+        await Promise.all([
+            loadUpcomingAgenda(),
+            renderDashboard()
+        ]);
 
 
     } catch (error) {

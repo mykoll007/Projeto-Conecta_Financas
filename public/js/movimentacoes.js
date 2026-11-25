@@ -16,14 +16,14 @@ const API_URL =
     "https://projeto-conecta-financas.vercel.app/api";
 
 
-    // =====================================================
+// =====================================================
 // CONFIRMAR EXCLUSÃO
 // =====================================================
 
 let confirmBeforeDelete =
     true;
 
-    
+
 
 
 // =====================================================
@@ -1042,8 +1042,8 @@ function renderCategoryOptions() {
                     return `
                         <option value="${category.id}">
                             ${escapeHtml(
-                                category.nome
-                            )}
+                        category.nome
+                    )}
                         </option>
                     `;
                 }
@@ -1780,9 +1780,9 @@ function renderSummary(
             transactions,
             transaction =>
                 transaction.type ===
-                    "income" &&
+                "income" &&
                 transaction.status ===
-                    "paid"
+                "paid"
         );
 
 
@@ -1791,20 +1791,9 @@ function renderSummary(
             transactions,
             transaction =>
                 transaction.type ===
-                    "expense" &&
+                "expense" &&
                 transaction.status ===
-                    "paid"
-        );
-
-
-    const saved =
-        sumTransactions(
-            transactions,
-            transaction =>
-                transaction.type ===
-                    "saved" &&
-                transaction.status ===
-                    "paid"
+                "paid"
         );
 
 
@@ -1814,12 +1803,12 @@ function renderSummary(
             transaction =>
                 (
                     transaction.type ===
-                        "expense" ||
+                    "expense" ||
                     transaction.type ===
-                        "saved"
+                    "saved"
                 ) &&
                 transaction.status ===
-                    "pending"
+                "pending"
         );
 
 
@@ -1827,9 +1816,9 @@ function renderSummary(
         transactions.filter(
             transaction =>
                 transaction.type ===
-                    "income" &&
+                "income" &&
                 transaction.status ===
-                    "paid"
+                "paid"
         ).length;
 
 
@@ -1837,9 +1826,9 @@ function renderSummary(
         transactions.filter(
             transaction =>
                 transaction.type ===
-                    "expense" &&
+                "expense" &&
                 transaction.status ===
-                    "paid"
+                "paid"
         ).length;
 
 
@@ -1847,9 +1836,9 @@ function renderSummary(
         transactions.filter(
             transaction =>
                 transaction.type ===
-                    "saved" &&
+                "saved" &&
                 transaction.status ===
-                    "paid"
+                "paid"
         ).length;
 
 
@@ -1858,19 +1847,36 @@ function renderSummary(
             transaction =>
                 (
                     transaction.type ===
-                        "expense" ||
+                    "expense" ||
                     transaction.type ===
-                        "saved"
+                    "saved"
                 ) &&
                 transaction.status ===
-                    "pending"
+                "pending"
         ).length;
 
+
+    const deposits = sumTransactions(
+        transactions,
+        transaction =>
+            transaction.type === "saved" &&
+            transaction.status === "paid"
+    );
+
+    const withdrawals = sumTransactions(
+        transactions,
+        transaction =>
+            transaction.type === "withdrawal" &&
+            transaction.status === "paid"
+    );
+
+    const saved = deposits - withdrawals;
 
     const balance =
         income -
         expense -
-        saved;
+        deposits +
+        withdrawals;
 
 
     const summaryIncome =
@@ -1987,10 +1993,9 @@ function renderSummary(
     if (incomeCountElement) {
 
         incomeCountElement.textContent =
-            `${incomeCount} recebimento${
-                incomeCount === 1
-                    ? ""
-                    : "s"
+            `${incomeCount} recebimento${incomeCount === 1
+                ? ""
+                : "s"
             }`;
     }
 
@@ -1998,10 +2003,9 @@ function renderSummary(
     if (expenseCountElement) {
 
         expenseCountElement.textContent =
-            `${expenseCount} pagamento${
-                expenseCount === 1
-                    ? ""
-                    : "s"
+            `${expenseCount} pagamento${expenseCount === 1
+                ? ""
+                : "s"
             }`;
     }
 
@@ -2018,10 +2022,9 @@ function renderSummary(
     if (pendingCountElement) {
 
         pendingCountElement.textContent =
-            `${pendingCount} pendência${
-                pendingCount === 1
-                    ? ""
-                    : "s"
+            `${pendingCount} pendência${pendingCount === 1
+                ? ""
+                : "s"
             }`;
     }
 }
@@ -2144,18 +2147,20 @@ function getTransactionTypeInfo(
     }
 
 
+    if (type === "withdrawal") {
+        return {
+            className: "income",
+            icon: "↗",
+            signal: "+",
+            label: "Resgate"
+        };
+    }
+
     return {
-        className:
-            "expense",
-
-        icon:
-            "↘",
-
-        signal:
-            "−",
-
-        label:
-            "Despesa"
+        className: "expense",
+        icon: "↘",
+        signal: "−",
+        label: "Despesa"
     };
 }
 
@@ -2194,6 +2199,10 @@ function getTransactionStatusLabel(
         return "Guardado";
     }
 
+
+    if (transaction.type === "withdrawal") {
+        return "Resgatado";
+    }
 
     return "Pago";
 }
@@ -2236,14 +2245,14 @@ function createTableRow(
 
                         <strong>
                             ${escapeHtml(
-                                transaction.description
-                            )}
+        transaction.description
+    )}
                         </strong>
 
                         <small>
                             ${escapeHtml(
-                                transaction.payment
-                            )}
+        transaction.payment
+    )}
                         </small>
 
                     </div>
@@ -2257,8 +2266,8 @@ function createTableRow(
 
                 <span class="category-badge">
                     ${escapeHtml(
-                        transaction.category
-                    )}
+        transaction.category
+    )}
                 </span>
 
             </td>
@@ -2266,8 +2275,8 @@ function createTableRow(
 
             <td>
                 ${formatDate(
-                    transaction.date
-                )}
+        transaction.date
+    )}
             </td>
 
 
@@ -2291,8 +2300,8 @@ function createTableRow(
                     ${typeInfo.signal}
 
                     ${currency.format(
-                        transaction.amount
-                    )}
+        transaction.amount
+    )}
 
                 </span>
 
@@ -2369,22 +2378,22 @@ function createMobileCard(
 
                         <strong>
                             ${escapeHtml(
-                                transaction.description
-                            )}
+        transaction.description
+    )}
                         </strong>
 
 
                         <small>
 
                             ${escapeHtml(
-                                transaction.category
-                            )}
+        transaction.category
+    )}
 
                             ·
 
                             ${formatDate(
-                                transaction.date
-                            )}
+        transaction.date
+    )}
 
                         </small>
 
@@ -2400,8 +2409,8 @@ function createMobileCard(
                     ${typeInfo.signal}
 
                     ${currency.format(
-                        transaction.amount
-                    )}
+        transaction.amount
+    )}
 
                 </span>
 
@@ -2727,34 +2736,34 @@ function openNewModal() {
         "paid";
 
 
-const paymentSelect =
-    getElement(
-        "payment"
-    );
+    const paymentSelect =
+        getElement(
+            "payment"
+        );
 
 
-if (paymentSelect) {
+    if (paymentSelect) {
 
-    const paymentExists =
-        [...paymentSelect.options]
-            .some(
-                option =>
-                    option.value ===
-                    defaultPaymentMethod
-            );
+        const paymentExists =
+            [...paymentSelect.options]
+                .some(
+                    option =>
+                        option.value ===
+                        defaultPaymentMethod
+                );
 
 
-    if (paymentExists) {
+        if (paymentExists) {
 
-        paymentSelect.value =
-            defaultPaymentMethod;
+            paymentSelect.value =
+                defaultPaymentMethod;
 
-    } else {
+        } else {
 
-        paymentSelect.value =
-            "Pix";
+            paymentSelect.value =
+                "Pix";
+        }
     }
-}
 
 
     const category =
@@ -3333,85 +3342,6 @@ async function deleteTransaction() {
 }
 
 
-async function deleteTransaction() {
-
-    if (!transactionToDelete) {
-        return;
-    }
-
-
-    const button =
-        getElement(
-            "confirmDelete"
-        );
-
-
-    try {
-
-        button.disabled =
-            true;
-
-
-        button.textContent =
-            "Excluindo...";
-
-
-        const resultado =
-            await apiRequest(
-                `/movimentacoes/${transactionToDelete}`,
-                {
-                    method:
-                        "DELETE"
-                }
-            );
-
-
-        transactionToDelete =
-            null;
-
-
-        getElement(
-            "deleteModal"
-        )?.close();
-
-
-        showAllTransactions =
-            false;
-
-
-        showToast(
-            resultado?.message ||
-            "Movimentação excluída."
-        );
-
-
-        await refreshTransactions();
-
-
-    } catch (error) {
-
-        console.error(
-            "Erro ao excluir movimentação:",
-            error
-        );
-
-
-        showToast(
-            error.message ||
-            "Erro ao excluir movimentação."
-        );
-
-
-    } finally {
-
-        button.disabled =
-            false;
-
-
-        button.textContent =
-            "Excluir";
-    }
-}
 
 
 // =====================================================
@@ -3863,13 +3793,7 @@ function exportCsv() {
 
                 transaction.description,
 
-                transaction.type ===
-                    "income"
-                    ? "Entrada"
-                    : transaction.type ===
-                        "saved"
-                        ? "Guardado"
-                        : "Despesa",
+                getTransactionTypeInfo(transaction.type).label,
 
                 transaction.category,
 
@@ -4498,9 +4422,9 @@ function setupEvents() {
 
                 if (
                     event.key ===
-                        "Enter" ||
+                    "Enter" ||
                     event.key ===
-                        " "
+                    " "
                 ) {
 
                     event.preventDefault();
