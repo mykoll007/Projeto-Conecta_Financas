@@ -269,6 +269,10 @@
     function identifyPayment(kind) {
         const text = normalize(kind);
 
+        if (text.includes("valor adicionado na conta por cartao")) {
+    return "Cartão de crédito";
+}
+
         if (text.includes("pix")) {
             return "Pix";
         }
@@ -347,6 +351,10 @@
             selected = false;
             warning = "Classificação precisa ser confirmada";
         }
+        if (kind.includes("valor adicionado na conta por cartao")) {
+    selected = false;
+    warning = "Pix no crédito - não representa uma receita real";
+}
 
         if (entry.type === "income" && !warning) {
             selected = false;
@@ -380,7 +388,7 @@
         const groups = [];
 
 const transactionPattern =
-    /^(Transferência (?:recebida pelo Pix(?: via)?|enviada pelo Pix|Recebida)|Reembolso recebido pelo Pix|Crédito em conta|Débito em conta|Resgate RDB|Aplicação RDB|Pagamento de fatura|Resgate de empréstimo|Pagamento de boleto efetuado|Compra no débito(?: via NuPay)?)\s*(.*?)\s+([\d.]+,\d{2})$/i;
+    /^(Transferência (?:recebida pelo Pix(?: via)?|enviada pelo Pix|Recebida)|Reembolso recebido pelo Pix|Crédito em conta|Débito em conta|Resgate RDB|Aplicação RDB|Pagamento de fatura|Resgate de empréstimo|Pagamento de boleto efetuado|Compra no débito(?: via NuPay)?|Valor adicionado na conta por cartão(?: de crédito)?)\s*(.*?)\s+([\d.]+,\d{2})$/i;
 
         for (const raw of lines) {
             const line = raw.trim();
