@@ -379,8 +379,8 @@
         const result = [];
         const groups = [];
 
-        const transactionPattern =
-            /^(Transferência (?:Recebida|recebida pelo Pix(?: via)?|enviada pelo Pix)|Crédito em conta|Débito em conta|Resgate RDB|Aplicação RDB|Pagamento de fatura|Resgate de empréstimo|Pagamento de boleto efetuado|Compra no débito via NuPay)\s*(.*?)\s+([\d.]+,\d{2})$/i;
+const transactionPattern =
+    /^(Transferência (?:recebida pelo Pix(?: via)?|enviada pelo Pix|Recebida)|Reembolso recebido pelo Pix|Crédito em conta|Débito em conta|Resgate RDB|Aplicação RDB|Pagamento de fatura|Resgate de empréstimo|Pagamento de boleto efetuado|Compra no débito(?: via NuPay)?)\s*(.*?)\s+([\d.]+,\d{2})$/i;
 
         for (const raw of lines) {
             const line = raw.trim();
